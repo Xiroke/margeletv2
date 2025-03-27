@@ -8,6 +8,7 @@ from config import settings
 
 from alembic import context
 
+from src.db.models import *  # noqa: F403
 from src.db.database import Base
 
 # this is the Alembic Config object, which provides

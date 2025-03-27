@@ -3,12 +3,12 @@ from typing import Annotated
 from fastapi import Depends
 from fastapi.routing import APIRouter
 
-from src.db.database import User
+from src.db.models import UserModel
 from src.auth.schemas import UserCreate, UserRead, UserUpdate
 from src.auth.users import auth_backend, current_active_user, fastapi_users
 
 
-router = APIRouter(prefix="", tags=["auth"])
+router = APIRouter(prefix="")
 
 router.include_router(
     fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
@@ -36,5 +36,5 @@ router.include_router(
 
 
 @router.get("/authenticated-route")
-async def authenticated_route(user: Annotated[User, Depends(current_active_user)]):
+async def authenticated_route(user: Annotated[UserModel, Depends(current_active_user)]):
     return {"message": f"Hello {user.email}!"}
