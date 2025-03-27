@@ -12,6 +12,9 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
+    name: Mapped[str] = mapped_column()
+    account_name: Mapped[str] = mapped_column(unique=True)
+    avatar_path: Mapped[str] = mapped_column(nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 

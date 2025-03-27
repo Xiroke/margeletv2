@@ -21,6 +21,7 @@ class RoleGroupModel(Base):
     __tablename__ = "role_group"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column()
     permissions: Mapped[list[str]] = mapped_column(
         ARRAY(ENUM(RolePermissionsEnum, name="role_permissions"))
     )
