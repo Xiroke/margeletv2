@@ -21,6 +21,7 @@ class ReadRoleGroupSchema(BaseRoleGroupSchema):
 
 class CreateRoleGroupSchema(BaseModel):
     title: str
+    group_id: UUID
 
 
 class UpdateRoleGroupSchema(BaseModel):

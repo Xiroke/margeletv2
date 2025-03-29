@@ -20,7 +20,7 @@ class ChatModel(Base):
     id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    title: Mapped[str] = mapped_column(unique=True)
+    title: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
     group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))

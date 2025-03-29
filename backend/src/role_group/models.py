@@ -29,7 +29,7 @@ class RoleGroupModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column()
     permissions: Mapped[list[str]] = mapped_column(
-        ARRAY(ENUM(RolePermissionsEnum, name="role_permissions"))
+        ARRAY(ENUM(RolePermissionsEnum, name="role_permissions")), default=lambda: []
     )
     group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))
     group: Mapped["GroupModel"] = relationship(back_populates="roles")

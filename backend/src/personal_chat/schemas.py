@@ -14,7 +14,8 @@ class BasePersonalChatSchema(BaseModel):
 
 
 class ReadPersonalChatSchema(BasePersonalChatSchema):
-    users: list["BaseUserSchema"]
+    # not used
+    # users: list["BaseUserSchema"]
 
     model_config = ConfigDict(from_attributes=True)
 

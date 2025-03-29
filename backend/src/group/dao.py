@@ -1,5 +1,5 @@
 from src.db.dao_base import DAOBase
-from src.db.models import GroupModel
+from .models import GroupModel
 
 
 class GroupDAO(DAOBase):

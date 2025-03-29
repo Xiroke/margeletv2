@@ -1,12 +1,11 @@
 import pytest_asyncio
-from dotenv import set_key, get_key
 from sqlalchemy.ext.asyncio import AsyncSession
-
 
 import sys
 
 sys.path.append("./")
 from src.db.database import Base, engine, async_session_maker
+from src.db.models import GroupModel, ChatModel, PersonalChatModel, RoleGroupModel
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
@@ -36,11 +35,36 @@ async def session(setup_database):
 
 @pytest_asyncio.fixture(scope="function")
 async def group(session: AsyncSession):
-    from src.group.models import GroupModel
-
     group = GroupModel(title="Test group")
     session.add(group)
     await session.commit()
     await session.refresh(group)
 
     yield group
+
+
+@pytest_asyncio.fixture(scope="function")
+async def chat(session: AsyncSession, group: GroupModel):
+    chat = ChatModel(title="Test chat", group_id=group.id)
+    session.add(chat)
+    await session.commit()
+    await session.refresh(chat)
+    yield chat
+
+
+@pytest_asyncio.fixture(scope="function")
+async def personal_chat(session: AsyncSession):
+    personal_chat = PersonalChatModel(title="Test personal chat")
+    session.add(personal_chat)
+    await session.commit()
+    await session.refresh(personal_chat)
+    yield personal_chat
+
+
+@pytest_asyncio.fixture(scope="function")
+async def role_group(session: AsyncSession, group: GroupModel):
+    role_group = RoleGroupModel(title="Test role group", group_id=group.id)
+    session.add(role_group)
+    await session.commit()
+    await session.refresh(role_group)
+    yield role_group

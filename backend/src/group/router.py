@@ -5,9 +5,9 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.models import GroupModel
 from src.db.database import get_async_session
 from .schemas import ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema
+from .models import GroupModel
 from .dao import GroupDAO
 
 router = APIRouter(prefix="/groups", tags=["group"])
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/groups", tags=["group"])
 @router.get(
     "/{group_uuid}",
 )
-async def get_groups(
+async def get_group(
     group_uuid: UUID, session: Annotated[AsyncSession, Depends(get_async_session)]
 ) -> ReadGroupSchema:
     return await GroupDAO.get_one_by_field(session, id=group_uuid)
