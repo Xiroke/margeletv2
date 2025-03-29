@@ -4,12 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update, select, delete
 
 from .database import Base
+from src.utils.exc_handler import handle_error, MapNoResultFound
 
 
 class DAOBase:
     model: Type[Base]
 
     @classmethod
+    @handle_error([MapNoResultFound])
     async def get_one_by_field(cls, session: AsyncSession, **filter):
         result = await session.execute(select(cls.model).filter_by(**filter))
         return result.scalars().one()

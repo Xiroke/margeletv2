@@ -8,5 +8,6 @@ wheels/
 *.egg-info
 .env
 TODO.txt
+*.log
 # Virtual environments
 .venv

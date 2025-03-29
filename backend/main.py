@@ -5,6 +5,10 @@ from src.group.router import router as group_router
 from src.chat.router import router as chat_router
 from src.personal_chat.router import router as personal_chat_router
 from src.role_group.router import router as role_group_router
+from config_logging import setup_logging
+
+# set settings and color for logging
+setup_logging()
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
