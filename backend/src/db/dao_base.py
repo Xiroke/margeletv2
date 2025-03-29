@@ -3,8 +3,6 @@ from typing import Type
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update, select, delete
 
-from pydantic import BaseModel
-
 from .database import Base
 
 
@@ -35,6 +33,8 @@ class DAOBase:
     async def create(cls, session: AsyncSession, obj: Type[Base]):
         session.add(obj)
         await session.commit()
+        await session.refresh(obj)
+        return obj
 
     @classmethod
     async def update(cls, session: AsyncSession, obj: dict, **filter):

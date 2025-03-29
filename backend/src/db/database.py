@@ -10,7 +10,13 @@ class Base(DeclarativeBase):
     pass
 
 
-engine = create_async_engine(settings.DB_URL)
+if settings.TEST_MODE:
+    from sqlalchemy.pool import NullPool
+
+    engine = create_async_engine(settings.TEST_DB_URL, poolclass=NullPool)
+else:
+    engine = create_async_engine(settings.DB_URL)
+
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 

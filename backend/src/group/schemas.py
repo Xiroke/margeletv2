@@ -1,36 +1,39 @@
+from __future__ import annotations
 from uuid import UUID
-from typing import TYPE_CHECKING
+from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from fastapi import UploadFile, File
 
-
-if TYPE_CHECKING:
-    from src.user.schemas import ReadUserSchema
-    from src.chat.schemas import ReadChatSchema
-    from src.role_group.schemas import ReadRoleGroupSchema
+from src.chat.schemas import BaseChatSchema
+from src.role_group.schemas import BaseRoleGroupSchema
 
 
-class ReadGroupSchema(BaseModel):
+class BaseGroupSchema(BaseModel):
     id: UUID
     title: str
-    avatar_path: str | None = None
-    panorama_path: str | None = None
-    created_at: str
-    users: list["ReadUserSchema"] = []
-    chats: list["ReadChatSchema"] = []
-    roles: list["ReadRoleGroupSchema"] = []
+    # image shouldn't be included, they will be sent separately
+    # avatar_path
+    # panorama_path
+    created_at: datetime
 
-    class Config:
-        from_attributes = True
+
+class ReadGroupSchema(BaseGroupSchema):
+    # users shouldn't be included
+    # users: list["ReadUserSchema"] = []
+    chats: list["BaseChatSchema"] = []
+    roles: list["BaseRoleGroupSchema"] = []
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateGroupSchema(BaseModel):
     title: str
-    avatar_path: str | None
-    panorama_path: str | None
+    avatar: UploadFile | None = File(None)
+    panorama: UploadFile | None = File(None)
 
 
 class UpdateGroupSchema(BaseModel):
     title: str | None
-    avatar_path: str | None
-    panorama_path: str | None
+    avatar: UploadFile | None = File(None)
+    panorama: UploadFile | None = File(None)

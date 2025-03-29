@@ -1,21 +1,26 @@
+from __future__ import annotations
 from uuid import UUID
-from typing import TYPE_CHECKING
+from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-if TYPE_CHECKING:
-    from src.chat.schemas import ReadChatSchema
-    from src.role_group.schemas import ReadRoleGroupSchema
+from src.chat.schemas import BaseChatSchema
+from src.role_group.schemas import BaseRoleGroupSchema
 
 
-class ReadUserSchema(BaseModel):
+class BaseUserSchema(BaseModel):
     id: UUID
     name: str
     account_name: str
     avatar_path: str | None = None
-    created_at: str
-    personal_chats: list["ReadChatSchema"] = []
-    groups: list["ReadRoleGroupSchema"] = []
+    created_at: datetime
+
+
+class ReadUserSchema(BaseUserSchema):
+    personal_chats: list["BaseChatSchema"] = []
+    groups: list["BaseRoleGroupSchema"] = []
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateUserSchema(BaseModel):

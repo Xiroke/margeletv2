@@ -1,19 +1,22 @@
+from __future__ import annotations
 from uuid import UUID
+from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from .models import RolePermissionsEnum
 
 
-class ReadRoleGroupSchema(BaseModel):
+class BaseRoleGroupSchema(BaseModel):
     id: int
     title: str
     permissions: list[RolePermissionsEnum]
     group_id: UUID
-    created_at: str
+    created_at: datetime
 
-    class Config:
-        from_attributes = True
+
+class ReadRoleGroupSchema(BaseRoleGroupSchema):
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateRoleGroupSchema(BaseModel):

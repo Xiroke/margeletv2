@@ -4,21 +4,24 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
+from src.user.schemas import BaseUserSchema
 
-class BaseChatSchema(BaseModel):
+
+class BasePersonalChatSchema(BaseModel):
     id: UUID
     title: str
     created_at: datetime
-    group_id: UUID
 
 
-class ReadChatSchema(BaseChatSchema):
+class ReadPersonalChatSchema(BasePersonalChatSchema):
+    users: list["BaseUserSchema"]
+
     model_config = ConfigDict(from_attributes=True)
 
 
-class CreateChatSchema(BaseModel):
+class CreatePersonalChatSchema(BaseModel):
     title: str
 
 
-class UpdateChatSchema(BaseModel):
+class UpdatePersonalChatSchema(BaseModel):
     title: str | None = None

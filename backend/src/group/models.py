@@ -1,10 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 import uuid
 
 from src.db.database import Base
-from src.db.enum import AllNamesModels
+
+if TYPE_CHECKING:
+    from src.user.models import UserModel
+    from src.chat.models import ChatModel
+    from src.role_group.models import RoleGroupModel
 
 
 class GroupModel(Base):
@@ -18,12 +26,14 @@ class GroupModel(Base):
     panorama_path: Mapped[str] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
-    users: Mapped[list[AllNamesModels.USER]] = relationship(
-        secondary=AllNamesModels.USER_TO_GROUP, back_populates="groups"
+    users: Mapped[list["UserModel"]] = relationship(
+        secondary="user_to_group", back_populates="groups"
     )
 
-    chats: Mapped[list[AllNamesModels.CHAT]] = relationship(back_populates="group")
+    chats: Mapped[list["ChatModel"]] = relationship(
+        back_populates="group", lazy="selectin"
+    )
 
-    roles: Mapped[list[AllNamesModels.ROLE_GROUP]] = relationship(
-        back_populates="group"
+    roles: Mapped[list["RoleGroupModel"]] = relationship(
+        back_populates="group", lazy="selectin"
     )

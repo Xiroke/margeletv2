@@ -1,11 +1,12 @@
 # Python-generated files
 __pycache__/
+*.pytest_cache
 *.py[oc]
 build/
 dist/
 wheels/
 *.egg-info
 .env
-
+TODO.txt
 # Virtual environments
 .venv

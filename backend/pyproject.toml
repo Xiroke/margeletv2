@@ -9,7 +9,10 @@ dependencies = [
     "asyncpg>=0.30.0",
     "fastapi>=0.115.12",
     "fastapi-users[sqlalchemy]>=14.0.1",
+    "httpx>=0.28.1",
     "pydantic-settings>=2.8.1",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.26.0",
     "sqlalchemy>=2.0.39",
     "uvicorn>=0.34.0",
 ]
@@ -27,3 +30,6 @@ select = [
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
 ]
+
+[tool.pytest]
+asyncio_mode = "auto"

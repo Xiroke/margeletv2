@@ -1,11 +1,17 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import UUID, ARRAY, ENUM
-from sqlalchemy import ForeignKey
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from datetime import datetime
 from enum import Enum
 
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import UUID, ARRAY, ENUM
+from sqlalchemy import ForeignKey
+
 from src.db.database import Base
-from src.db.enum import AllNamesModels, AllNamesTables
+
+if TYPE_CHECKING:
+    from src.group.models import GroupModel
 
 
 class RolePermissionsEnum(Enum):
@@ -25,6 +31,6 @@ class RoleGroupModel(Base):
     permissions: Mapped[list[str]] = mapped_column(
         ARRAY(ENUM(RolePermissionsEnum, name="role_permissions"))
     )
-    group_id: Mapped[UUID] = mapped_column(ForeignKey(AllNamesTables.GROUP + ".id"))
-    group: Mapped[AllNamesModels.GROUP] = relationship(back_populates="role_groups")
+    group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))
+    group: Mapped["GroupModel"] = relationship(back_populates="roles")
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
