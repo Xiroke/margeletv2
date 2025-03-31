@@ -6,6 +6,7 @@ import sys
 sys.path.append("./")
 from src.db.database import Base, engine, async_session_maker
 from src.db.models import GroupModel, ChatModel, PersonalChatModel, RoleGroupModel
+from src.dependencies.s3 import s3_bucket_service_factory
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
@@ -22,15 +23,16 @@ async def setup_database():
         await conn.commit()
 
 
-# @pytest_asyncio.fixture(scope="function")
-# async def session_maker(setup_database):
-#     yield async_sessionmaker(setup_database, expire_on_commit=False)
-
-
 @pytest_asyncio.fixture(scope="function")
 async def session(setup_database):
     async with async_session_maker() as session:
         yield session
+
+
+@pytest_asyncio.fixture(scope="function")
+async def s3():
+    s3 = s3_bucket_service_factory()
+    yield s3
 
 
 @pytest_asyncio.fixture(scope="function")

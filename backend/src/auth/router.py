@@ -4,12 +4,14 @@ from fastapi import Depends
 from fastapi.routing import APIRouter
 
 from src.db.models import UserModel
+from src.user.router import router as user_router
 from .schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, current_active_user, fastapi_users
 
 
 router = APIRouter(prefix="")
 
+router.include_router(user_router)
 router.include_router(
     fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
 )
