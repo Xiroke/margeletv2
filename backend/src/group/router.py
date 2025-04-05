@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, UploadFile, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, HTTPException, Body
 from fastapi.responses import JSONResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -78,7 +78,7 @@ async def get_group(
 
 @router.post("/")
 async def create_group(
-    group: Annotated[CreateGroupSchema, Depends()],
+    group: Annotated[CreateGroupSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     group_db = GroupModel(title=group.title)
@@ -90,7 +90,7 @@ async def create_group(
 @router.patch("/{group_uuid}")
 async def update_group(
     group_uuid: UUID,
-    group: Annotated[UpdateGroupSchema, Depends()],
+    group: Annotated[UpdateGroupSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     await GroupDAO.update(session, group.model_dump(exclude_none=True), id=group_uuid)

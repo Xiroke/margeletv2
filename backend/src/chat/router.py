@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,7 +24,7 @@ async def get_chat(
 
 @router.post("/")
 async def create_chat(
-    chat: Annotated[CreateChatSchema, Depends()],
+    chat: Annotated[CreateChatSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     chat_db = ChatModel(title=chat.title, group_id=chat.group_id)
@@ -36,7 +36,7 @@ async def create_chat(
 @router.patch("/{chat_uuid}")
 async def update_chat(
     chat_uuid: UUID,
-    chat: Annotated[UpdateChatSchema, Depends()],
+    chat: Annotated[UpdateChatSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     await ChatDAO.update(session, chat.model_dump(exclude_none=True), id=chat_uuid)

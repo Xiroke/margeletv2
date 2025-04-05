@@ -25,9 +25,7 @@ class ReadUserSchema(BaseUserSchema):
 
 class CreateUserSchema(BaseModel):
     name: str
-    avatar_path: str | None
 
 
 class UpdateUserSchema(BaseModel):
     name: str | None
-    avatar_path: str | None

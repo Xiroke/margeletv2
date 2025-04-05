@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,7 +23,7 @@ async def get_role_group(
 
 @router.post("/")
 async def create_role_group(
-    role_group: Annotated[CreateRoleGroupSchema, Depends()],
+    role_group: Annotated[CreateRoleGroupSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     role_group_db = RoleGroupModel(title=role_group.title, group_id=role_group.group_id)
@@ -35,7 +35,7 @@ async def create_role_group(
 @router.patch("/{role_group_id}")
 async def update_role_group(
     role_group_id: int,
-    role_group: Annotated[UpdateRoleGroupSchema, Depends()],
+    role_group: Annotated[UpdateRoleGroupSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     await RoleGroupDAO.update(

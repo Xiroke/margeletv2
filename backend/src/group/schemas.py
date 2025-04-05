@@ -3,8 +3,6 @@ from uuid import UUID
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
-from fastapi import UploadFile, File
-
 from src.chat.schemas import BaseChatSchema
 from src.role_group.schemas import BaseRoleGroupSchema
 
@@ -12,9 +10,8 @@ from src.role_group.schemas import BaseRoleGroupSchema
 class BaseGroupSchema(BaseModel):
     id: UUID
     title: str
-    # image shouldn't be included, they will be sent separately
-    # avatar_path
-    # panorama_path
+    avatar_path: str | None
+    panorama_path: str | None
     created_at: datetime
 
 
@@ -29,11 +26,7 @@ class ReadGroupSchema(BaseGroupSchema):
 
 class CreateGroupSchema(BaseModel):
     title: str
-    avatar: UploadFile | None = File(None)
-    panorama: UploadFile | None = File(None)
 
 
 class UpdateGroupSchema(BaseModel):
     title: str | None
-    avatar: UploadFile | None = File(None)
-    panorama: UploadFile | None = File(None)

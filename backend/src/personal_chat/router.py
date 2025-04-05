@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,7 +29,7 @@ async def get_personal_chat(
 
 @router.post("/")
 async def create_personal_chat(
-    personal_chat: Annotated[CreatePersonalChatSchema, Depends()],
+    personal_chat: Annotated[CreatePersonalChatSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     personal_chat_db = PersonalChatModel(title=personal_chat.title)
@@ -41,7 +41,7 @@ async def create_personal_chat(
 @router.patch("/{personal_chat_uuid}")
 async def update_personal_chat(
     personal_chat_uuid: UUID,
-    personal_chat: Annotated[UpdatePersonalChatSchema, Depends()],
+    personal_chat: Annotated[UpdatePersonalChatSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     await PersonalChatDAO.update(
