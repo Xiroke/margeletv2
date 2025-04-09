@@ -1,0 +1,26 @@
+.group_panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.panorama {
+    width: 350px;
+    height: 200px;
+    border-radius: 20px;
+    background-color: var(--primary-background);
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    gap: 15px;
+}
+
+.button_item {
+    width: 30px;
+    height: 30px;
+    background-color: var(--primary-background);
+    border-radius: 50%;
+}

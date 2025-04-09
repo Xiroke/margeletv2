@@ -1,0 +1,15 @@
+import { HTMLAttributes } from 'react';
+
+import styles from './{{name}}.module.scss';
+
+export interface {{pascalCase name}}Props extends HTMLAttributes<HTMLDivElement> {}
+
+export const {{pascalCase name}} = ({}: {{pascalCase name}}Props) => {
+  return (
+    <div className={styles['{{name}}']}>
+      {{pascalCase name}} Component
+    </div>
+  );
+};
+
+export default {{pascalCase name}};

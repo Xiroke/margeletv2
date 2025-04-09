@@ -1,0 +1,10 @@
+.chat_list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .chat_item {
+        font-size: 20px;
+        font-weight: 800;
+    }
+}
