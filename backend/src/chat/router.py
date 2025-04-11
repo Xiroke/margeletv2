@@ -13,6 +13,14 @@ from .dao import ChatDAO
 router = APIRouter(prefix="/chats", tags=["chat"])
 
 
+@router.get("/group_chats/{group_id}")
+async def get_group_chats(
+    group_id: UUID,
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+):
+    return await ChatDAO.get_all_by_field(session, group_id=group_id)
+
+
 @router.get(
     "/{chat_uuid}",
 )

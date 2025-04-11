@@ -12,19 +12,17 @@ class BaseUserSchema(BaseModel):
     id: UUID
     name: str
     account_name: str
-    avatar_path: str | None = None
     created_at: datetime
 
 
 class ReadUserSchema(BaseUserSchema):
-    personal_chats: list["BaseChatSchema"] = []
-    groups: list["BaseRoleGroupSchema"] = []
-
     model_config = ConfigDict(from_attributes=True)
 
 
 class CreateUserSchema(BaseModel):
     name: str
+    account_name: str
+    email: str
 
 
 class UpdateUserSchema(BaseModel):

@@ -1,5 +1,6 @@
 import uuid
 from typing import Optional, Annotated
+from datetime import timezone, datetime, timedelta
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
@@ -12,8 +13,16 @@ from fastapi_users.db import SQLAlchemyUserDatabase
 
 from src.user.utils import get_user_db
 from src.db.models import UserModel
+from src.db.database import get_async_session
+from src.token.dao import TokenDAO
+from src.token.models import TokenModel
+
 
 SECRET = "SECRET"
+
+
+async def create_refresh_token(user) -> str:
+    return await get_jwt_strategy().write_token(user)
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
@@ -29,6 +38,21 @@ class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
         self, user: UserModel, token: str, request: Optional[Request] = None
     ):
         print(f"User {user.id} has forgot their password. Reset token: {token}")
+
+    async def on_after_login(self, user, request, response):
+        refresh_token = await create_refresh_token(user)
+        token_db = TokenModel(user_id=user.id, value=refresh_token)
+
+        await TokenDAO.create(session=await anext(get_async_session()), obj=token_db)
+
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            expires=datetime.now(timezone.utc) + timedelta(days=24),
+            httponly=True,
+            secure=False,
+            samesite="strict",
+        )
 
     async def on_after_request_verify(
         self, user: UserModel, token: str, request: Optional[Request] = None
@@ -46,7 +70,7 @@ bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
 
 def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET, lifetime_seconds=3600)
+    return JWTStrategy(secret=SECRET, lifetime_seconds=86400)
 
 
 auth_backend = AuthenticationBackend(

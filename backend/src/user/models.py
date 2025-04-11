@@ -13,6 +13,7 @@ from src.db.database import Base
 if TYPE_CHECKING:
     from src.personal_chat.models import PersonalChatModel
     from src.group.models import GroupModel
+    from src.token.models import TokenModel
 
 
 class UserModel(SQLAlchemyBaseUserTableUUID, Base):
@@ -21,9 +22,12 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     )
     name: Mapped[str] = mapped_column()
     account_name: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(unique=True)
     avatar_path: Mapped[str] = mapped_column(nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
+
+    tokens: Mapped[list["TokenModel"]] = relationship(back_populates="user")
 
     personal_chats: Mapped[list["PersonalChatModel"]] = relationship(
         secondary="user_to_personal_chat", back_populates="users"

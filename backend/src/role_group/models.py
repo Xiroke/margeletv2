@@ -21,6 +21,7 @@ class RolePermissionsEnum(Enum):
     CAN_SET_PANORAMA = "can_set_panorama"
     CAN_CONTROL_CHATS = "can_control_chats"
     CAN_SEND_MESSAGE = "can_send_message"
+    # CAN_INVITE = "can_invite"
 
 
 class RoleGroupModel(Base):

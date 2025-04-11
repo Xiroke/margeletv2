@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
-import uuid
 
-from src.db.database import Base
+from src.db.models.base_models.models import BaseChannel
 
 if TYPE_CHECKING:
     from src.user.models import UserModel
@@ -15,12 +15,10 @@ if TYPE_CHECKING:
     from src.role_group.models import RoleGroupModel
 
 
-class GroupModel(Base):
+class GroupModel(BaseChannel):
     __tablename__ = "group"
 
-    id: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[UUID] = mapped_column(ForeignKey("base_channel.id"), primary_key=True)
     title: Mapped[str] = mapped_column(unique=True)
     avatar_path: Mapped[str] = mapped_column(nullable=True)
     panorama_path: Mapped[str] = mapped_column(nullable=True)
@@ -37,3 +35,7 @@ class GroupModel(Base):
     roles: Mapped[list["RoleGroupModel"]] = relationship(
         back_populates="group", lazy="selectin"
     )
+
+    __mapper_args__ = {
+        "polymorphic_identity": "group",
+    }

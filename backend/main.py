@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -6,6 +8,8 @@ from src.group.router import router as group_router
 from src.chat.router import router as chat_router
 from src.personal_chat.router import router as personal_chat_router
 from src.role_group.router import router as role_group_router
+from src.message.router import router as message_router
+from src.no_sql_db.database import init_mongo_db
 from config_logging import setup_logging
 
 # set settings and color for logging
@@ -29,11 +33,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# In message_router there is a websocket route
+# /api/messages/{chat_id}?token=jwt
 app.include_router(prefix="/api", router=auth_router)
 app.include_router(prefix="/api", router=group_router)
 app.include_router(prefix="/api", router=personal_chat_router)
 app.include_router(prefix="/api", router=chat_router)
 app.include_router(prefix="/api", router=role_group_router)
+app.include_router(prefix="/api", router=message_router)
+
+
+async def main():
+    await init_mongo_db()
 
 
 @app.get("/api")
@@ -42,6 +53,7 @@ def ping():
 
 
 if __name__ == "__main__":
+    asyncio.run(main())
     import uvicorn
 
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -4,10 +4,14 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, UploadFile, HTTPException, Body
 from fastapi.responses import JSONResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+import jwt
 
 from src.db.database import get_async_session
 from src.utils.image_utils import save_image_in_s3
 from src.dependencies.s3 import s3_bucket_service_factory
+from src.auth.users import current_active_user
+from src.db.models import UserModel
+from config import settings
 from .schemas import ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema
 from .models import GroupModel
 from .dao import GroupDAO
@@ -65,6 +69,58 @@ async def upload_panorama(
     prefix = await save_image_in_s3("groups", group_uuid, image, s3)
     await GroupDAO.update(session, {"panorama_path": prefix}, id=group_uuid)
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
+
+
+@router.get("/invite/{group_uuid}")
+async def get_invite_token(
+    group_uuid: UUID,
+    current_user: Annotated[UserModel, Depends(current_active_user)],
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+):
+    group = await GroupDAO.get_one_by_field(session, id=group_uuid)
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+    token = jwt.encode(
+        {"group_id": group.id, "user_id": current_user.id},
+        settings.INVITE_TOKEN_JWT,
+        algorithm="HS256",
+    )
+    return token
+
+
+@router.post("/invite/{group_id}")
+async def join_group(
+    group_id: UUID,
+    token: Annotated[str, Body()],
+    current_user: Annotated[UserModel, Depends(current_active_user)],
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+):
+    try:
+        payload = jwt.decode(token, settings.INVITE_TOKEN_JWT, algorithms=["HS256"])
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=400, detail="Invalid token")  # noqa: B904
+    if payload["group_id"] != group_id:
+        raise HTTPException(status_code=400, detail="Invalid token")
+
+    await GroupDAO.add_user_to_group(session, group_id, current_user.id)
+
+    return JSONResponse(status_code=200, content={"message": "Group joined"})
+
+
+@router.get("/user_groups/me")
+async def get_my_groups(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+    current_user: Annotated[UserModel, Depends(current_active_user)],
+):
+    return await GroupDAO.get_all_by_field(session, user_id=current_user.id)
+
+
+@router.get("/user_groups/{user_id}")
+async def get_user_groups(
+    user_id: UUID,
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+):
+    return await GroupDAO.get_all_by_field(session, user_id=user_id)
 
 
 @router.get(
