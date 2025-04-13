@@ -49,7 +49,7 @@ async def update_chat(
 ):
     await ChatDAO.update(session, chat.model_dump(exclude_none=True), id=chat_uuid)
 
-    return JSONResponse(status_code=200, content={"message": "Group updated"})
+    return JSONResponse(status_code=200, content={"message": "Chat updated"})
 
 
 @router.delete("/{chat_uuid}")
@@ -59,4 +59,4 @@ async def delete_chat(
 ):
     await ChatDAO.delete(session, chat_uuid)
 
-    return JSONResponse(status_code=200, content={"message": "Group deleted"})
+    return JSONResponse(status_code=200, content={"message": "Chat deleted"})

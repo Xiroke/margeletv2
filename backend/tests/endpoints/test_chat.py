@@ -1,8 +1,8 @@
 import sys
 
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
-from sqlalchemy.exc import NoResultFound
 
 sys.path.append("./")
 from src.db.dao import ChatDAO
@@ -13,7 +13,9 @@ client = TestClient(app)
 
 @pytest.mark.asyncio
 async def test_create_chat(session, group):
-    response = client.post("/api/chats", params={"title": "chat", "group_id": group.id})
+    response = client.post(
+        "/api/chats", json={"title": "chat", "group_id": str(group.id)}
+    )
     assert response.status_code == 200
     chat_db = await ChatDAO.get_one_by_field(session, title="chat")
     assert chat_db.title == "chat"
@@ -28,7 +30,7 @@ async def test_get_chat(chat):
 
 @pytest.mark.asyncio
 async def test_update_chat(session, chat):
-    response = client.patch(f"/api/chats/{chat.id}", params={"title": "New name chat"})
+    response = client.patch(f"/api/chats/{chat.id}", json={"title": "New name chat"})
     assert response.status_code == 200
     await session.refresh(chat)
     assert chat.title == "New name chat"
@@ -36,8 +38,8 @@ async def test_update_chat(session, chat):
 
 @pytest.mark.asyncio
 async def test_delete_chat(session, chat):
-    response = client.delete(f"/api/chats/{chat.id}")
+    response = client.delete(f"/api/chats/{str(chat.id)}")
     assert response.status_code == 200
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(HTTPException):
         await ChatDAO.get_one_by_field(session, id=chat.id)
