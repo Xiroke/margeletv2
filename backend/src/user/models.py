@@ -27,8 +27,6 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
 
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
-    tokens: Mapped[list["TokenModel"]] = relationship(back_populates="user")
-
     personal_chats: Mapped[list["PersonalChatModel"]] = relationship(
         secondary="user_to_personal_chat", back_populates="users"
     )

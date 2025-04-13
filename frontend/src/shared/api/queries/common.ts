@@ -1,7 +1,7 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2 
 
 import { UseQueryResult } from "@tanstack/react-query";
-import { AuthService, ChatService, DefaultService, GroupService, PersonalChatService, RoleGroupService, UsersService } from "../requests/services.gen";
+import { AuthService, ChatService, DefaultService, GroupService, MessagesService, PersonalChatService, RoleGroupService, UsersService } from "../requests/services.gen";
 export type UsersServiceGetApiUsersAvatarByGroupUuidDefaultResponse = Awaited<ReturnType<typeof UsersService.getApiUsersAvatarByGroupUuid>>;
 export type UsersServiceGetApiUsersAvatarByGroupUuidQueryResult<TData = UsersServiceGetApiUsersAvatarByGroupUuidDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useUsersServiceGetApiUsersAvatarByGroupUuidKey = "UsersServiceGetApiUsersAvatarByGroupUuid";
@@ -18,6 +18,10 @@ export const useUsersServiceGetApiUsersByIdKey = "UsersServiceGetApiUsersById";
 export const UseUsersServiceGetApiUsersByIdKeyFn = ({ id }: {
   id: string;
 }, queryKey?: Array<unknown>) => [useUsersServiceGetApiUsersByIdKey, ...(queryKey ?? [{ id }])];
+export type AuthServiceGetApiAuthAccessTokenDefaultResponse = Awaited<ReturnType<typeof AuthService.getApiAuthAccessToken>>;
+export type AuthServiceGetApiAuthAccessTokenQueryResult<TData = AuthServiceGetApiAuthAccessTokenDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useAuthServiceGetApiAuthAccessTokenKey = "AuthServiceGetApiAuthAccessToken";
+export const UseAuthServiceGetApiAuthAccessTokenKeyFn = (queryKey?: Array<unknown>) => [useAuthServiceGetApiAuthAccessTokenKey, ...(queryKey ?? [])];
 export type DefaultServiceGetApiAuthenticatedRouteDefaultResponse = Awaited<ReturnType<typeof DefaultService.getApiAuthenticatedRoute>>;
 export type DefaultServiceGetApiAuthenticatedRouteQueryResult<TData = DefaultServiceGetApiAuthenticatedRouteDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useDefaultServiceGetApiAuthenticatedRouteKey = "DefaultServiceGetApiAuthenticatedRoute";
@@ -38,6 +42,22 @@ export const useGroupServiceGetApiGroupsPanoramaByGroupUuidKey = "GroupServiceGe
 export const UseGroupServiceGetApiGroupsPanoramaByGroupUuidKeyFn = ({ groupUuid }: {
   groupUuid: string;
 }, queryKey?: Array<unknown>) => [useGroupServiceGetApiGroupsPanoramaByGroupUuidKey, ...(queryKey ?? [{ groupUuid }])];
+export type GroupServiceGetApiGroupsInviteByGroupUuidDefaultResponse = Awaited<ReturnType<typeof GroupService.getApiGroupsInviteByGroupUuid>>;
+export type GroupServiceGetApiGroupsInviteByGroupUuidQueryResult<TData = GroupServiceGetApiGroupsInviteByGroupUuidDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useGroupServiceGetApiGroupsInviteByGroupUuidKey = "GroupServiceGetApiGroupsInviteByGroupUuid";
+export const UseGroupServiceGetApiGroupsInviteByGroupUuidKeyFn = ({ groupUuid }: {
+  groupUuid: string;
+}, queryKey?: Array<unknown>) => [useGroupServiceGetApiGroupsInviteByGroupUuidKey, ...(queryKey ?? [{ groupUuid }])];
+export type GroupServiceGetApiGroupsUserGroupsMeDefaultResponse = Awaited<ReturnType<typeof GroupService.getApiGroupsUserGroupsMe>>;
+export type GroupServiceGetApiGroupsUserGroupsMeQueryResult<TData = GroupServiceGetApiGroupsUserGroupsMeDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useGroupServiceGetApiGroupsUserGroupsMeKey = "GroupServiceGetApiGroupsUserGroupsMe";
+export const UseGroupServiceGetApiGroupsUserGroupsMeKeyFn = (queryKey?: Array<unknown>) => [useGroupServiceGetApiGroupsUserGroupsMeKey, ...(queryKey ?? [])];
+export type GroupServiceGetApiGroupsUserGroupsByUserIdDefaultResponse = Awaited<ReturnType<typeof GroupService.getApiGroupsUserGroupsByUserId>>;
+export type GroupServiceGetApiGroupsUserGroupsByUserIdQueryResult<TData = GroupServiceGetApiGroupsUserGroupsByUserIdDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useGroupServiceGetApiGroupsUserGroupsByUserIdKey = "GroupServiceGetApiGroupsUserGroupsByUserId";
+export const UseGroupServiceGetApiGroupsUserGroupsByUserIdKeyFn = ({ userId }: {
+  userId: string;
+}, queryKey?: Array<unknown>) => [useGroupServiceGetApiGroupsUserGroupsByUserIdKey, ...(queryKey ?? [{ userId }])];
 export type GroupServiceGetApiGroupsByGroupUuidDefaultResponse = Awaited<ReturnType<typeof GroupService.getApiGroupsByGroupUuid>>;
 export type GroupServiceGetApiGroupsByGroupUuidQueryResult<TData = GroupServiceGetApiGroupsByGroupUuidDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useGroupServiceGetApiGroupsByGroupUuidKey = "GroupServiceGetApiGroupsByGroupUuid";
@@ -50,6 +70,12 @@ export const usePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKey = "P
 export const UsePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKeyFn = ({ personalChatUuid }: {
   personalChatUuid: string;
 }, queryKey?: Array<unknown>) => [usePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKey, ...(queryKey ?? [{ personalChatUuid }])];
+export type ChatServiceGetApiChatsGroupChatsByGroupIdDefaultResponse = Awaited<ReturnType<typeof ChatService.getApiChatsGroupChatsByGroupId>>;
+export type ChatServiceGetApiChatsGroupChatsByGroupIdQueryResult<TData = ChatServiceGetApiChatsGroupChatsByGroupIdDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useChatServiceGetApiChatsGroupChatsByGroupIdKey = "ChatServiceGetApiChatsGroupChatsByGroupId";
+export const UseChatServiceGetApiChatsGroupChatsByGroupIdKeyFn = ({ groupId }: {
+  groupId: string;
+}, queryKey?: Array<unknown>) => [useChatServiceGetApiChatsGroupChatsByGroupIdKey, ...(queryKey ?? [{ groupId }])];
 export type ChatServiceGetApiChatsByChatUuidDefaultResponse = Awaited<ReturnType<typeof ChatService.getApiChatsByChatUuid>>;
 export type ChatServiceGetApiChatsByChatUuidQueryResult<TData = ChatServiceGetApiChatsByChatUuidDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useChatServiceGetApiChatsByChatUuidKey = "ChatServiceGetApiChatsByChatUuid";
@@ -62,6 +88,10 @@ export const useRoleGroupServiceGetApiRolesGroupByRoleGroupIdKey = "RoleGroupSer
 export const UseRoleGroupServiceGetApiRolesGroupByRoleGroupIdKeyFn = ({ roleGroupId }: {
   roleGroupId: number;
 }, queryKey?: Array<unknown>) => [useRoleGroupServiceGetApiRolesGroupByRoleGroupIdKey, ...(queryKey ?? [{ roleGroupId }])];
+export type MessagesServiceGetApiMessagesApiDefaultResponse = Awaited<ReturnType<typeof MessagesService.getApiMessagesApi>>;
+export type MessagesServiceGetApiMessagesApiQueryResult<TData = MessagesServiceGetApiMessagesApiDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useMessagesServiceGetApiMessagesApiKey = "MessagesServiceGetApiMessagesApi";
+export const UseMessagesServiceGetApiMessagesApiKeyFn = (queryKey?: Array<unknown>) => [useMessagesServiceGetApiMessagesApiKey, ...(queryKey ?? [])];
 export type UsersServicePostApiUsersAvatarByGroupUuidMutationResult = Awaited<ReturnType<typeof UsersService.postApiUsersAvatarByGroupUuid>>;
 export type AuthServicePostApiAuthJwtLoginMutationResult = Awaited<ReturnType<typeof AuthService.postApiAuthJwtLogin>>;
 export type AuthServicePostApiAuthJwtLogoutMutationResult = Awaited<ReturnType<typeof AuthService.postApiAuthJwtLogout>>;
@@ -72,6 +102,7 @@ export type AuthServicePostApiAuthRequestVerifyTokenMutationResult = Awaited<Ret
 export type AuthServicePostApiAuthVerifyMutationResult = Awaited<ReturnType<typeof AuthService.postApiAuthVerify>>;
 export type GroupServicePostApiGroupsAvatarByGroupUuidMutationResult = Awaited<ReturnType<typeof GroupService.postApiGroupsAvatarByGroupUuid>>;
 export type GroupServicePostApiGroupsPanoramaByGroupUuidMutationResult = Awaited<ReturnType<typeof GroupService.postApiGroupsPanoramaByGroupUuid>>;
+export type GroupServicePostApiGroupsInviteByGroupIdMutationResult = Awaited<ReturnType<typeof GroupService.postApiGroupsInviteByGroupId>>;
 export type GroupServicePostApiGroupsMutationResult = Awaited<ReturnType<typeof GroupService.postApiGroups>>;
 export type PersonalChatServicePostApiPersonalChatsMutationResult = Awaited<ReturnType<typeof PersonalChatService.postApiPersonalChats>>;
 export type ChatServicePostApiChatsMutationResult = Awaited<ReturnType<typeof ChatService.postApiChats>>;

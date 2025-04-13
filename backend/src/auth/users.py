@@ -4,25 +4,22 @@ from datetime import timezone, datetime, timedelta
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
-from fastapi_users.authentication import (
-    AuthenticationBackend,
-    BearerTransport,
-    JWTStrategy,
+from fastapi_users.authentication import AuthenticationBackend, JWTStrategy
+from fastapi_users.authentication.strategy.db import (
+    AccessTokenDatabase,
+    DatabaseStrategy,
 )
+
+from fastapi_users.authentication import CookieTransport
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from src.user.utils import get_user_db
 from src.db.models import UserModel
-from src.db.database import get_async_session
-from src.token.dao import TokenDAO
+from src.token.dao import get_refresh_token_db
 from src.token.models import TokenModel
 
 
 SECRET = "SECRET"
-
-
-async def create_refresh_token(user) -> str:
-    return await get_jwt_strategy().write_token(user)
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
@@ -40,19 +37,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 
     async def on_after_login(self, user, request, response):
-        refresh_token = await create_refresh_token(user)
-        token_db = TokenModel(user_id=user.id, value=refresh_token)
-
-        await TokenDAO.create(session=await anext(get_async_session()), obj=token_db)
-
-        response.set_cookie(
-            key="refresh_token",
-            value=refresh_token,
-            expires=datetime.now(timezone.utc) + timedelta(days=24),
-            httponly=True,
-            secure=False,
-            samesite="strict",
-        )
+        pass
 
     async def on_after_request_verify(
         self, user: UserModel, token: str, request: Optional[Request] = None
@@ -66,18 +51,30 @@ async def get_user_manager(
     yield UserManager(user_db)
 
 
-bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
+cookie_transport = CookieTransport(
+    cookie_name="refresh_token", cookie_max_age=60 * 60 * 24 * 24
+)
 
 
-def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET, lifetime_seconds=86400)
+def get_database_strategy(
+    access_token_db: Annotated[
+        AccessTokenDatabase[TokenModel], Depends(get_refresh_token_db)
+    ],
+) -> DatabaseStrategy:
+    return DatabaseStrategy(access_token_db, lifetime_seconds=60 * 60 * 24 * 24)
 
 
 auth_backend = AuthenticationBackend(
-    name="jwt",
-    transport=bearer_transport,
-    get_strategy=get_jwt_strategy,
+    name="db_cookie",
+    transport=cookie_transport,
+    get_strategy=get_database_strategy,
 )
+
+
+def get_jwt_strategy() -> JWTStrategy:
+    """jwt strategy used for generating access tokens"""
+    return JWTStrategy(secret=SECRET, lifetime_seconds=3600)
+
 
 fastapi_users = FastAPIUsers[UserModel, uuid.UUID](get_user_manager, [auth_backend])
 

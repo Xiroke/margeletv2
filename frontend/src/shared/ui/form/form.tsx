@@ -1,5 +1,5 @@
 'use client';
-import { HTMLAttributes, ReactNode } from 'react';
+import { FormEvent, FormEventHandler, HTMLAttributes, ReactNode } from 'react';
 
 import styles from './form.module.scss';
 import InputText from '@/shared/ui/inputs/input_text';
@@ -12,7 +12,7 @@ export interface FormProps extends HTMLAttributes<HTMLDivElement> {
   textButton: string;
   afterInputsElement?: ReactNode;
   afterFormElement?: ReactNode;
-  onSubmit: () => void;
+  onSubmit: FormEventHandler;
 }
 
 export const Form = ({

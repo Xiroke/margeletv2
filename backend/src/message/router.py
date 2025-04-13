@@ -5,7 +5,6 @@ from typing import Annotated
 
 from src.auth.users import (
     current_active_user,
-    get_jwt_strategy,
     get_user_manager,
     get_user_db,
 )
@@ -66,25 +65,25 @@ def ping():
     return "pong"
 
 
-@router.websocket("/{chat_id}")
-async def websocket_endpoint(
-    session: Annotated[AsyncSession, Depends(get_async_session)],
-    websocket: WebSocket,
-    chat_id: int,
-    token: Annotated[str | None, Query()] = None,
-):
-    jwt_strategy = get_jwt_strategy()
+# @router.websocket("/{chat_id}")
+# async def websocket_endpoint(
+#     session: Annotated[AsyncSession, Depends(get_async_session)],
+#     websocket: WebSocket,
+#     chat_id: int,
+#     token: Annotated[str | None, Query()] = None,
+# ):
+#     jwt_strategy = get_jwt_strategy()
 
-    user = await jwt_strategy.read_token(
-        token,
-        user_manager=await anext(get_user_manager(await anext(get_user_db(session)))),
-    )
+#     user = await jwt_strategy.read_token(
+#         token,
+#         user_manager=await anext(get_user_manager(await anext(get_user_db(session)))),
+#     )
 
-    await connection_manager_users.connect(websocket, user.id, {chat_id})
-    try:
-        while True:
-            text = await websocket.receive_text()
-            await connection_manager_users.broadcast(text, chat_id, token, session)
+#     await connection_manager_users.connect(websocket, user.id, {chat_id})
+#     try:
+#         while True:
+#             text = await websocket.receive_text()
+#             await connection_manager_users.broadcast(text, chat_id, token, session)
 
-    except WebSocketDisconnect:
-        connection_manager_users.disconnect(websocket, chat_id)
+#     except WebSocketDisconnect:
+#         connection_manager_users.disconnect(websocket, chat_id)
