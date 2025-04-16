@@ -1,4 +1,5 @@
-import asyncio
+import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,8 +15,16 @@ from config_logging import setup_logging
 
 # set settings and color for logging
 setup_logging()
+logging.getLogger("pymongo").setLevel(logging.INFO)
 
-app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_mongo_db()
+    yield
+
+
+app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json", lifespan=lifespan)
 
 origins = [
     "http://localhost",
@@ -43,17 +52,12 @@ app.include_router(prefix="/api", router=role_group_router)
 app.include_router(prefix="/api", router=message_router)
 
 
-async def main():
-    await init_mongo_db()
-
-
 @app.get("/api")
 def ping():
     return "pong"
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
     import uvicorn
 
     uvicorn.run("main:app", port=8000, reload=True)

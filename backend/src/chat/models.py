@@ -23,5 +23,5 @@ class ChatModel(Base):
     title: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
-    group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))
+    group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), nullable=False)
     group: Mapped["GroupModel"] = relationship(back_populates="chats")

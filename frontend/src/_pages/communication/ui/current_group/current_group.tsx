@@ -15,12 +15,14 @@ export const CurrentGroup = ({ className }: CurrentGroupProps) => {
   return (
     <div className={clsx(styles.current_group, className)}>
       {groupId ? (
-        <Talk className={styles.talk} />
+        <>
+          <Talk className={styles.talk} />
+          <VerticalLine className="vertical_line" />
+          <GroupPanel className={styles.group_panel} />
+        </>
       ) : (
         <div className={styles.current_group_unselect}>Выберите группу</div>
       )}
-      <VerticalLine className="vertical_line" />
-      <GroupPanel className={styles.group_panel} />
     </div>
   );
 };

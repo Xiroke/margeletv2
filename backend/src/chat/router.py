@@ -5,12 +5,22 @@ from fastapi import APIRouter, Depends, Body
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.db.models import UserModel
 from src.db.database import get_async_session
+from src.auth.users import current_active_user
 from .models import ChatModel
 from .schemas import ReadChatSchema, CreateChatSchema, UpdateChatSchema
 from .dao import ChatDAO
 
 router = APIRouter(prefix="/chats", tags=["chat"])
+
+
+@router.get("/chats/me")
+async def get_my_chats(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+    user: Annotated[UserModel, Depends(current_active_user)],
+):
+    return await ChatDAO.get_all_chats_by_user(session, user_id=user.id)
 
 
 @router.get("/group_chats/{group_id}")
@@ -30,12 +40,13 @@ async def get_chat(
     return await ChatDAO.get_one_by_field(session, id=chat_uuid)
 
 
-@router.post("/")
+@router.post("/{group_id}")
 async def create_chat(
     chat: Annotated[CreateChatSchema, Body()],
+    group_id: UUID,
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
-    chat_db = ChatModel(title=chat.title, group_id=chat.group_id)
+    chat_db = ChatModel(title=chat.title, group_id=group_id)
     new_chat = await ChatDAO.create(session, chat_db)
 
     return new_chat

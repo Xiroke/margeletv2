@@ -18,9 +18,7 @@ class ReadChatSchema(BaseChatSchema):
 
 class CreateChatSchema(BaseModel):
     title: str
-    group_id: UUID
 
 
 class UpdateChatSchema(BaseModel):
     title: str | None = None
-    group_id: UUID | None = None

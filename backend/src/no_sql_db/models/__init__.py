@@ -1,3 +1,3 @@
-from src.message.no_sql_models import Message
+from src.message.no_sql_models import MessageModel
 
-__all__ = ["Message"]
+__all__ = ["MessageModel"]

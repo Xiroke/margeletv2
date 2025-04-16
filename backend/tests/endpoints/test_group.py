@@ -41,3 +41,10 @@ async def test_delete_group(session, group):
 
     with pytest.raises(HTTPException):
         await GroupDAO.get_one_by_field(session, id=group.id)
+
+
+@pytest.mark.asyncio
+async def test_get_my_groups(session, group):
+    response = client.get("/api/groups/user_groups/me")
+    assert response.status_code == 200
+    assert response.json()[0]["title"] == group.title

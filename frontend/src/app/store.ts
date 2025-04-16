@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import group from '@/entities/group/model/slice';
+import chat from '@/entities/chat/model/slice';
 
 const store = configureStore({
-  reducer: { group },
+  reducer: { group, chat },
 });
 
 export default store;

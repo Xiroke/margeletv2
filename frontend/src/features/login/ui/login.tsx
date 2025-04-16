@@ -13,13 +13,13 @@ export interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {}
 export const LoginForm = ({}: LoginFormProps) => {
   const loginApi = apiLogin.login();
   const router = useRouter();
-  const isAuth = useIsAuth();
+  // const isAuth = useIsAuth();
 
-  useEffect(() => {
-    if (isAuth) {
-      router.push('/communication');
-    }
-  }, [isAuth]);
+  // useEffect(() => {
+  //   if (isAuth) {
+  //     router.push('/communication');
+  //   }
+  // }, [isAuth]);
 
   const onSubmit: FormEventHandler = (e) => {
     e.preventDefault();

@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import styles from './group_panel.module.scss';
 import { useAppSelector } from '@/shared/lib/hooks';
-import ChatList from '../chat_list';
+import ChatList from '@/widgets/chat_list/ui';
 
 export interface GroupPanelProps extends HTMLAttributes<HTMLDivElement> {}
 

@@ -1,5 +1,7 @@
+from uuid import UUID
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert
+from sqlalchemy import select, insert
 
 from src.db.dao_base import DAOBase
 from src.db.models import UserToGroupModel
@@ -10,8 +12,23 @@ class GroupDAO(DAOBase):
     model = GroupModel
 
     @classmethod
-    async def add_user_to_group(cls, session: AsyncSession, group_id, user_id):
+    async def create(cls, session, obj: GroupModel, user_id: UUID):
+        session.add(obj)
+
+        await session.flush()
+
         await session.execute(
-            insert(UserToGroupModel).values(group_id=group_id, user_id=user_id)
+            insert(UserToGroupModel).values(group_id=obj.id, user_id=user_id)
         )
         await session.commit()
+        await session.refresh(obj)
+        return obj
+
+    @classmethod
+    async def get_user_groups(cls, session: AsyncSession, user_id):
+        groups = await session.execute(
+            select(GroupModel)
+            .join(UserToGroupModel, UserToGroupModel.c.group_id == GroupModel.id)
+            .filter(UserToGroupModel.c.user_id == user_id)
+        )
+        return groups.scalars().all()

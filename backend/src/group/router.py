@@ -110,9 +110,9 @@ async def join_group(
 @router.get("/user_groups/me")
 async def get_my_groups(
     session: Annotated[AsyncSession, Depends(get_async_session)],
-    current_user: Annotated[UserModel, Depends(current_active_user)],
+    user: Annotated[UserModel, Depends(current_active_user)],
 ):
-    return await GroupDAO.get_all_by_field(session, user_id=current_user.id)
+    return await GroupDAO.get_user_groups(session, user_id=user.id)
 
 
 @router.get("/user_groups/{user_id}")
@@ -120,7 +120,7 @@ async def get_user_groups(
     user_id: UUID,
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
-    return await GroupDAO.get_all_by_field(session, user_id=user_id)
+    return await GroupDAO.get_user_groups(session, user_id=user_id)
 
 
 @router.get(
@@ -134,12 +134,12 @@ async def get_group(
 
 @router.post("/")
 async def create_group(
+    user: Annotated[UserModel, Depends(current_active_user)],
     group: Annotated[CreateGroupSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
     group_db = GroupModel(title=group.title)
-    new_group = await GroupDAO.create(session, group_db)
-
+    new_group = await GroupDAO.create(session, group_db, user_id=user.id)
     return new_group
 
 
