@@ -7,6 +7,15 @@ class GlobalSettings(BaseSettings):
     MONGO_INITDB_HOST: str
     ME_CONFIG_BASICAUTH: str  # for docker
 
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
+    POSTGRES_PORT: str
+
+    S3_USER: str
+    S3_PASSWORD: str
+    S3_PORT: str
+
     model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
 
 
@@ -17,12 +26,6 @@ class Settings(BaseSettings):
     INVITE_TOKEN_JWT: str
 
     SECRET_KEY_REFRESH: str
-
-    # S3
-    bucket_name: str  # s3 bucket
-    endpoint: str  # url to s3
-    access_key: str  # s3 username
-    secret_key: str  # s3 password
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

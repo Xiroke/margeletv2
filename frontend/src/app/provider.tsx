@@ -3,12 +3,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode, useState, StrictMode } from 'react';
 import { Provider } from 'react-redux';
-import { CookiesProvider } from 'next-client-cookies/server';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { OpenAPI as OpenAPIConfig } from '@/shared/api/requests/core/OpenAPI';
 import store from './store';
 import settings from '@/shared/config';
+import WebsocketProvider from '../shared/lib/context/websocket_provider';
 
 OpenAPIConfig.BASE = settings.NEXT_PUBLIC_API_URL!;
 OpenAPIConfig.CREDENTIALS = settings.CREDENTIALS as 'include' | 'omit' | 'same-origin';
@@ -21,7 +21,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <StrictMode>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <WebsocketProvider>{children}</WebsocketProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </Provider>

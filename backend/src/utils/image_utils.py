@@ -5,7 +5,7 @@ from PIL import Image
 from fastapi import UploadFile
 from fastapi import HTTPException
 
-from src.dependencies.s3 import S3BucketService
+from src.infrastructure.s3 import S3BucketService
 
 
 async def save_image_in_s3(

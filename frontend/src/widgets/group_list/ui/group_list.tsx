@@ -5,8 +5,9 @@ import clsx from 'clsx';
 import GroupCard from '@/entities/group/ui';
 import styles from './group_list.module.scss';
 import { useAppDispatch } from '@/shared/lib/hooks';
-import { setGroupId } from '@/entities/group/model/slice';
+import { setGroupData } from '@/entities/group/model/slice';
 import { apiGroup, ReadGroupSchema } from '@/entities/group/model';
+import { setChatId } from '@/entities/chat/model/slice';
 
 export interface GroupListProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -14,11 +15,16 @@ export const GroupList = ({ className }: GroupListProps) => {
   const dispatch = useAppDispatch();
   const { data }: { data: ReadGroupSchema[] | undefined } = apiGroup.getMyGroups();
 
+  const onClick = (id: string, title: string) => {
+    dispatch(setGroupData({ id, title }));
+    dispatch(setChatId(null));
+  };
+
   return (
     <div className={clsx(styles.groups, className)}>
       {data &&
         data.map((item) => (
-          <GroupCard key={item.id} id={item.id} onClick={() => dispatch(setGroupId(item.id))} />
+          <GroupCard key={item.id} id={item.id} onClick={() => onClick(item.id, item.title)} />
         ))}
     </div>
   );

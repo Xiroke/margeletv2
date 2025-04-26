@@ -1,6 +1,6 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
-from .models import MessageModel
+from .models import MessageModel, IdToUsername
 
 from config import global_setttigns
 
@@ -10,4 +10,6 @@ client = AsyncIOMotorClient(
 
 
 async def init_mongo_db():
-    await init_beanie(database=client.margelet, document_models=[MessageModel])
+    await init_beanie(
+        database=client.margelet, document_models=[MessageModel, IdToUsername]
+    )

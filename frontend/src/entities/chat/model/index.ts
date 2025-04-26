@@ -3,15 +3,17 @@ import {
   useChatServiceGetApiChatsByChatUuid,
   useChatServiceGetApiChatsGroupChatsByGroupId,
   useChatServicePatchApiChatsByChatUuid,
-  useChatServicePostApiChats,
+  useChatServiceGetApiChatsChatsMe,
+  useChatServicePostApiChatsByGroupId,
 } from '@/shared/api/queries';
 
 export const apiChat = {
   get: useChatServiceGetApiChatsByChatUuid,
   getGroupChats: useChatServiceGetApiChatsGroupChatsByGroupId,
-  create: useChatServicePostApiChats,
+  create: useChatServicePostApiChatsByGroupId,
   update: useChatServicePatchApiChatsByChatUuid,
   delete: useChatServiceDeleteApiChatsByChatUuid,
+  getChatsMe: useChatServiceGetApiChatsChatsMe,
 };
 
 export type { ReadChatSchema, UpdateChatSchema, CreateChatSchema } from '@/shared/api/requests';

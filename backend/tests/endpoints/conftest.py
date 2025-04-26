@@ -6,7 +6,7 @@ import sys
 sys.path.append("./")
 from src.db.database import Base, engine, async_session_maker
 from src.db.models import GroupModel, ChatModel, PersonalChatModel, RoleGroupModel
-from src.dependencies.s3 import s3_bucket_service_factory
+from src.infrastructure.s3 import s3_bucket_service_factory
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)

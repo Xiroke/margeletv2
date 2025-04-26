@@ -12,16 +12,24 @@
     border-radius: 50%;
     background-color: var(--primary-background);
     margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .author {
     font-weight: 800;
-    font-style: 16px;
+    font-size: 16px;
     margin-bottom: 10px;
+}
+
+.text {
+    font-size: 20px;
 }
 
 .time {
     align-self: flex-end;
-    margin-left: 5px;
-    margin-bottom: 8px;
+    margin-left: 10px;
+    margin-bottom: -7px;
+    font-style: 14px;
 }

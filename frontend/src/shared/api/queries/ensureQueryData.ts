@@ -32,6 +32,7 @@ export const ensureUseGroupServiceGetApiGroupsByGroupUuidData = (queryClient: Qu
 export const ensureUsePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidData = (queryClient: QueryClient, { personalChatUuid }: {
   personalChatUuid: string;
 }) => queryClient.ensureQueryData({ queryKey: Common.UsePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKeyFn({ personalChatUuid }), queryFn: () => PersonalChatService.getApiPersonalChatsByPersonalChatUuid({ personalChatUuid }) });
+export const ensureUseChatServiceGetApiChatsChatsMeData = (queryClient: QueryClient) => queryClient.ensureQueryData({ queryKey: Common.UseChatServiceGetApiChatsChatsMeKeyFn(), queryFn: () => ChatService.getApiChatsChatsMe() });
 export const ensureUseChatServiceGetApiChatsGroupChatsByGroupIdData = (queryClient: QueryClient, { groupId }: {
   groupId: string;
 }) => queryClient.ensureQueryData({ queryKey: Common.UseChatServiceGetApiChatsGroupChatsByGroupIdKeyFn({ groupId }), queryFn: () => ChatService.getApiChatsGroupChatsByGroupId({ groupId }) });
@@ -41,4 +42,9 @@ export const ensureUseChatServiceGetApiChatsByChatUuidData = (queryClient: Query
 export const ensureUseRoleGroupServiceGetApiRolesGroupByRoleGroupIdData = (queryClient: QueryClient, { roleGroupId }: {
   roleGroupId: number;
 }) => queryClient.ensureQueryData({ queryKey: Common.UseRoleGroupServiceGetApiRolesGroupByRoleGroupIdKeyFn({ roleGroupId }), queryFn: () => RoleGroupService.getApiRolesGroupByRoleGroupId({ roleGroupId }) });
-export const ensureUseMessagesServiceGetApiMessagesApiData = (queryClient: QueryClient) => queryClient.ensureQueryData({ queryKey: Common.UseMessagesServiceGetApiMessagesApiKeyFn(), queryFn: () => MessagesService.getApiMessagesApi() });
+export const ensureUseMessagesServiceGetApiMessagesChatByChatIdData = (queryClient: QueryClient, { chatId }: {
+  chatId: string;
+}) => queryClient.ensureQueryData({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) });
+export const ensureUseMessagesServiceGetApiMessagesByMessageIdData = (queryClient: QueryClient, { messageId }: {
+  messageId: string;
+}) => queryClient.ensureQueryData({ queryKey: Common.UseMessagesServiceGetApiMessagesByMessageIdKeyFn({ messageId }), queryFn: () => MessagesService.getApiMessagesByMessageId({ messageId }) });

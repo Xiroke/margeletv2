@@ -12,13 +12,14 @@ export interface CurrentGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const CurrentGroup = ({ className }: CurrentGroupProps) => {
   const groupId = useAppSelector((state) => state.group.id);
+
   return (
     <div className={clsx(styles.current_group, className)}>
       {groupId ? (
         <>
           <Talk className={styles.talk} />
           <VerticalLine className="vertical_line" />
-          <GroupPanel className={styles.group_panel} />
+          <GroupPanel className={styles.group_panel} panorama_path="/" />
         </>
       ) : (
         <div className={styles.current_group_unselect}>Выберите группу</div>

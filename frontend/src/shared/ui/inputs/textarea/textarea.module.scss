@@ -1,0 +1,15 @@
+.textarea {
+    display: flex;
+    flex-direction: column;
+}
+
+.textarea_input {
+    text-align: left;
+    font-size: 16px;
+    margin-top: 5px;
+    border: 2px solid var(--primary-background);
+    width: 250px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 0px 15px;
+}

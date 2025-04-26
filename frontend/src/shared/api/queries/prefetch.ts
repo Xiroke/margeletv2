@@ -32,6 +32,7 @@ export const prefetchUseGroupServiceGetApiGroupsByGroupUuid = (queryClient: Quer
 export const prefetchUsePersonalChatServiceGetApiPersonalChatsByPersonalChatUuid = (queryClient: QueryClient, { personalChatUuid }: {
   personalChatUuid: string;
 }) => queryClient.prefetchQuery({ queryKey: Common.UsePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKeyFn({ personalChatUuid }), queryFn: () => PersonalChatService.getApiPersonalChatsByPersonalChatUuid({ personalChatUuid }) });
+export const prefetchUseChatServiceGetApiChatsChatsMe = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseChatServiceGetApiChatsChatsMeKeyFn(), queryFn: () => ChatService.getApiChatsChatsMe() });
 export const prefetchUseChatServiceGetApiChatsGroupChatsByGroupId = (queryClient: QueryClient, { groupId }: {
   groupId: string;
 }) => queryClient.prefetchQuery({ queryKey: Common.UseChatServiceGetApiChatsGroupChatsByGroupIdKeyFn({ groupId }), queryFn: () => ChatService.getApiChatsGroupChatsByGroupId({ groupId }) });
@@ -41,4 +42,9 @@ export const prefetchUseChatServiceGetApiChatsByChatUuid = (queryClient: QueryCl
 export const prefetchUseRoleGroupServiceGetApiRolesGroupByRoleGroupId = (queryClient: QueryClient, { roleGroupId }: {
   roleGroupId: number;
 }) => queryClient.prefetchQuery({ queryKey: Common.UseRoleGroupServiceGetApiRolesGroupByRoleGroupIdKeyFn({ roleGroupId }), queryFn: () => RoleGroupService.getApiRolesGroupByRoleGroupId({ roleGroupId }) });
-export const prefetchUseMessagesServiceGetApiMessagesApi = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseMessagesServiceGetApiMessagesApiKeyFn(), queryFn: () => MessagesService.getApiMessagesApi() });
+export const prefetchUseMessagesServiceGetApiMessagesChatByChatId = (queryClient: QueryClient, { chatId }: {
+  chatId: string;
+}) => queryClient.prefetchQuery({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) });
+export const prefetchUseMessagesServiceGetApiMessagesByMessageId = (queryClient: QueryClient, { messageId }: {
+  messageId: string;
+}) => queryClient.prefetchQuery({ queryKey: Common.UseMessagesServiceGetApiMessagesByMessageIdKeyFn({ messageId }), queryFn: () => MessagesService.getApiMessagesByMessageId({ messageId }) });

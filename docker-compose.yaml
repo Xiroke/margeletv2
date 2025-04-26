@@ -1,17 +1,19 @@
-version: '3'
-
 services:
   mongo:
     image: mongo
+    container_name: mongo
     restart: always
     ports:
       - '27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
 
   mongo-express:
     image: mongo-express
+    container_name: mongo_express
     restart: always
     ports:
       - 8081:8081
@@ -20,3 +22,40 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       ME_CONFIG_MONGODB_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/
       ME_CONFIG_BASICAUTH: ${ME_CONFIG_BASICAUTH}
+    depends_on:
+      - mongo
+  
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: always
+    ports:
+      - "${S3_PORT}:9000" 
+      - "9001:9001" # web ui
+    environment:
+      MINIO_ROOT_USER: ${S3_USER}
+      MINIO_ROOT_PASSWORD: ${S3_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data1:/data1
+      - minio_data2:/data2
+
+volumes:
+  postgres_data:
+  mongo_data:
+  minio_data1:
+  minio_data2:

@@ -20,6 +20,7 @@ class GroupModel(BaseChannel):
 
     id: Mapped[UUID] = mapped_column(ForeignKey("base_channel.id"), primary_key=True)
     title: Mapped[str] = mapped_column(unique=True)
+    description: Mapped[str] = mapped_column(nullable=True)
     avatar_path: Mapped[str] = mapped_column(nullable=True)
     panorama_path: Mapped[str] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())

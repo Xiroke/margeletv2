@@ -1,9 +1,8 @@
 import aioboto3
 from pathlib import Path
 from io import BytesIO
-from enum import StrEnum
 
-from config import settings
+from config import global_setttigns
 
 
 class S3BucketService:
@@ -130,8 +129,8 @@ class S3BucketService:
 
 def s3_bucket_service_factory() -> S3BucketService:
     return S3BucketService(
-        settings.bucket_name,
-        settings.endpoint,
-        settings.access_key,
-        settings.secret_key,
+        'margelet',
+        'https://localhost:' + global_setttigns.S3_PORT,
+        global_setttigns.S3_USER,
+        global_setttigns.S3_PASSWORD,
     )

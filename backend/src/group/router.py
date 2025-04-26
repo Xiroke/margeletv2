@@ -8,7 +8,7 @@ import jwt
 
 from src.db.database import get_async_session
 from src.utils.image_utils import save_image_in_s3
-from src.dependencies.s3 import s3_bucket_service_factory
+from src.infrastructure.s3 import s3_bucket_service_factory
 from src.auth.users import current_active_user
 from src.db.models import UserModel
 from config import settings

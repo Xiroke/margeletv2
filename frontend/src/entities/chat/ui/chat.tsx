@@ -9,7 +9,7 @@ export interface ChatProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Chat = ({ title, className, onClick }: ChatProps) => {
   return (
-    <div className={clsx(styles['chat'], className)} onClick={onClick}>
+    <div className={clsx(styles.chat, className)} onClick={onClick}>
       # {title}
     </div>
   );

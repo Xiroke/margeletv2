@@ -1,12 +1,12 @@
 'use client';
-import { FormEventHandler, HTMLAttributes, useEffect } from 'react';
+import { FormEventHandler, HTMLAttributes } from 'react';
 import { useRouter } from 'next/navigation';
 
-import Form from '@/shared/ui/form';
-import { InputTextProps } from '@/shared/ui/inputs/input_text';
+import Form from '@/shared/ui/form_page';
+import InputText from '@/shared/ui/inputs/input_text';
 import { apiLogin } from '../model';
-import { useRedirectAuth, useIsAuth } from '@/features/auth/lib';
 import styles from './login.module.scss';
+import Button from '@/shared/ui/button';
 
 export interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -30,12 +30,25 @@ export const LoginForm = ({}: LoginFormProps) => {
     router.push('/communication');
   };
 
-  const inputs: InputTextProps[] = [
-    { type: 'text', labelText: 'Email', placeholder: 'example@mail.com', name: 'email' },
-    { type: 'password', labelText: 'Пароль', placeholder: '*********', name: 'password' },
-  ];
-
-  return <Form title="Вход" inputs={inputs} onSubmit={onSubmit} textButton="Войти" />;
+  return (
+    <form onSubmit={onSubmit} className={styles.login_form}>
+      <InputText
+        type="text"
+        name="email"
+        labelText="Email"
+        placeholder="example@mail.com"
+        classNameInput={styles.login_input}
+      />
+      <InputText
+        type="text"
+        name="password"
+        labelText="Пароль"
+        placeholder="*********"
+        classNameInput={styles.login_input}
+      />
+      <Button type="submit">Войти</Button>
+    </form>
+  );
 };
 
 export default LoginForm;

@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetApiUsersAvatarByGroupUuidData, GetApiUsersAvatarByGroupUuidResponse, PostApiUsersAvatarByGroupUuidData, PostApiUsersAvatarByGroupUuidResponse, GetApiUsersMeResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, GetApiAuthAccessTokenResponse, GetApiAuthenticatedRouteResponse, GetApiResponse, GetApiGroupsAvatarByGroupUuidData, GetApiGroupsAvatarByGroupUuidResponse, PostApiGroupsAvatarByGroupUuidData, PostApiGroupsAvatarByGroupUuidResponse, GetApiGroupsPanoramaByGroupUuidData, GetApiGroupsPanoramaByGroupUuidResponse, PostApiGroupsPanoramaByGroupUuidData, PostApiGroupsPanoramaByGroupUuidResponse, GetApiGroupsInviteByGroupUuidData, GetApiGroupsInviteByGroupUuidResponse, PostApiGroupsInviteByGroupIdData, PostApiGroupsInviteByGroupIdResponse, GetApiGroupsUserGroupsMeResponse, GetApiGroupsUserGroupsByUserIdData, GetApiGroupsUserGroupsByUserIdResponse, GetApiGroupsByGroupUuidData, GetApiGroupsByGroupUuidResponse, PatchApiGroupsByGroupUuidData, PatchApiGroupsByGroupUuidResponse, DeleteApiGroupsByGroupUuidData, DeleteApiGroupsByGroupUuidResponse, PostApiGroupsData, PostApiGroupsResponse, GetApiPersonalChatsByPersonalChatUuidData, GetApiPersonalChatsByPersonalChatUuidResponse, PatchApiPersonalChatsByPersonalChatUuidData, PatchApiPersonalChatsByPersonalChatUuidResponse, DeleteApiPersonalChatsByPersonalChatUuidData, DeleteApiPersonalChatsByPersonalChatUuidResponse, PostApiPersonalChatsData, PostApiPersonalChatsResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, GetApiChatsByChatUuidData, GetApiChatsByChatUuidResponse, PatchApiChatsByChatUuidData, PatchApiChatsByChatUuidResponse, DeleteApiChatsByChatUuidData, DeleteApiChatsByChatUuidResponse, PostApiChatsData, PostApiChatsResponse, GetApiRolesGroupByRoleGroupIdData, GetApiRolesGroupByRoleGroupIdResponse, PatchApiRolesGroupByRoleGroupIdData, PatchApiRolesGroupByRoleGroupIdResponse, DeleteApiRolesGroupByRoleGroupIdData, DeleteApiRolesGroupByRoleGroupIdResponse, PostApiRolesGroupData, PostApiRolesGroupResponse, GetApiMessagesApiResponse } from './types.gen';
+import type { GetApiUsersAvatarByGroupUuidData, GetApiUsersAvatarByGroupUuidResponse, PostApiUsersAvatarByGroupUuidData, PostApiUsersAvatarByGroupUuidResponse, GetApiUsersMeResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, GetApiAuthAccessTokenResponse, GetApiAuthenticatedRouteResponse, GetApiResponse, GetApiGroupsAvatarByGroupUuidData, GetApiGroupsAvatarByGroupUuidResponse, PostApiGroupsAvatarByGroupUuidData, PostApiGroupsAvatarByGroupUuidResponse, GetApiGroupsPanoramaByGroupUuidData, GetApiGroupsPanoramaByGroupUuidResponse, PostApiGroupsPanoramaByGroupUuidData, PostApiGroupsPanoramaByGroupUuidResponse, GetApiGroupsInviteByGroupUuidData, GetApiGroupsInviteByGroupUuidResponse, PostApiGroupsInviteByGroupIdData, PostApiGroupsInviteByGroupIdResponse, GetApiGroupsUserGroupsMeResponse, GetApiGroupsUserGroupsByUserIdData, GetApiGroupsUserGroupsByUserIdResponse, GetApiGroupsByGroupUuidData, GetApiGroupsByGroupUuidResponse, PatchApiGroupsByGroupUuidData, PatchApiGroupsByGroupUuidResponse, DeleteApiGroupsByGroupUuidData, DeleteApiGroupsByGroupUuidResponse, PostApiGroupsData, PostApiGroupsResponse, GetApiPersonalChatsByPersonalChatUuidData, GetApiPersonalChatsByPersonalChatUuidResponse, PatchApiPersonalChatsByPersonalChatUuidData, PatchApiPersonalChatsByPersonalChatUuidResponse, DeleteApiPersonalChatsByPersonalChatUuidData, DeleteApiPersonalChatsByPersonalChatUuidResponse, PostApiPersonalChatsData, PostApiPersonalChatsResponse, GetApiChatsChatsMeResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, GetApiChatsByChatUuidData, GetApiChatsByChatUuidResponse, PatchApiChatsByChatUuidData, PatchApiChatsByChatUuidResponse, DeleteApiChatsByChatUuidData, DeleteApiChatsByChatUuidResponse, PostApiChatsByGroupIdData, PostApiChatsByGroupIdResponse, GetApiRolesGroupByRoleGroupIdData, GetApiRolesGroupByRoleGroupIdResponse, PatchApiRolesGroupByRoleGroupIdData, PatchApiRolesGroupByRoleGroupIdResponse, DeleteApiRolesGroupByRoleGroupIdData, DeleteApiRolesGroupByRoleGroupIdResponse, PostApiRolesGroupData, PostApiRolesGroupResponse, GetApiMessagesChatByChatIdData, GetApiMessagesChatByChatIdResponse, GetApiMessagesByMessageIdData, GetApiMessagesByMessageIdResponse, PatchApiMessagesByMessageIdData, PatchApiMessagesByMessageIdResponse, DeleteApiMessagesByMessageIdData, DeleteApiMessagesByMessageIdResponse, PostApiMessagesData, PostApiMessagesResponse } from './types.gen';
 
 export class UsersService {
     /**
@@ -162,10 +162,11 @@ export class UsersService {
 
 export class AuthService {
     /**
-     * Auth:Jwt.Login
+     * Auth:Db Cookie.Login
      * @param data The data for the request.
      * @param data.formData
-     * @returns BearerResponse Successful Response
+     * @returns unknown Successful Response
+     * @returns void No Content
      * @throws ApiError
      */
     public static postApiAuthJwtLogin(data: PostApiAuthJwtLoginData): CancelablePromise<PostApiAuthJwtLoginResponse> {
@@ -182,8 +183,9 @@ export class AuthService {
     }
     
     /**
-     * Auth:Jwt.Logout
+     * Auth:Db Cookie.Logout
      * @returns unknown Successful Response
+     * @returns void No Content
      * @throws ApiError
      */
     public static postApiAuthJwtLogout(): CancelablePromise<PostApiAuthJwtLogoutResponse> {
@@ -296,8 +298,8 @@ export class AuthService {
     
     /**
      * Get Access Token
-     * Get refresh token from cookie and return access token
-     * @returns AccessToken Successful Response
+     * Get access token using refresh token
+     * @returns unknown Successful Response
      * @throws ApiError
      */
     public static getApiAuthAccessToken(): CancelablePromise<GetApiAuthAccessTokenResponse> {
@@ -669,6 +671,18 @@ export class PersonalChatService {
 
 export class ChatService {
     /**
+     * Get My Chats
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getApiChatsChatsMe(): CancelablePromise<GetApiChatsChatsMeResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/chats/chats/me'
+        });
+    }
+    
+    /**
      * Get Group Chats
      * @param data The data for the request.
      * @param data.groupId
@@ -754,14 +768,18 @@ export class ChatService {
     /**
      * Create Chat
      * @param data The data for the request.
+     * @param data.groupId
      * @param data.requestBody
      * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static postApiChats(data: PostApiChatsData): CancelablePromise<PostApiChatsResponse> {
+    public static postApiChatsByGroupId(data: PostApiChatsByGroupIdData): CancelablePromise<PostApiChatsByGroupIdResponse> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/chats/',
+            url: '/api/chats/{group_id}',
+            path: {
+                group_id: data.groupId
+            },
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {
@@ -859,14 +877,105 @@ export class RoleGroupService {
 
 export class MessagesService {
     /**
-     * Ping
+     * Get All Messages Chat
+     * @param data The data for the request.
+     * @param data.chatId
+     * @returns ReadMessageSchema Successful Response
+     * @throws ApiError
+     */
+    public static getApiMessagesChatByChatId(data: GetApiMessagesChatByChatIdData): CancelablePromise<GetApiMessagesChatByChatIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/messages/chat/{chat_id}',
+            path: {
+                chat_id: data.chatId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Message By Id
+     * @param data The data for the request.
+     * @param data.messageId
+     * @returns ReadMessageSchema Successful Response
+     * @throws ApiError
+     */
+    public static getApiMessagesByMessageId(data: GetApiMessagesByMessageIdData): CancelablePromise<GetApiMessagesByMessageIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/messages/{message_id}',
+            path: {
+                message_id: data.messageId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Message
+     * not work
+     * @param data The data for the request.
+     * @param data.messageId
+     * @param data.requestBody
      * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static getApiMessagesApi(): CancelablePromise<GetApiMessagesApiResponse> {
+    public static patchApiMessagesByMessageId(data: PatchApiMessagesByMessageIdData): CancelablePromise<PatchApiMessagesByMessageIdResponse> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/messages/api'
+            method: 'PATCH',
+            url: '/api/messages/{message_id}',
+            path: {
+                message_id: data.messageId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Message
+     * @param data The data for the request.
+     * @param data.messageId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteApiMessagesByMessageId(data: DeleteApiMessagesByMessageIdData): CancelablePromise<DeleteApiMessagesByMessageIdResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/messages/{message_id}',
+            path: {
+                message_id: data.messageId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Message
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static postApiMessages(data: PostApiMessagesData): CancelablePromise<PostApiMessagesResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/messages/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
         });
     }
     

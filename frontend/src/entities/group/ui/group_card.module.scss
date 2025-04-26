@@ -16,6 +16,9 @@
         height: inherit;
         width: 65px;
         border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background-color: var(--primary-background);
     }
 

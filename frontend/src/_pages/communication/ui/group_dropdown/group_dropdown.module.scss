@@ -1,0 +1,63 @@
+/* group_dropdown.module.css */
+
+.group_dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Контейнер самого меню */
+.menu_content {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    z-index: 1000;
+}
+
+/* Пункты меню */
+.menu_item {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #1a202c;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.menu_item:hover {
+    background-color: #f1f5f9;
+}
+
+/* Разделитель */
+.menu_separator {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 6px 0;
+}
+
+/* SubContent */
+.sub_content {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* SubTrigger */
+.sub_trigger {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #1a202c;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sub_trigger:hover {
+    background-color: #f1f5f9;
+}

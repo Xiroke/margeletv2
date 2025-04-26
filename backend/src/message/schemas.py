@@ -2,7 +2,7 @@ from __future__ import annotations
 from uuid import UUID
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseMessageSchema(BaseModel):
@@ -13,6 +13,7 @@ class BaseMessageSchema(BaseModel):
     to_chat_id: UUID
     is_group: bool
     created_at: datetime
+    author: str | None = None  # optional must be get from IdToUserName
 
 
 class ReadMessageSchema(BaseMessageSchema):
@@ -21,7 +22,7 @@ class ReadMessageSchema(BaseMessageSchema):
 
 class CreateMessageSchema(BaseModel):
     message: str
-    user_id: UUID
+    user_id: UUID | None = None
     to_chat_id: UUID
     is_group: bool
 

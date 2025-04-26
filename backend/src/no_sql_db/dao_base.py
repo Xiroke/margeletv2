@@ -1,8 +1,3 @@
-from typing import TypeVar
-from uuid import UUID
-
-from fastapi import Depends
-from pydantic import BaseModel
 from beanie import Document
 
 
@@ -11,27 +6,17 @@ class NoSqlDAOBase[T: Document]:
 
     @classmethod
     async def get_one_by_id(cls, id: any):
-        result = await cls.model.get(id)
+        result = await cls.model.get(id, fetch_links=True)
         return result
 
     @classmethod
-    async def get_one_by_field(cls, *filter) -> T:
-        result = await cls.model.find_one(*filter)
+    async def get_one_by_field(cls, *filter) -> T | None:
+        result = await cls.model.find_one(*filter, fetch_links=True)
         return result
 
     @classmethod
-    async def get_one_or_none_by_field(cls, **filter) -> T | None:
-        result = await cls.model.find_one(filter)
-        return result
-
-    @classmethod
-    async def get_all_by_field(cls, **filter) -> list[T]:
-        result = await cls.model.find(filter)
-        return result
-
-    @classmethod
-    async def get_all(cls, **filter) -> list[T]:
-        result = await cls.model.find(filter)
+    async def get_all_by_field(cls, *filter) -> list[T]:
+        result = await cls.model.find(*filter, fetch_links=True).to_list()
         return result
 
     @classmethod

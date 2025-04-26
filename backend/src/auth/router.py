@@ -74,7 +74,7 @@ async def get_access_token(
         expires=datetime.now(timezone.utc) + timedelta(days=1),
         httponly=True,
         secure=True,
-        samesite="none",
+        samesite="Lax",
     )
 
     return {"access_token": access_token}

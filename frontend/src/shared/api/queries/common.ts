@@ -70,6 +70,10 @@ export const usePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKey = "P
 export const UsePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKeyFn = ({ personalChatUuid }: {
   personalChatUuid: string;
 }, queryKey?: Array<unknown>) => [usePersonalChatServiceGetApiPersonalChatsByPersonalChatUuidKey, ...(queryKey ?? [{ personalChatUuid }])];
+export type ChatServiceGetApiChatsChatsMeDefaultResponse = Awaited<ReturnType<typeof ChatService.getApiChatsChatsMe>>;
+export type ChatServiceGetApiChatsChatsMeQueryResult<TData = ChatServiceGetApiChatsChatsMeDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useChatServiceGetApiChatsChatsMeKey = "ChatServiceGetApiChatsChatsMe";
+export const UseChatServiceGetApiChatsChatsMeKeyFn = (queryKey?: Array<unknown>) => [useChatServiceGetApiChatsChatsMeKey, ...(queryKey ?? [])];
 export type ChatServiceGetApiChatsGroupChatsByGroupIdDefaultResponse = Awaited<ReturnType<typeof ChatService.getApiChatsGroupChatsByGroupId>>;
 export type ChatServiceGetApiChatsGroupChatsByGroupIdQueryResult<TData = ChatServiceGetApiChatsGroupChatsByGroupIdDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useChatServiceGetApiChatsGroupChatsByGroupIdKey = "ChatServiceGetApiChatsGroupChatsByGroupId";
@@ -88,10 +92,18 @@ export const useRoleGroupServiceGetApiRolesGroupByRoleGroupIdKey = "RoleGroupSer
 export const UseRoleGroupServiceGetApiRolesGroupByRoleGroupIdKeyFn = ({ roleGroupId }: {
   roleGroupId: number;
 }, queryKey?: Array<unknown>) => [useRoleGroupServiceGetApiRolesGroupByRoleGroupIdKey, ...(queryKey ?? [{ roleGroupId }])];
-export type MessagesServiceGetApiMessagesApiDefaultResponse = Awaited<ReturnType<typeof MessagesService.getApiMessagesApi>>;
-export type MessagesServiceGetApiMessagesApiQueryResult<TData = MessagesServiceGetApiMessagesApiDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
-export const useMessagesServiceGetApiMessagesApiKey = "MessagesServiceGetApiMessagesApi";
-export const UseMessagesServiceGetApiMessagesApiKeyFn = (queryKey?: Array<unknown>) => [useMessagesServiceGetApiMessagesApiKey, ...(queryKey ?? [])];
+export type MessagesServiceGetApiMessagesChatByChatIdDefaultResponse = Awaited<ReturnType<typeof MessagesService.getApiMessagesChatByChatId>>;
+export type MessagesServiceGetApiMessagesChatByChatIdQueryResult<TData = MessagesServiceGetApiMessagesChatByChatIdDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useMessagesServiceGetApiMessagesChatByChatIdKey = "MessagesServiceGetApiMessagesChatByChatId";
+export const UseMessagesServiceGetApiMessagesChatByChatIdKeyFn = ({ chatId }: {
+  chatId: string;
+}, queryKey?: Array<unknown>) => [useMessagesServiceGetApiMessagesChatByChatIdKey, ...(queryKey ?? [{ chatId }])];
+export type MessagesServiceGetApiMessagesByMessageIdDefaultResponse = Awaited<ReturnType<typeof MessagesService.getApiMessagesByMessageId>>;
+export type MessagesServiceGetApiMessagesByMessageIdQueryResult<TData = MessagesServiceGetApiMessagesByMessageIdDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useMessagesServiceGetApiMessagesByMessageIdKey = "MessagesServiceGetApiMessagesByMessageId";
+export const UseMessagesServiceGetApiMessagesByMessageIdKeyFn = ({ messageId }: {
+  messageId: string;
+}, queryKey?: Array<unknown>) => [useMessagesServiceGetApiMessagesByMessageIdKey, ...(queryKey ?? [{ messageId }])];
 export type UsersServicePostApiUsersAvatarByGroupUuidMutationResult = Awaited<ReturnType<typeof UsersService.postApiUsersAvatarByGroupUuid>>;
 export type AuthServicePostApiAuthJwtLoginMutationResult = Awaited<ReturnType<typeof AuthService.postApiAuthJwtLogin>>;
 export type AuthServicePostApiAuthJwtLogoutMutationResult = Awaited<ReturnType<typeof AuthService.postApiAuthJwtLogout>>;
@@ -105,16 +117,19 @@ export type GroupServicePostApiGroupsPanoramaByGroupUuidMutationResult = Awaited
 export type GroupServicePostApiGroupsInviteByGroupIdMutationResult = Awaited<ReturnType<typeof GroupService.postApiGroupsInviteByGroupId>>;
 export type GroupServicePostApiGroupsMutationResult = Awaited<ReturnType<typeof GroupService.postApiGroups>>;
 export type PersonalChatServicePostApiPersonalChatsMutationResult = Awaited<ReturnType<typeof PersonalChatService.postApiPersonalChats>>;
-export type ChatServicePostApiChatsMutationResult = Awaited<ReturnType<typeof ChatService.postApiChats>>;
+export type ChatServicePostApiChatsByGroupIdMutationResult = Awaited<ReturnType<typeof ChatService.postApiChatsByGroupId>>;
 export type RoleGroupServicePostApiRolesGroupMutationResult = Awaited<ReturnType<typeof RoleGroupService.postApiRolesGroup>>;
+export type MessagesServicePostApiMessagesMutationResult = Awaited<ReturnType<typeof MessagesService.postApiMessages>>;
 export type UsersServicePatchApiUsersMeMutationResult = Awaited<ReturnType<typeof UsersService.patchApiUsersMe>>;
 export type UsersServicePatchApiUsersByIdMutationResult = Awaited<ReturnType<typeof UsersService.patchApiUsersById>>;
 export type GroupServicePatchApiGroupsByGroupUuidMutationResult = Awaited<ReturnType<typeof GroupService.patchApiGroupsByGroupUuid>>;
 export type PersonalChatServicePatchApiPersonalChatsByPersonalChatUuidMutationResult = Awaited<ReturnType<typeof PersonalChatService.patchApiPersonalChatsByPersonalChatUuid>>;
 export type ChatServicePatchApiChatsByChatUuidMutationResult = Awaited<ReturnType<typeof ChatService.patchApiChatsByChatUuid>>;
 export type RoleGroupServicePatchApiRolesGroupByRoleGroupIdMutationResult = Awaited<ReturnType<typeof RoleGroupService.patchApiRolesGroupByRoleGroupId>>;
+export type MessagesServicePatchApiMessagesByMessageIdMutationResult = Awaited<ReturnType<typeof MessagesService.patchApiMessagesByMessageId>>;
 export type UsersServiceDeleteApiUsersByIdMutationResult = Awaited<ReturnType<typeof UsersService.deleteApiUsersById>>;
 export type GroupServiceDeleteApiGroupsByGroupUuidMutationResult = Awaited<ReturnType<typeof GroupService.deleteApiGroupsByGroupUuid>>;
 export type PersonalChatServiceDeleteApiPersonalChatsByPersonalChatUuidMutationResult = Awaited<ReturnType<typeof PersonalChatService.deleteApiPersonalChatsByPersonalChatUuid>>;
 export type ChatServiceDeleteApiChatsByChatUuidMutationResult = Awaited<ReturnType<typeof ChatService.deleteApiChatsByChatUuid>>;
 export type RoleGroupServiceDeleteApiRolesGroupByRoleGroupIdMutationResult = Awaited<ReturnType<typeof RoleGroupService.deleteApiRolesGroupByRoleGroupId>>;
+export type MessagesServiceDeleteApiMessagesByMessageIdMutationResult = Awaited<ReturnType<typeof MessagesService.deleteApiMessagesByMessageId>>;
