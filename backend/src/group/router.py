@@ -1,20 +1,21 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, UploadFile, HTTPException, Body
+import jwt
+from fastapi import APIRouter, Body, Depends, HTTPException, UploadFile
 from fastapi.responses import JSONResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-import jwt
 
-from src.db.database import get_async_session
-from src.utils.image_utils import save_image_in_s3
-from src.infrastructure.s3 import s3_bucket_service_factory
-from src.auth.users import current_active_user
-from src.db.models import UserModel
 from config import settings
-from .schemas import ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema
-from .models import GroupModel
+from src.auth.users import current_active_user
+from src.db.database import get_async_session
+from src.db.models import UserModel
+from src.infrastructure.s3 import s3_bucket_service_factory
+from src.utils.image_utils import save_image_in_s3
+
 from .dao import GroupDAO
+from .models import GroupModel
+from .schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
 
 router = APIRouter(prefix="/groups", tags=["group"])
 

@@ -1,23 +1,23 @@
 import uuid
-from typing import Optional, Annotated
-from datetime import timezone, datetime, timedelta
+from typing import Annotated, Optional
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
-from fastapi_users.authentication import AuthenticationBackend, JWTStrategy
+from fastapi_users.authentication import (
+    AuthenticationBackend,
+    CookieTransport,
+    JWTStrategy,
+)
 from fastapi_users.authentication.strategy.db import (
     AccessTokenDatabase,
     DatabaseStrategy,
 )
-
-from fastapi_users.authentication import CookieTransport
 from fastapi_users.db import SQLAlchemyUserDatabase
 
-from src.user.utils import get_user_db
 from src.db.models import UserModel
 from src.token.dao import get_refresh_token_db
 from src.token.models import TokenModel
-
+from src.user.utils import get_user_db
 
 SECRET = "SECRET"
 

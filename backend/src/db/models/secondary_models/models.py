@@ -1,9 +1,9 @@
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import ForeignKey, Integer, Column, Table, DateTime
 from datetime import datetime
 
-from src.db.database import Base
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table
+from sqlalchemy.dialects.postgresql import UUID
 
+from src.db.database import Base
 
 UserToPersonalChatModel = Table(
     "user_to_personal_chat",

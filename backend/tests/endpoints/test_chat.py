@@ -5,8 +5,8 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 sys.path.append("./")
-from src.db.dao import ChatDAO
 from main import app
+from src.db.dao import ChatDAO
 
 client = TestClient(app)
 

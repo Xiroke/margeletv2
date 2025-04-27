@@ -1,11 +1,24 @@
 .button {
-    background-color: var(--primary);
-    height: 40px;
-    width: 250px;
-    color: var(--primary-foreground);
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
+  background-color: var(--primary);
+  height: 40px;
+  width: 250px;
+  color: var(--primary-foreground);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+.invert_button {
+  background-color: var(--primary-foreground);
+  height: 40px;
+  width: 250px;
+  color: var(--primary);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  stroke: 1px solid var(--primary-background);
 }

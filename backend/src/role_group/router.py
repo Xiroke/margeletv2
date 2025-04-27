@@ -1,13 +1,14 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Body, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.database import get_async_session
-from .schemas import ReadRoleGroupSchema, CreateRoleGroupSchema, UpdateRoleGroupSchema
-from .models import RoleGroupModel
+
 from .dao import RoleGroupDAO
+from .models import RoleGroupModel
+from .schemas import CreateRoleGroupSchema, ReadRoleGroupSchema, UpdateRoleGroupSchema
 
 router = APIRouter(prefix="/roles_group", tags=["role_group"])
 

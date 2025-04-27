@@ -1,8 +1,9 @@
 import uuid
-from pydantic import BaseModel
 
 from fastapi_users import schemas
-from src.user.schemas import ReadUserSchema, UpdateUserSchema, CreateUserSchema
+from pydantic import BaseModel
+
+from src.user.schemas import CreateUserSchema, ReadUserSchema, UpdateUserSchema
 
 
 class UserRead(schemas.BaseUser[uuid.UUID], ReadUserSchema):

@@ -1,16 +1,17 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Body, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.models import UserModel
-from src.db.database import get_async_session
 from src.auth.users import current_active_user
-from .models import ChatModel
-from .schemas import ReadChatSchema, CreateChatSchema, UpdateChatSchema
+from src.db.database import get_async_session
+from src.db.models import UserModel
+
 from .dao import ChatDAO
+from .models import ChatModel
+from .schemas import CreateChatSchema, ReadChatSchema, UpdateChatSchema
 
 router = APIRouter(prefix="/chats", tags=["chat"])
 

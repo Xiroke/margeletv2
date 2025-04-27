@@ -1,11 +1,11 @@
+import sys
+
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import sys
-
 sys.path.append("./")
-from src.db.database import Base, engine, async_session_maker
-from src.db.models import GroupModel, ChatModel, PersonalChatModel, RoleGroupModel
+from src.db.database import Base, async_session_maker, engine
+from src.db.models import ChatModel, GroupModel, PersonalChatModel, RoleGroupModel
 from src.infrastructure.s3 import s3_bucket_service_factory
 
 

@@ -24,9 +24,6 @@ export const LoginForm = ({}: LoginFormProps) => {
   const onSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     loginApi.mutate({ formData: { username: 'user@example.com', password: 'string' } });
-
-    if (!loginApi.data) return;
-
     router.push('/communication');
   };
 
@@ -40,7 +37,7 @@ export const LoginForm = ({}: LoginFormProps) => {
         classNameInput={styles.login_input}
       />
       <InputText
-        type="text"
+        type="password"
         name="password"
         labelText="Пароль"
         placeholder="*********"

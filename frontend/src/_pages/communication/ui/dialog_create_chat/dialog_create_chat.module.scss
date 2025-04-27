@@ -1,0 +1,44 @@
+.dialog_root {
+}
+
+.dialog_content_layout {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+  background-color: rgba($color: var(--primary-background), $alpha: 0.5);
+}
+
+.dialog_content {
+  width: 450px;
+  margin: auto;
+  background-color: var(--primary-foreground);
+  border: 2px solid var(--primary-background);
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.input {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.button {
+  width: 100px !important;
+}
+
+.close {
+  transform: rotate(45deg);
+}
+
+.title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}

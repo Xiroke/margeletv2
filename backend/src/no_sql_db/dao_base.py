@@ -1,11 +1,14 @@
+from abc import ABC
+from uuid import UUID
+
 from beanie import Document
 
 
-class NoSqlDAOBase[T: Document]:
-    model: T = None
+class NoSqlDAOBase[T: Document](ABC):
+    model: type[T]
 
     @classmethod
-    async def get_one_by_id(cls, id: any):
+    async def get_one_by_id(cls, id: int | UUID):
         result = await cls.model.get(id, fetch_links=True)
         return result
 
@@ -26,8 +29,18 @@ class NoSqlDAOBase[T: Document]:
 
     @classmethod
     async def update(cls, obj: dict, **filter):
-        await cls.model.find_one(**filter).update_one(**obj)
+        result = await cls.model.find_one(**filter)
+
+        if result is None:
+            raise ValueError("Object not found")
+
+        return await result.update_one(**obj)
 
     @classmethod
-    async def delete(cls, **filter):
-        await cls.model.find_one(**filter).delete()
+    async def delete_by_id(cls, id: int | UUID):
+        result = await cls.model.get(id)
+
+        if result is None:
+            raise ValueError("Object not found")
+
+        await result.delete()

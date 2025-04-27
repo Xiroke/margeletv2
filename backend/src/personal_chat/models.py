@@ -1,10 +1,11 @@
 from __future__ import annotations
+
+from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from datetime import datetime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.models.base_models.models import BaseChannel
 

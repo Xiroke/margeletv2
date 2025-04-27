@@ -9,6 +9,7 @@ import Button from '@/shared/ui/button';
 import Textarea from '@/shared/ui/inputs/textarea';
 import { apiGroup } from '@/entities/group/model';
 import { useRouter } from 'next/navigation';
+import FormPage from '@/shared/ui/form_page';
 
 export interface CreateGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -36,7 +37,7 @@ export const CreateGroup = ({}: CreateGroupProps) => {
   };
 
   return (
-    <Form title="Создание группы">
+    <FormPage title="Создание группы">
       <form onSubmit={onSubmit} className={styles.group_form}>
         <InputText type="text" placeholder="Моя группа" name="title" labelText="Название" />
         <Textarea
@@ -47,7 +48,7 @@ export const CreateGroup = ({}: CreateGroupProps) => {
         />
         <Button type="submit">Создать</Button>
       </form>
-    </Form>
+    </FormPage>
   );
 };
 

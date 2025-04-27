@@ -1,13 +1,14 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, UploadFile, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import JSONResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.database import get_async_session
-from src.utils.image_utils import save_image_in_s3
 from src.infrastructure.s3 import s3_bucket_service_factory
+from src.utils.image_utils import save_image_in_s3
+
 from .dao import UserDAO
 
 # search include router in auth router.py

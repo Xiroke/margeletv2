@@ -1,10 +1,11 @@
 from uuid import UUID
 
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert
 
 from src.db.dao_base import DAOBase
 from src.db.models import UserToGroupModel
+
 from .models import GroupModel
 
 

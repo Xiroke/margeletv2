@@ -1,12 +1,11 @@
 from uuid import UUID
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload
-
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.dao_base import DAOBase
-from src.db.models import UserModel, GroupModel, UserToGroupModel
+from src.db.models import GroupModel, UserToGroupModel
+
 from .models import ChatModel
 
 

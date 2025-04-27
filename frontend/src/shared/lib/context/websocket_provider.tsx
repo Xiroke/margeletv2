@@ -1,8 +1,15 @@
-import { useEffect, PropsWithChildren, createContext, useRef, useContext, useState } from 'react';
+import {
+  useEffect,
+  PropsWithChildren,
+  createContext,
+  useRef,
+  useContext,
+  useState,
+} from "react";
 
-import config from '@/shared/config';
-import { apiAuth } from '@/features/auth/model';
-import { useRouter } from 'next/navigation';
+import config from "@/shared/config";
+import { apiAuth } from "@/features/auth/model";
+import { useRouter } from "next/navigation";
 
 interface WebsocketProviderProps extends PropsWithChildren {}
 
@@ -27,12 +34,16 @@ const WSContext = createContext<IWSContext | null>(null);
 const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   const router = useRouter();
   const wsRef = useRef<WebSocket | null>(null);
-  const { data: tokenData, isLoading, isError }: ITokenData = apiAuth.getAccessToken();
+  const {
+    data: tokenData,
+    isLoading,
+    isError,
+  }: ITokenData = apiAuth.getAccessToken(undefined, { retry: false });
   const onMessageFuncRef = useRef<(data: any) => void>((data: any) => {});
 
   useEffect(() => {
     if (isError) {
-      router.push('/');
+      router.push("/");
     }
 
     if (wsRef.current || isLoading || isError || !tokenData) {
@@ -41,12 +52,12 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     }
 
     const ws = new WebSocket(
-      `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/?access_token=${tokenData.access_token}`,
+      `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/?access_token=${tokenData.access_token}`
     );
     wsRef.current = ws;
 
     ws.onopen = () => {
-      console.log('connect');
+      console.log("connect");
     };
 
     ws.onmessage = (event) => {
@@ -54,7 +65,7 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     };
 
     ws.onclose = () => {
-      console.log('disconnect');
+      console.log("disconnect");
     };
 
     return () => {
@@ -62,16 +73,16 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
-        console.log('WebSocket closed');
+        console.log("WebSocket closed");
       }
     };
-  }, [isLoading, isError, tokenData]);
+  }, [isLoading, tokenData]);
 
   const send = (data: any) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {
-      console.warn('websocket not open');
+      console.warn("websocket not open");
     }
   };
 
@@ -87,7 +98,8 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
         send,
         onMessage,
         isConnected: wsRef.current?.readyState === WebSocket.OPEN,
-      }}>
+      }}
+    >
       {children}
     </WSContext.Provider>
   );
@@ -97,7 +109,7 @@ export const useWS = () => {
   const context = useContext(WSContext);
 
   if (!context) {
-    throw new Error('ws provider is not found');
+    throw new Error("ws provider is not found");
   }
 
   return context;

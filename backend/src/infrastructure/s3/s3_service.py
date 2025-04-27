@@ -1,6 +1,7 @@
-import aioboto3
-from pathlib import Path
 from io import BytesIO
+from pathlib import Path
+
+import aioboto3
 
 from config import global_setttigns
 

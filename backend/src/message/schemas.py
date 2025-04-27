@@ -1,8 +1,9 @@
 from __future__ import annotations
-from uuid import UUID
-from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict
 
 
 class BaseMessageSchema(BaseModel):

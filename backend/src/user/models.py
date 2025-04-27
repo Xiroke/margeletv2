@@ -1,19 +1,18 @@
 from __future__ import annotations
 
+import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
-import uuid
-from datetime import datetime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.database import Base
 
 if TYPE_CHECKING:
-    from src.personal_chat.models import PersonalChatModel
     from src.group.models import GroupModel
-    from src.token.models import TokenModel
+    from src.personal_chat.models import PersonalChatModel
 
 
 class UserModel(SQLAlchemyBaseUserTableUUID, Base):

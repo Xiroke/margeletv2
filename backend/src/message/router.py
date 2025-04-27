@@ -1,38 +1,30 @@
+from typing import Annotated
 from uuid import UUID
 
-from fastapi import (
-    APIRouter,
-    Body,
-    HTTPException,
-    WebSocket,
-    Depends,
-    Query,
-    WebSocketDisconnect,
-)
+from fastapi import APIRouter, Body, Depends, Query, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Annotated
 from fastapi_users.authentication import JWTStrategy
-
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.users import (
-    get_jwt_strategy,
     current_active_user,
-    get_user_manager,
+    get_jwt_strategy,
     get_user_db,
+    get_user_manager,
 )
-from src.db.database import get_async_session
 from src.db.dao import ChatDAO
+from src.db.database import get_async_session
 from src.db.models import UserModel
+
 from .dao import MessageDAO
+from .id_to_username.dao import IdToUsernameDAO
 from .no_sql_models import MessageModel
 from .schemas import (
-    ReadMessageSchema,
-    UpdateMessageSchema,
     CreateMessageSchema,
+    ReadMessageSchema,
     RecivedDataDTO,
+    UpdateMessageSchema,
 )
-from .id_to_username.dao import IdToUsernameDAO
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 
@@ -98,13 +90,13 @@ async def create_message(
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: list[UUID, WebSocket] = {}  # {user_id: ws}
+        self.active_connections: dict[UUID, WebSocket] = {}  # {user_id: ws}
         self.chats_connections: dict[
             UUID, list[UUID]
         ] = {}  # {chat_id: [user_id]}all online users in each chat
 
-    async def connect(self, websocket: WebSocket, user_id: int, chats_id: list[int]):
-        if user_id in self.active_connections:
+    async def connect(self, websocket: WebSocket, user_id: UUID, chats_id: list[UUID]):
+        if user_id in self.active_connections.keys():
             # if user using other tab of browser, we accept new connection,
             # but no dublicate chat_connections
             await websocket.accept()
@@ -120,8 +112,8 @@ class ConnectionManager:
             else:
                 self.chats_connections[chat_id] = [user_id]
 
-    async def disconnect(self, user_id: int, chats_id: list[int]):
-        if user_id not in self.active_connections:
+    async def disconnect(self, user_id: UUID, chats_id: list[UUID]):
+        if user_id not in self.active_connections.keys():
             return
 
         ws: WebSocket = self.active_connections[user_id]

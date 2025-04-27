@@ -1,18 +1,18 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from datetime import datetime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.models.base_models.models import BaseChannel
 
 if TYPE_CHECKING:
-    from src.user.models import UserModel
     from src.chat.models import ChatModel
     from src.role_group.models import RoleGroupModel
+    from src.user.models import UserModel
 
 
 class GroupModel(BaseChannel):

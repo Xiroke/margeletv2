@@ -28,12 +28,17 @@ dev = [
 ]
 
 [tool.ruff]
-select = [
+lint.select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "F",  # pyflakes
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
+    "I001", # imports
+    "I002",
+    "FAST001", # fastapi
+    "FAST002",
+    "FAST003",
 ]
 
 [tool.pytest]

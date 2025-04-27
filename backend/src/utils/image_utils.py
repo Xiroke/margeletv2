@@ -1,9 +1,8 @@
 import os
 from io import BytesIO
 
+from fastapi import HTTPException, UploadFile
 from PIL import Image
-from fastapi import UploadFile
-from fastapi import HTTPException
 
 from src.infrastructure.s3 import S3BucketService
 
@@ -24,7 +23,7 @@ async def save_image_in_s3(
         await s3_bucket_service.upload_file_object(
             prefix, f"{filename}.jpg", img_byte_arr.getvalue()
         )
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=500, detail="Unknown error occurred")  # noqa: B904
 
     return path_to_file

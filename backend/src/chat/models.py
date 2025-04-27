@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from datetime import datetime
-import uuid
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.database import Base
-
 
 if TYPE_CHECKING:
     from src.group.models import GroupModel

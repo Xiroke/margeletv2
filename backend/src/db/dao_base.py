@@ -1,10 +1,11 @@
 from typing import Type
 
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update, select, delete
+
+from src.utils.exc_handler import MapNoResultFound, handle_error
 
 from .database import Base
-from src.utils.exc_handler import handle_error, MapNoResultFound
 
 
 class DAOBase:

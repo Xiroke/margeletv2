@@ -1,10 +1,9 @@
-from typing import List, Callable, Type
-
-from pydantic import BaseModel
-from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from logging import getLogger
+from typing import Callable, List, Type
+
+from fastapi import HTTPException
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = getLogger(__name__)
 

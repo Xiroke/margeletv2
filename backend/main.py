@@ -4,14 +4,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from config_logging import setup_logging
 from src.auth.router import router as auth_router
-from src.group.router import router as group_router
 from src.chat.router import router as chat_router
-from src.personal_chat.router import router as personal_chat_router
-from src.role_group.router import router as role_group_router
+from src.group.router import router as group_router
 from src.message.router import router as message_router
 from src.no_sql_db.database import init_mongo_db
-from config_logging import setup_logging
+from src.personal_chat.router import router as personal_chat_router
+from src.role_group.router import router as role_group_router
 
 # set settings and color for logging
 setup_logging()

@@ -1,21 +1,16 @@
-from typing import Annotated, AsyncGenerator
 from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
-from fastapi import Depends, HTTPException, Response
+from fastapi import Depends, Response
 from fastapi.routing import APIRouter
 from fastapi_users.authentication import JWTStrategy
-from fastapi_users_db_sqlalchemy.access_token import (
-    SQLAlchemyAccessTokenDatabase,
-)
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.db.database import get_async_session
 from src.db.models import UserModel
 from src.user.router import router as user_router
-from src.db.database import get_async_session
-from src.token.dao import get_refresh_token_db
-from src.token.models import TokenModel
-from .utils import get_token_from_cookie
-from .schemas import UserCreate, UserRead, UserUpdate, AccessToken
+
+from .schemas import UserCreate, UserRead, UserUpdate
 from .users import (
     auth_backend,
     current_active_user,
