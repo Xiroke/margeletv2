@@ -6,17 +6,13 @@ from fastapi.routing import APIRouter
 from fastapi_users.authentication import JWTStrategy
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import settings
 from src.db.database import get_async_session
 from src.db.models import UserModel
 from src.user.router import router as user_router
 
 from .schemas import UserCreate, UserRead, UserUpdate
-from .users import (
-    auth_backend,
-    current_active_user,
-    fastapi_users,
-    get_jwt_strategy,
-)
+from .users import auth_backend, current_active_user, fastapi_users, get_jwt_strategy
 
 router = APIRouter(prefix="")
 
@@ -67,9 +63,9 @@ async def get_access_token(
         key="access_token",
         value=access_token,
         expires=datetime.now(timezone.utc) + timedelta(days=1),
-        httponly=True,
-        secure=True,
-        samesite="Lax",
+        httponly=settings.COOKIE_HTTPONLY,
+        secure=settings.COOKIE_SECURE,
+        samesite=settings.COOKIE_SAMESITE,
     )
 
     return {"access_token": access_token}

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
-from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.db.models.base_models.models import BaseChannel
+from src.db.database import Base
 
 if TYPE_CHECKING:
     from src.chat.models import ChatModel
@@ -15,14 +15,18 @@ if TYPE_CHECKING:
     from src.user.models import UserModel
 
 
-class GroupModel(BaseChannel):
+class GroupModel(Base):
     __tablename__ = "group"
 
-    id: Mapped[UUID] = mapped_column(ForeignKey("base_channel.id"), primary_key=True)
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str] = mapped_column(nullable=True)
     avatar_path: Mapped[str] = mapped_column(nullable=True)
     panorama_path: Mapped[str] = mapped_column(nullable=True)
+    is_group_one_chat: Mapped[bool] = mapped_column(default=True)
+    is_personal_group: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
     users: Mapped[list["UserModel"]] = relationship(

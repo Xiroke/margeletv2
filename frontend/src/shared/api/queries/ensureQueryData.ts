@@ -19,9 +19,9 @@ export const ensureUseGroupServiceGetApiGroupsAvatarByGroupUuidData = (queryClie
 export const ensureUseGroupServiceGetApiGroupsPanoramaByGroupUuidData = (queryClient: QueryClient, { groupUuid }: {
   groupUuid: string;
 }) => queryClient.ensureQueryData({ queryKey: Common.UseGroupServiceGetApiGroupsPanoramaByGroupUuidKeyFn({ groupUuid }), queryFn: () => GroupService.getApiGroupsPanoramaByGroupUuid({ groupUuid }) });
-export const ensureUseGroupServiceGetApiGroupsInviteByGroupUuidData = (queryClient: QueryClient, { groupUuid }: {
-  groupUuid: string;
-}) => queryClient.ensureQueryData({ queryKey: Common.UseGroupServiceGetApiGroupsInviteByGroupUuidKeyFn({ groupUuid }), queryFn: () => GroupService.getApiGroupsInviteByGroupUuid({ groupUuid }) });
+export const ensureUseGroupServiceGetApiGroupsInviteByGroupIdData = (queryClient: QueryClient, { groupId }: {
+  groupId: string;
+}) => queryClient.ensureQueryData({ queryKey: Common.UseGroupServiceGetApiGroupsInviteByGroupIdKeyFn({ groupId }), queryFn: () => GroupService.getApiGroupsInviteByGroupId({ groupId }) });
 export const ensureUseGroupServiceGetApiGroupsUserGroupsMeData = (queryClient: QueryClient) => queryClient.ensureQueryData({ queryKey: Common.UseGroupServiceGetApiGroupsUserGroupsMeKeyFn(), queryFn: () => GroupService.getApiGroupsUserGroupsMe() });
 export const ensureUseGroupServiceGetApiGroupsUserGroupsByUserIdData = (queryClient: QueryClient, { userId }: {
   userId: string;

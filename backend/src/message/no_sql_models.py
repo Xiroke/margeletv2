@@ -11,7 +11,6 @@ class MessageModel(Document):
     message: str
     user_id: UUID
     to_chat_id: UUID
-    is_group: bool
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:

@@ -1,24 +1,38 @@
-import { HTMLAttributes } from 'react';
-import clsx from 'clsx';
+"use client";
+import { HTMLAttributes } from "react";
+import clsx from "clsx";
+import { useState } from "react";
 
-import styles from './group_dropdown.module.scss';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import styles from "./group_dropdown.module.scss";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import DialogInvitation from "../dialog_invitation";
+import Button from "@/shared/ui/button";
 
 export interface GroupDropdownProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const GroupDropdown = ({ className, children }: GroupDropdownProps) => {
+  const [openDialog, setOpenDialog] = useState(false);
+
   return (
-    <div className={clsx(styles.group_dropdown, className)}>
+    <div className={clsx(styles.dropdown, className)}>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content className={styles.menu_content}>
-            <DropdownMenu.Item className={styles.menu_item}>Добавить участника</DropdownMenu.Item>
-            <DropdownMenu.Item className={styles.menu_item}>Создать чат</DropdownMenu.Item>
-            <DropdownMenu.Item className={styles.menu_item}>Выйти из группы</DropdownMenu.Item>
+            <DropdownMenu.Item
+              className={styles.menu_item}
+              onSelect={() => setOpenDialog(true)}
+            >
+              Добавить участника
+            </DropdownMenu.Item>
+            <DropdownMenu.Item className={styles.menu_item}>
+              Выйти из группы
+            </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
+
+      <DialogInvitation open={openDialog} setOpen={setOpenDialog} />
     </div>
   );
 };

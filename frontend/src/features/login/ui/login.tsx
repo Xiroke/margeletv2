@@ -1,34 +1,42 @@
-'use client';
-import { FormEventHandler, HTMLAttributes } from 'react';
-import { useRouter } from 'next/navigation';
+"use client";
+import { FormEventHandler, HTMLAttributes, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-import Form from '@/shared/ui/form_page';
-import InputText from '@/shared/ui/inputs/input_text';
-import { apiLogin } from '../model';
-import styles from './login.module.scss';
-import Button from '@/shared/ui/button';
+import InputText from "@/shared/ui/inputs/input_text";
+import { apiLogin } from "../model";
+import styles from "./login.module.scss";
+import Button from "@/shared/ui/button";
+import Link from "next/link";
 
 export interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const LoginForm = ({}: LoginFormProps) => {
   const loginApi = apiLogin.login();
   const router = useRouter();
-  // const isAuth = useIsAuth();
 
-  // useEffect(() => {
-  //   if (isAuth) {
-  //     router.push('/communication');
-  //   }
-  // }, [isAuth]);
+  useEffect(() => {
+    if (!loginApi.isSuccess) {
+      return;
+    }
+    //when get response after communiction, we redirect a user
+    router.push("/communication");
+  }, [loginApi.isSuccess]);
 
-  const onSubmit: FormEventHandler = (e) => {
+  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    loginApi.mutate({ formData: { username: 'user@example.com', password: 'string' } });
-    router.push('/communication');
+
+    const formData = new FormData(e.currentTarget);
+
+    loginApi.mutate({
+      formData: {
+        username: formData.get("email") as string,
+        password: formData.get("password") as string,
+      },
+    });
   };
 
   return (
-    <form onSubmit={onSubmit} className={styles.login_form}>
+    <form onSubmit={onSubmit} className={styles.form}>
       <InputText
         type="text"
         name="email"
@@ -43,7 +51,12 @@ export const LoginForm = ({}: LoginFormProps) => {
         placeholder="*********"
         classNameInput={styles.login_input}
       />
-      <Button type="submit">Войти</Button>
+      <Button type="submit" className={styles.submit}>
+        Войти
+      </Button>
+      <Link href="/registration">
+        <Button styleType="invert">Зарегистрироваться</Button>
+      </Link>
     </form>
   );
 };

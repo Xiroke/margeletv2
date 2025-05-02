@@ -1,24 +1,27 @@
 .communication {
-    flex: 1;
-    background-color: var(--primary-foreground);
-    border-radius: 15px 15px 0 0;
-    height: 100%;
-    padding: 20px 40px 0px 40px;
-    display: flex;
-    flex-direction: row;
-    margin-left: 20px;
+  flex: 1;
+  background-color: var(--primary-foreground);
+  border-radius: 15px 15px 0 0;
+  height: 100%;
+  padding: 20px 40px 0px 40px;
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
 }
 
 .groups {
-    margin-top: 40px;
-    margin-right: 40px;
+  margin-top: 40px;
 }
 
 .container {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .current_group {
-    flex: 1;
+  flex: 1;
+}
+
+.channels {
+  padding-right: 40px;
 }

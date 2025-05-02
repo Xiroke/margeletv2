@@ -1,9 +1,7 @@
 from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends
-from fastapi_users_db_sqlalchemy.access_token import (
-    SQLAlchemyAccessTokenDatabase,
-)
+from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.database import get_async_session

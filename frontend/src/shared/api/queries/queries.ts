@@ -20,9 +20,9 @@ export const useGroupServiceGetApiGroupsAvatarByGroupUuid = <TData = Common.Grou
 export const useGroupServiceGetApiGroupsPanoramaByGroupUuid = <TData = Common.GroupServiceGetApiGroupsPanoramaByGroupUuidDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupUuid }: {
   groupUuid: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsPanoramaByGroupUuidKeyFn({ groupUuid }, queryKey), queryFn: () => GroupService.getApiGroupsPanoramaByGroupUuid({ groupUuid }) as TData, ...options });
-export const useGroupServiceGetApiGroupsInviteByGroupUuid = <TData = Common.GroupServiceGetApiGroupsInviteByGroupUuidDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupUuid }: {
-  groupUuid: string;
-}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsInviteByGroupUuidKeyFn({ groupUuid }, queryKey), queryFn: () => GroupService.getApiGroupsInviteByGroupUuid({ groupUuid }) as TData, ...options });
+export const useGroupServiceGetApiGroupsInviteByGroupId = <TData = Common.GroupServiceGetApiGroupsInviteByGroupIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupId }: {
+  groupId: string;
+}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsInviteByGroupIdKeyFn({ groupId }, queryKey), queryFn: () => GroupService.getApiGroupsInviteByGroupId({ groupId }) as TData, ...options });
 export const useGroupServiceGetApiGroupsUserGroupsMe = <TData = Common.GroupServiceGetApiGroupsUserGroupsMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsUserGroupsMeKeyFn(queryKey), queryFn: () => GroupService.getApiGroupsUserGroupsMe() as TData, ...options });
 export const useGroupServiceGetApiGroupsUserGroupsByUserId = <TData = Common.GroupServiceGetApiGroupsUserGroupsByUserIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ userId }: {
   userId: string;
@@ -101,13 +101,11 @@ export const useGroupServicePostApiGroupsPanoramaByGroupUuid = <TData = Common.G
   formData: Body_upload_panorama_api_groups_panorama__group_uuid__post;
   groupUuid: string;
 }, TContext>({ mutationFn: ({ formData, groupUuid }) => GroupService.postApiGroupsPanoramaByGroupUuid({ formData, groupUuid }) as unknown as Promise<TData>, ...options });
-export const useGroupServicePostApiGroupsInviteByGroupId = <TData = Common.GroupServicePostApiGroupsInviteByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
-  groupId: string;
+export const useGroupServicePostApiGroupsInvite = <TData = Common.GroupServicePostApiGroupsInviteMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   requestBody: string;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
-  groupId: string;
   requestBody: string;
-}, TContext>({ mutationFn: ({ groupId, requestBody }) => GroupService.postApiGroupsInviteByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
+}, TContext>({ mutationFn: ({ requestBody }) => GroupService.postApiGroupsInvite({ requestBody }) as unknown as Promise<TData>, ...options });
 export const useGroupServicePostApiGroups = <TData = Common.GroupServicePostApiGroupsMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   requestBody: CreateGroupSchema;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {

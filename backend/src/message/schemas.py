@@ -12,7 +12,6 @@ class BaseMessageSchema(BaseModel):
     message: str
     user_id: UUID
     to_chat_id: UUID
-    is_group: bool
     created_at: datetime
     author: str | None = None  # optional must be get from IdToUserName
 
@@ -25,7 +24,6 @@ class CreateMessageSchema(BaseModel):
     message: str
     user_id: UUID | None = None
     to_chat_id: UUID
-    is_group: bool
 
 
 class UpdateMessageSchema(BaseModel):

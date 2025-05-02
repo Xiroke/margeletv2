@@ -1,18 +1,22 @@
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes } from "react";
 
-import styles from './user_card.module.scss';
-import { apiUser } from '../model';
+import styles from "./user_card.module.scss";
+import { apiUser } from "../model";
 
 export interface UserCardProps extends HTMLAttributes<HTMLDivElement> {}
 
-export const UserCard = ({}: UserCardProps) => {
+export const UserCard = ({ ...props }: UserCardProps) => {
   const { data } = apiUser.get();
 
   if (!data) {
     return null;
   }
 
-  return <div className={styles['user_card']}>{data.name.slice(0, 2)}</div>;
+  return (
+    <div {...props} className={styles["user_card"]}>
+      {data.name.slice(0, 2)}
+    </div>
+  );
 };
 
 export default UserCard;

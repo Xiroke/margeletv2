@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from fastapi_users.db import SQLAlchemyBaseUserTableUUID
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -12,7 +12,6 @@ from src.db.database import Base
 
 if TYPE_CHECKING:
     from src.group.models import GroupModel
-    from src.personal_chat.models import PersonalChatModel
 
 
 class UserModel(SQLAlchemyBaseUserTableUUID, Base):
@@ -25,10 +24,6 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     avatar_path: Mapped[str] = mapped_column(nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
-
-    personal_chats: Mapped[list["PersonalChatModel"]] = relationship(
-        secondary="user_to_personal_chat", back_populates="users"
-    )
 
     groups: Mapped[list["GroupModel"]] = relationship(
         secondary="user_to_group", back_populates="users"

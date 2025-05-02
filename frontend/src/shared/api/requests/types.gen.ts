@@ -300,18 +300,17 @@ export type PostApiGroupsPanoramaByGroupUuidData = {
 
 export type PostApiGroupsPanoramaByGroupUuidResponse = unknown;
 
-export type GetApiGroupsInviteByGroupUuidData = {
-    groupUuid: string;
+export type GetApiGroupsInviteByGroupIdData = {
+    groupId: string;
 };
 
-export type GetApiGroupsInviteByGroupUuidResponse = unknown;
+export type GetApiGroupsInviteByGroupIdResponse = unknown;
 
-export type PostApiGroupsInviteByGroupIdData = {
-    groupId: string;
+export type PostApiGroupsInviteData = {
     requestBody: string;
 };
 
-export type PostApiGroupsInviteByGroupIdResponse = unknown;
+export type PostApiGroupsInviteResponse = unknown;
 
 export type GetApiGroupsUserGroupsMeResponse = unknown;
 
@@ -820,9 +819,9 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/groups/invite/{group_uuid}': {
+    '/api/groups/invite/{group_id}': {
         get: {
-            req: GetApiGroupsInviteByGroupUuidData;
+            req: GetApiGroupsInviteByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -835,9 +834,9 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/groups/invite/{group_id}': {
+    '/api/groups/invite': {
         post: {
-            req: PostApiGroupsInviteByGroupIdData;
+            req: PostApiGroupsInviteData;
             res: {
                 /**
                  * Successful Response

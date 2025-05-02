@@ -16,20 +16,31 @@ class GlobalSettings(BaseSettings):
     S3_PASSWORD: str
     S3_PORT: str
 
-    model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
+    BACKEND_URL: str
+    FRONTEND_URL: str
+
+    model_config = SettingsConfigDict(
+        env_file="../.env", env_file_encoding="utf-8", extra="ignore"
+    )
 
 
 class Settings(BaseSettings):
+    DEV: bool
     TEST_MODE: bool
+
     DB_URL: str
     TEST_DB_URL: str
-    INVITE_TOKEN_JWT: str
 
+    INVITE_TOKEN_JWT: str
     SECRET_KEY_REFRESH: str
+
+    COOKIE_HTTPONLY: bool
+    COOKIE_SECURE: bool
+    COOKIE_SAMESITE: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
-settings = Settings()
+settings = Settings()  # type: ignore
 
-global_setttigns = GlobalSettings()
+global_setttigns = GlobalSettings()  # type: ignore

@@ -32,7 +32,6 @@ interface IWSContext {
 const WSContext = createContext<IWSContext | null>(null);
 
 const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
-  const router = useRouter();
   const wsRef = useRef<WebSocket | null>(null);
   const {
     data: tokenData,
@@ -43,7 +42,7 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
 
   useEffect(() => {
     if (isError) {
-      router.push("/");
+      return;
     }
 
     if (wsRef.current || isLoading || isError || !tokenData) {
@@ -61,6 +60,7 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     };
 
     ws.onmessage = (event) => {
+      console.log(JSON.parse(event.data));
       onMessageFuncRef.current(JSON.parse(event.data));
     };
 

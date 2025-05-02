@@ -23,6 +23,10 @@
   width: 100%;
 }
 
+.input_field {
+  width: 100%;
+}
+
 .button {
   width: 100px !important;
 }
@@ -40,5 +44,11 @@
 .buttons {
   display: flex;
   flex-direction: row;
+  justify-content: end;
   gap: 15px;
+  margin-top: 15px;
+}
+
+.title_icon {
+  transform: rotate(45deg);
 }

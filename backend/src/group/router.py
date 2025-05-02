@@ -11,6 +11,7 @@ from src.auth.users import current_active_user
 from src.db.database import get_async_session
 from src.db.models import UserModel
 from src.infrastructure.s3 import s3_bucket_service_factory
+from src.user.dao import UserDAO
 from src.utils.image_utils import save_image_in_s3
 
 from .dao import GroupDAO
@@ -20,11 +21,11 @@ from .schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
 router = APIRouter(prefix="/groups", tags=["group"])
 
 
-@router.get("/avatar/{group_uuid}")
+@router.get("/avatar/{group_id}")
 async def get_avatar(
-    group_uuid: UUID, s3: Annotated[s3_bucket_service_factory, Depends()]
+    group_id: UUID, s3: Annotated[s3_bucket_service_factory, Depends()]
 ):
-    response = await s3.get_file_object(f"groups/{group_uuid}.jpg")
+    response = await s3.get_file_object(f"groups/{group_id}.jpg")
 
     if response is None:
         raise HTTPException(status_code=404, detail="Avatar not found")
@@ -34,23 +35,23 @@ async def get_avatar(
     return Response(content=image, media_type="image/png")
 
 
-@router.post("/avatar/{group_uuid}")
+@router.post("/avatar/{group_id}")
 async def upload_avatar(
-    group_uuid: UUID,
+    group_id: UUID,
     image: UploadFile,
     session: Annotated[AsyncSession, Depends(get_async_session)],
     s3: Annotated[s3_bucket_service_factory, Depends()],
 ):
-    prefix = await save_image_in_s3("groups", group_uuid, image, s3)
-    await GroupDAO.update(session, {"avatar_path": prefix}, id=group_uuid)
+    prefix = await save_image_in_s3("groups", group_id, image, s3)
+    await GroupDAO.update(session, {"avatar_path": prefix}, id=group_id)
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
-@router.get("/panorama/{group_uuid}")
+@router.get("/panorama/{group_id}")
 async def load_panorama(
-    group_uuid: UUID, s3: Annotated[s3_bucket_service_factory, Depends()]
+    group_id: UUID, s3: Annotated[s3_bucket_service_factory, Depends()]
 ):
-    response = await s3.get_file_object(f"groups/{group_uuid}.jpg")
+    response = await s3.get_file_object(f"groups/{group_id}.jpg")
 
     if response is None:
         raise HTTPException(status_code=404, detail="Avatar not found")
@@ -60,38 +61,37 @@ async def load_panorama(
     return Response(content=image, media_type="image/png")
 
 
-@router.post("/panorama/{group_uuid}")
+@router.post("/panorama/{group_id}")
 async def upload_panorama(
-    group_uuid: UUID,
+    group_id: UUID,
     image: UploadFile,
     session: Annotated[AsyncSession, Depends(get_async_session)],
     s3: Annotated[s3_bucket_service_factory, Depends()],
 ):
-    prefix = await save_image_in_s3("groups", group_uuid, image, s3)
-    await GroupDAO.update(session, {"panorama_path": prefix}, id=group_uuid)
+    prefix = await save_image_in_s3("groups", group_id, image, s3)
+    await GroupDAO.update(session, {"panorama_path": prefix}, id=group_id)
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
-@router.get("/invite/{group_uuid}")
+@router.get("/invite/{group_id}")
 async def get_invite_token(
-    group_uuid: UUID,
+    group_id: UUID,
     current_user: Annotated[UserModel, Depends(current_active_user)],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
-    group = await GroupDAO.get_one_by_field(session, id=group_uuid)
+    group = await GroupDAO.get_one_by_field(session, id=group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
     token = jwt.encode(
-        {"group_id": group.id, "user_id": current_user.id},
+        {"group_id": str(group.id), "user_id": str(current_user.id)},
         settings.INVITE_TOKEN_JWT,
         algorithm="HS256",
     )
     return token
 
 
-@router.post("/invite/{group_id}")
+@router.post("/invite")
 async def join_group(
-    group_id: UUID,
     token: Annotated[str, Body()],
     current_user: Annotated[UserModel, Depends(current_active_user)],
     session: Annotated[AsyncSession, Depends(get_async_session)],
@@ -100,10 +100,19 @@ async def join_group(
         payload = jwt.decode(token, settings.INVITE_TOKEN_JWT, algorithms=["HS256"])
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=400, detail="Invalid token")  # noqa: B904
-    if payload["group_id"] != group_id:
+
+    try:
+        user_creatur_token = await UserDAO.get_one_by_field(
+            session, id=payload["user_id"]
+        )
+        await GroupDAO.is_user_in_group(
+            session, user_creatur_token.id, payload["group_id"]
+        )
+
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid token")
 
-    await GroupDAO.add_user_to_group(session, group_id, current_user.id)
+    await GroupDAO.add_user_to_group(session, payload["group_id"], current_user.id)
 
     return JSONResponse(status_code=200, content={"message": "Group joined"})
 
@@ -125,12 +134,12 @@ async def get_user_groups(
 
 
 @router.get(
-    "/{group_uuid}",
+    "/{group_id}",
 )
 async def get_group(
-    group_uuid: UUID, session: Annotated[AsyncSession, Depends(get_async_session)]
+    group_id: UUID, session: Annotated[AsyncSession, Depends(get_async_session)]
 ) -> ReadGroupSchema:
-    return await GroupDAO.get_one_by_field(session, id=group_uuid)
+    return await GroupDAO.get_one_by_field(session, id=group_id)
 
 
 @router.post("/")
@@ -144,22 +153,22 @@ async def create_group(
     return new_group
 
 
-@router.patch("/{group_uuid}")
+@router.patch("/{group_id}")
 async def update_group(
-    group_uuid: UUID,
+    group_id: UUID,
     group: Annotated[UpdateGroupSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
-    await GroupDAO.update(session, group.model_dump(exclude_none=True), id=group_uuid)
+    await GroupDAO.update(session, group.model_dump(exclude_none=True), id=group_id)
 
     return JSONResponse(status_code=200, content={"message": "Group updated"})
 
 
-@router.delete("/{group_uuid}")
+@router.delete("/{group_id}")
 async def delete_group(
-    group_uuid: UUID,
+    group_id: UUID,
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
-    await GroupDAO.delete(session, group_uuid)
+    await GroupDAO.delete(session, group_id)
 
     return JSONResponse(status_code=200, content={"message": "Group deleted"})

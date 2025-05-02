@@ -19,9 +19,9 @@ export const useGroupServiceGetApiGroupsAvatarByGroupUuidSuspense = <TData = Com
 export const useGroupServiceGetApiGroupsPanoramaByGroupUuidSuspense = <TData = Common.GroupServiceGetApiGroupsPanoramaByGroupUuidDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupUuid }: {
   groupUuid: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsPanoramaByGroupUuidKeyFn({ groupUuid }, queryKey), queryFn: () => GroupService.getApiGroupsPanoramaByGroupUuid({ groupUuid }) as TData, ...options });
-export const useGroupServiceGetApiGroupsInviteByGroupUuidSuspense = <TData = Common.GroupServiceGetApiGroupsInviteByGroupUuidDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupUuid }: {
-  groupUuid: string;
-}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsInviteByGroupUuidKeyFn({ groupUuid }, queryKey), queryFn: () => GroupService.getApiGroupsInviteByGroupUuid({ groupUuid }) as TData, ...options });
+export const useGroupServiceGetApiGroupsInviteByGroupIdSuspense = <TData = Common.GroupServiceGetApiGroupsInviteByGroupIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupId }: {
+  groupId: string;
+}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsInviteByGroupIdKeyFn({ groupId }, queryKey), queryFn: () => GroupService.getApiGroupsInviteByGroupId({ groupId }) as TData, ...options });
 export const useGroupServiceGetApiGroupsUserGroupsMeSuspense = <TData = Common.GroupServiceGetApiGroupsUserGroupsMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsUserGroupsMeKeyFn(queryKey), queryFn: () => GroupService.getApiGroupsUserGroupsMe() as TData, ...options });
 export const useGroupServiceGetApiGroupsUserGroupsByUserIdSuspense = <TData = Common.GroupServiceGetApiGroupsUserGroupsByUserIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ userId }: {
   userId: string;

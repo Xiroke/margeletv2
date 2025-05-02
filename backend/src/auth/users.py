@@ -14,9 +14,10 @@ from fastapi_users.authentication.strategy.db import (
 )
 from fastapi_users.db import SQLAlchemyUserDatabase
 
+from config import settings
 from src.db.models import UserModel
-from src.token.dao import get_refresh_token_db
-from src.token.models import TokenModel
+from src.refresh_token.dao import get_refresh_token_db
+from src.refresh_token.models import TokenModel
 from src.user.utils import get_user_db
 
 SECRET = "SECRET"
@@ -54,9 +55,9 @@ async def get_user_manager(
 cookie_transport = CookieTransport(
     cookie_name="refresh_token",
     cookie_max_age=60 * 60 * 24 * 24,
-    cookie_httponly=True,
-    cookie_secure=True,
-    cookie_samesite="lax",
+    cookie_httponly=settings.COOKIE_HTTPONLY,
+    cookie_secure=settings.COOKIE_SECURE,
+    cookie_samesite=settings.COOKIE_SAMESITE,
 )
 
 
