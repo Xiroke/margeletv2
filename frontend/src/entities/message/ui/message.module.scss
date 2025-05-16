@@ -1,35 +1,37 @@
 .message {
-    width: 450px;
-    height: 80px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  width: 100%;
+  min-height: 80px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .avatar {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background-color: var(--primary-background);
-    margin-right: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  flex-shrink: 0;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: var(--primary-background);
+  margin-right: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .author {
-    font-weight: 800;
-    font-size: 16px;
-    margin-bottom: 10px;
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
 .text {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .time {
-    align-self: flex-end;
-    margin-left: 10px;
-    margin-bottom: -7px;
-    font-style: 14px;
+  align-self: flex-end;
+  margin-left: 10px;
+  margin-bottom: -7px;
+  font-style: 14px;
 }

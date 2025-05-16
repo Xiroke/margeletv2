@@ -3,10 +3,17 @@
   background-color: var(--primary-foreground);
   border-radius: 15px 15px 0 0;
   height: 100%;
-  padding: 20px 40px 0px 40px;
+  padding: 2vh 1.5vw 0px 1.5vw;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   margin-left: 20px;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    padding-left: 4vw;
+    padding-right: 4vw;
+  }
 }
 
 .groups {
@@ -16,12 +23,60 @@
 .container {
   display: flex;
   flex-direction: row;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 }
 
 .current_group {
   flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .channels {
-  padding-right: 40px;
+  padding-right: 1.5vw;
+
+  @media (max-width: 1024px) {
+    padding-right: 4vw;
+  }
+
+  @media (max-width: 768px) {
+    padding-right: 0;
+    width: 100%;
+  }
+}
+
+.nav_mobile_layout {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.nav {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.vertical_line {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block !important;
+  }
+}
+
+.nav_icon {
+  width: 30px;
+  height: 30px;
 }

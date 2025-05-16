@@ -4,10 +4,8 @@ from typing import Annotated
 from fastapi import Depends, Response
 from fastapi.routing import APIRouter
 from fastapi_users.authentication import JWTStrategy
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from src.db.database import get_async_session
 from src.db.models import UserModel
 from src.user.router import router as user_router
 
@@ -49,7 +47,6 @@ async def authenticated_route(user: Annotated[UserModel, Depends(current_active_
 
 @router.get("/auth/access_token", tags=["auth"])
 async def get_access_token(
-    session: Annotated[AsyncSession, Depends(get_async_session)],
     jwt_strategy: Annotated[JWTStrategy, Depends(get_jwt_strategy)],
     user: Annotated[UserModel, Depends(current_active_user)],
     response: Response,

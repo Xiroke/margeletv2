@@ -1,12 +1,13 @@
-'use client';
-import { HTMLAttributes } from 'react';
-import clsx from 'clsx';
+"use client";
+import { HTMLAttributes } from "react";
+import clsx from "clsx";
 
-import styles from './current_group.module.scss';
-import VerticalLine from '@/shared/ui/vertical_line';
-import Talk from '../talk';
-import GroupPanel from '../group_panel';
-import { useAppSelector } from '@/shared/lib/hooks';
+import styles from "./current_group.module.scss";
+import VerticalLine from "@/shared/ui/vertical_line";
+import Talk from "../talk";
+import GroupPanel from "../group_panel";
+import { useAppSelector } from "@/shared/lib/hooks";
+import useMediaQuery from "@/shared/lib/hooks/use_media_query";
 
 export interface CurrentGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -18,8 +19,8 @@ export const CurrentGroup = ({ className }: CurrentGroupProps) => {
       {groupId ? (
         <>
           <Talk className={styles.talk} />
-          <VerticalLine className="vertical_line" />
-          <GroupPanel className={styles.group_panel} panorama_path="/" />
+          <VerticalLine className={styles.vertical_line} />
+          <GroupPanel className={styles.group_panel} />
         </>
       ) : (
         <div className={styles.current_group_unselect}>Выберите группу</div>

@@ -7,6 +7,7 @@ import styles from "./group_dropdown.module.scss";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import DialogInvitation from "../dialog_invitation";
 import Button from "@/shared/ui/button";
+import Link from "next/link";
 
 export interface GroupDropdownProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -25,6 +26,11 @@ export const GroupDropdown = ({ className, children }: GroupDropdownProps) => {
             >
               Добавить участника
             </DropdownMenu.Item>
+
+            <DropdownMenu.Item className={styles.menu_item}>
+              <Link href={"/communication/settings"}>Настройки группы</Link>
+            </DropdownMenu.Item>
+
             <DropdownMenu.Item className={styles.menu_item}>
               Выйти из группы
             </DropdownMenu.Item>

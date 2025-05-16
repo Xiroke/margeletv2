@@ -46,7 +46,6 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     }
 
     if (wsRef.current || isLoading || isError || !tokenData) {
-      console.log(wsRef);
       return;
     }
 
@@ -60,7 +59,6 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     };
 
     ws.onmessage = (event) => {
-      console.log(JSON.parse(event.data));
       onMessageFuncRef.current(JSON.parse(event.data));
     };
 

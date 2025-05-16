@@ -3,13 +3,15 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseMessageSchema(BaseModel):
     id: UUID
     id_in_chat: int
-    message: str
+    message: str = Field(
+        max_length=2000, description="Message must be less than 2000 characters"
+    )
     user_id: UUID
     to_chat_id: UUID
     created_at: datetime
@@ -21,13 +23,17 @@ class ReadMessageSchema(BaseMessageSchema):
 
 
 class CreateMessageSchema(BaseModel):
-    message: str
+    message: str = Field(
+        max_length=2000, description="Message must be less than 2000 characters"
+    )
     user_id: UUID | None = None
     to_chat_id: UUID
 
 
 class UpdateMessageSchema(BaseModel):
-    message: str | None
+    message: str | None = Field(
+        max_length=2000, description="Message must be less than 2000 characters"
+    )
 
 
 class RecivedDataDTO(CreateMessageSchema):

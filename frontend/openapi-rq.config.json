@@ -1,0 +1,12 @@
+{
+  "schemaPath": "http://0.0.0.0:8000/api/openapi.json",
+  "outputFiles": {
+    "./src/shared/api.ts": {
+      "exportName": "api",
+      "hooks": true
+    }
+  },
+  "responseTypeOverrides": {
+    "/panorama/{group_id}": "blob"
+  }
+}

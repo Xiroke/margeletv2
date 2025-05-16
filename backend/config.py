@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -36,7 +38,10 @@ class Settings(BaseSettings):
 
     COOKIE_HTTPONLY: bool
     COOKIE_SECURE: bool
-    COOKIE_SAMESITE: str
+    COOKIE_SAMESITE: Literal["lax", "strict", "none"]
+
+    S3_BUCKET_NAME: str
+    S3_PATH: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

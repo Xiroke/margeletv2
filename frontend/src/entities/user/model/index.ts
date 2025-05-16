@@ -1,13 +1,13 @@
 import {
-  useUsersServiceGetApiUsersAvatarByGroupUuid,
+  useUsersServiceGetApiUsersAvatarByGroupId,
   useUsersServiceGetApiUsersById,
   useUsersServiceGetApiUsersMe,
-} from '@/shared/api/queries';
+} from "@/shared/api/queries";
 
 export const apiUser = {
-  getAvatar: useUsersServiceGetApiUsersAvatarByGroupUuid,
+  getAvatar: useUsersServiceGetApiUsersAvatarByGroupId,
   getUserById: useUsersServiceGetApiUsersById,
   get: useUsersServiceGetApiUsersMe,
 };
 
-export type {} from '@/shared/api/requests';
+export type {} from "@/shared/api/requests";

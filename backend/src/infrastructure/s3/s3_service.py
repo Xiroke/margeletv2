@@ -1,9 +1,13 @@
+import logging
 from io import BytesIO
-from pathlib import Path
 
 import aioboto3
+from botocore.exceptions import ClientError
+from fastapi import HTTPException
 
-from config import global_setttigns
+from config import global_setttigns, settings
+
+logger = logging.getLogger(__name__)
 
 
 class S3BucketService:
@@ -50,7 +54,7 @@ class S3BucketService:
             )
         """
         client_context = await self.create_s3_client()
-        destination_file_name = str(Path(prefix, source_file_name))
+        destination_file_name = str(f"/{prefix}/{source_file_name}")
 
         if isinstance(content, bytes):
             buffer = BytesIO(content)
@@ -93,7 +97,9 @@ class S3BucketService:
 
         return storage_content
 
-    async def get_file_object(self, prefix: str):  # -> Optional[StreamingBody]:
+    async def get_file_object(
+        self, prefix: str, source_file_name: str, chunk_size: int = 69 * 1024
+    ):
         """
         Get file object from S3
 
@@ -104,15 +110,27 @@ class S3BucketService:
             file_body = await s3_service.get_file_object("margelet/files/file1.txt")
             content = await file_body.read()
         """
+        destination_file_name = str(f"/{prefix}/{source_file_name}")
+
         client_context = await self.create_s3_client()
         async with client_context() as client:
             try:
-                file_obj = await client.get_object(Bucket=self.bucket_name, Key=prefix)
-            except Exception as ex:
-                if ex.response["Error"]["Code"] == "NoSuchKey":
-                    return None
-                raise ex
-        return file_obj["Body"]
+                file_obj = await client.get_object(
+                    Bucket=self.bucket_name, Key=destination_file_name
+                )
+
+                file_data = await file_obj["Body"].read()
+
+            except ClientError as e:
+                if e.response["Error"]["Code"] == "NoSuchKey":
+                    raise HTTPException(  # noqa: B904
+                        status_code=404,
+                        detail="File not found",
+                    )
+                logger.error(str(e))
+                raise HTTPException(500, "Unknown error")
+
+        return file_data
 
     async def delete_file_object(self, prefix: str, source_file_name: str) -> None:
         """
@@ -122,16 +140,17 @@ class S3BucketService:
             prefix (str): Path to the file in the bucket
             source_file_name (str): Name which will be used in the bucket
         """
+        destination_file_name = str(f"/{prefix}/{source_file_name}")
+
         client_context = await self.create_s3_client()
         async with client_context() as client:
-            path_to_file = str(Path(prefix, source_file_name))
-            client.delete_object(Bucket=self.bucket_name, Key=path_to_file)
+            client.delete_object(Bucket=self.bucket_name, Key=destination_file_name)
 
 
 def s3_bucket_service_factory() -> S3BucketService:
     return S3BucketService(
-        'margelet',
-        'https://localhost:' + global_setttigns.S3_PORT,
+        settings.S3_BUCKET_NAME,
+        settings.S3_PATH + ":" + global_setttigns.S3_PORT,
         global_setttigns.S3_USER,
         global_setttigns.S3_PASSWORD,
     )

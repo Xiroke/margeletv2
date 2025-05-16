@@ -1,21 +1,36 @@
 "use client";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, MouseEventHandler, useEffect } from "react";
 import Image from "next/image";
 
 import styles from "./group_card.module.scss";
 import { apiGroup } from "../model";
+import { useAppDispatch } from "@/shared/lib/hooks";
+import { setPanoramaPath } from "../model/slice";
 
 export interface GroupCardProps extends HTMLAttributes<HTMLDivElement> {
   id: string;
   image_url?: string;
+  data: any;
 }
 
-export const GroupCard = ({ id, image_url, onClick }: GroupCardProps) => {
-  const { data } = apiGroup.get({ groupUuid: id });
+export const GroupCard = ({ id, image_url, onClick, data }: GroupCardProps) => {
+  const dispatch = useAppDispatch();
+
+  const onClickHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    //clear panorama when select other group
+    dispatch(setPanoramaPath(null));
+
+    // if panorama path not set, app will not request image from backend
+    if (data?.panorama_path) {
+      dispatch(setPanoramaPath(data.panorama_path));
+    }
+
+    onClick && onClick(e);
+  };
 
   return (
     data && (
-      <div onClick={onClick} className={styles.group_card}>
+      <div onClick={onClickHandler} className={styles.group_card}>
         {image_url ? (
           <Image
             src={image_url}

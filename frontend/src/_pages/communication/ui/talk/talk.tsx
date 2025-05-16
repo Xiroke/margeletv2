@@ -1,3 +1,4 @@
+"use client";
 import {
   HTMLAttributes,
   KeyboardEventHandler,
@@ -10,12 +11,13 @@ import clsx from "clsx";
 
 import styles from "./talk.module.scss";
 import config from "@/shared/config";
-import { useAppSelector } from "@/shared/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 import Sending from "../sending";
 import Message from "@/entities/message/ui";
 import { apiMessage, ReadMessageSchema } from "@/entities/message/model";
 import { useWS } from "@/shared/lib/context";
 import { useQueryClient } from "@tanstack/react-query";
+import useMediaQuery from "@/shared/lib/hooks/use_media_query";
 
 export interface TalkProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -24,13 +26,11 @@ export const Talk = ({ className }: TalkProps) => {
   const chatId = useAppSelector((state) => state.chat.id);
   const sendMessageRef = useRef<HTMLInputElement>(null);
   const { send, onMessage } = useWS();
+  const isLaptop = useMediaQuery("(min-width: 1024px)");
+  const [toBottom, setToBottom] = useState(true);
+  const [messages, setMessages] = useState();
 
-  const [_, forceRerender] = useState(0);
-
-  const {
-    data: messages,
-    refetch,
-  }: { data: ReadMessageSchema[] | undefined; refetch: () => void } =
+  const { data: messages }: { data: ReadMessageSchema[] | undefined } =
     apiMessage.getAllMessageChat(
       {
         chatId: chatId!,
@@ -40,6 +40,50 @@ export const Talk = ({ className }: TalkProps) => {
         enabled: !!chatId,
       }
     );
+
+  const messagesRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    // event when get new message we scroll to the end messages
+    const messages = messagesRef.current;
+    if (!messages) return;
+    const { scrollTop, scrollHeight, clientHeight } = messages;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+
+    console.log(
+      scrollHeight,
+      scrollTop,
+      clientHeight,
+      scrollHeight - scrollTop - clientHeight
+    );
+    if (distanceFromBottom >= 500) {
+      return;
+    }
+
+    messages.scrollTo({
+      top: messages.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    const messages = messagesRef.current;
+    if (messages == null) {
+      return;
+    }
+
+    if (toBottom == false) {
+      handleScroll();
+    } else {
+      //scroll to bottom whem open page
+      setToBottom(false);
+      messages.scrollTo({
+        top: messages.scrollHeight,
+      });
+    }
+
+    //scroll to bottom if its need
+  }, [messages]);
 
   // Пример изменения данных
   const updateMessage = (newMessage: ReadMessageSchema) => {
@@ -53,18 +97,14 @@ export const Talk = ({ className }: TalkProps) => {
   };
 
   useEffect(() => {
-    // add call function when get a message
-    if (!messages) {
-      console.log(messages);
-    }
-
     onMessage((message: any) => {
-      if (!message && message.id != undefined) {
+      if (typeof message.id == "undefined") {
         return;
       }
 
       updateMessage(message);
     });
+    // maybe its need to fix
   }, [messages]);
 
   const sentMessage: KeyboardEventHandler = (e) => {
@@ -72,8 +112,14 @@ export const Talk = ({ className }: TalkProps) => {
       return;
     }
 
+    //check lenght message
+    const message = sendMessageRef.current.value;
+    if (message.length > 2000) {
+      alert("Сообщение не должно быть больше 2000 символов");
+    }
+
     send({
-      message: sendMessageRef.current.value,
+      message,
       to_chat_id: chatId,
       is_group: true,
     });
@@ -81,31 +127,32 @@ export const Talk = ({ className }: TalkProps) => {
     sendMessageRef.current.value = "";
   };
 
-  useEffect(() => {}, []);
-  return messages ? (
-    <div className={clsx(styles.talk, className)}>
-      <div className={styles.talk_content}>
-        <div className={styles.top_gradient} />
-        <div className={clsx(styles.message_list)}>
-          {messages.length != 0 &&
-            messages.map((item) => (
-              <Message
-                className={styles.message_item}
-                text={item.message}
-                author={item.author!}
-                time={item.created_at}
-                key={item.id}
-              />
-            ))}
-        </div>
-        <div className={styles.sending_container}>
-          <Sending ref={sendMessageRef} onKeyDown={sentMessage} />
+  if (messages) {
+    return (
+      <div className={clsx(styles.talk, className)}>
+        <div className={styles.talk_content}>
+          <div className={styles.top_gradient} />
+          <div ref={messagesRef} className={clsx(styles.message_list)}>
+            {messages.length != 0 &&
+              messages.map((item) => (
+                <Message
+                  className={styles.message_item}
+                  text={item.message}
+                  author={item.author!}
+                  time={item.created_at}
+                  key={item.id}
+                />
+              ))}
+          </div>
+          <div className={styles.sending_messagesList}>
+            <Sending ref={sendMessageRef} onKeyDown={sentMessage} />
+          </div>
         </div>
       </div>
-    </div>
-  ) : (
-    <div className={styles.talk_unselect}>Выберите чат</div>
-  );
+    );
+  } else if (isLaptop) {
+    return <div className={styles.talk_unselect}>Выберите чат</div>;
+  }
 };
 
 export default Talk;

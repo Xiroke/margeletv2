@@ -144,7 +144,7 @@ export const $Body_reset_reset_password_api_auth_reset_password_post = {
     title: 'Body_reset_reset_password_api_auth_reset_password_post'
 } as const;
 
-export const $Body_upload_avatar_api_groups_avatar__group_uuid__post = {
+export const $Body_upload_avatar_api_groups_avatar__group_id__post = {
     properties: {
         image: {
             type: 'string',
@@ -154,10 +154,10 @@ export const $Body_upload_avatar_api_groups_avatar__group_uuid__post = {
     },
     type: 'object',
     required: ['image'],
-    title: 'Body_upload_avatar_api_groups_avatar__group_uuid__post'
+    title: 'Body_upload_avatar_api_groups_avatar__group_id__post'
 } as const;
 
-export const $Body_upload_avatar_api_users_avatar__group_uuid__post = {
+export const $Body_upload_avatar_api_users_avatar__group_id__post = {
     properties: {
         image: {
             type: 'string',
@@ -167,10 +167,10 @@ export const $Body_upload_avatar_api_users_avatar__group_uuid__post = {
     },
     type: 'object',
     required: ['image'],
-    title: 'Body_upload_avatar_api_users_avatar__group_uuid__post'
+    title: 'Body_upload_avatar_api_users_avatar__group_id__post'
 } as const;
 
-export const $Body_upload_panorama_api_groups_panorama__group_uuid__post = {
+export const $Body_upload_panorama_api_groups_panorama__group_id__post = {
     properties: {
         image: {
             type: 'string',
@@ -180,7 +180,7 @@ export const $Body_upload_panorama_api_groups_panorama__group_uuid__post = {
     },
     type: 'object',
     required: ['image'],
-    title: 'Body_upload_panorama_api_groups_panorama__group_uuid__post'
+    title: 'Body_upload_panorama_api_groups_panorama__group_id__post'
 } as const;
 
 export const $Body_verify_request_token_api_auth_request_verify_token_post = {
@@ -247,7 +247,9 @@ export const $CreateMessageSchema = {
     properties: {
         message: {
             type: 'string',
-            title: 'Message'
+            maxLength: 2000,
+            title: 'Message',
+            description: 'Message must be less than 2000 characters'
         },
         user_id: {
             anyOf: [
@@ -265,27 +267,11 @@ export const $CreateMessageSchema = {
             type: 'string',
             format: 'uuid',
             title: 'To Chat Id'
-        },
-        is_group: {
-            type: 'boolean',
-            title: 'Is Group'
         }
     },
     type: 'object',
-    required: ['message', 'to_chat_id', 'is_group'],
+    required: ['message', 'to_chat_id'],
     title: 'CreateMessageSchema'
-} as const;
-
-export const $CreatePersonalChatSchema = {
-    properties: {
-        title: {
-            type: 'string',
-            title: 'Title'
-        }
-    },
-    type: 'object',
-    required: ['title'],
-    title: 'CreatePersonalChatSchema'
 } as const;
 
 export const $CreateRoleGroupSchema = {
@@ -452,7 +438,9 @@ export const $ReadMessageSchema = {
         },
         message: {
             type: 'string',
-            title: 'Message'
+            maxLength: 2000,
+            title: 'Message',
+            description: 'Message must be less than 2000 characters'
         },
         user_id: {
             type: 'string',
@@ -463,10 +451,6 @@ export const $ReadMessageSchema = {
             type: 'string',
             format: 'uuid',
             title: 'To Chat Id'
-        },
-        is_group: {
-            type: 'boolean',
-            title: 'Is Group'
         },
         created_at: {
             type: 'string',
@@ -486,30 +470,8 @@ export const $ReadMessageSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'id_in_chat', 'message', 'user_id', 'to_chat_id', 'is_group', 'created_at'],
+    required: ['id', 'id_in_chat', 'message', 'user_id', 'to_chat_id', 'created_at'],
     title: 'ReadMessageSchema'
-} as const;
-
-export const $ReadPersonalChatSchema = {
-    properties: {
-        id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Id'
-        },
-        title: {
-            type: 'string',
-            title: 'Title'
-        },
-        created_at: {
-            type: 'string',
-            format: 'date-time',
-            title: 'Created At'
-        }
-    },
-    type: 'object',
-    required: ['id', 'title', 'created_at'],
-    title: 'ReadPersonalChatSchema'
 } as const;
 
 export const $ReadRoleGroupSchema = {
@@ -603,36 +565,20 @@ export const $UpdateMessageSchema = {
         message: {
             anyOf: [
                 {
-                    type: 'string'
+                    type: 'string',
+                    maxLength: 2000
                 },
                 {
                     type: 'null'
                 }
             ],
-            title: 'Message'
+            title: 'Message',
+            description: 'Message must be less than 2000 characters'
         }
     },
     type: 'object',
     required: ['message'],
     title: 'UpdateMessageSchema'
-} as const;
-
-export const $UpdatePersonalChatSchema = {
-    properties: {
-        title: {
-            anyOf: [
-                {
-                    type: 'string'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Title'
-        }
-    },
-    type: 'object',
-    title: 'UpdatePersonalChatSchema'
 } as const;
 
 export const $UpdateRoleGroupSchema = {

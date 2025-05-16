@@ -16,6 +16,7 @@ from src.role_group.router import router as role_group_router
 # set settings and color for logging
 setup_logging()
 logging.getLogger("pymongo").setLevel(logging.INFO)
+logging.getLogger("multipart").setLevel(logging.INFO)
 
 
 @asynccontextmanager

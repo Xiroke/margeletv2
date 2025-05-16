@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
@@ -10,7 +11,7 @@ from config import settings
 from src.auth.users import current_active_user
 from src.db.database import get_async_session
 from src.db.models import UserModel
-from src.infrastructure.s3 import s3_bucket_service_factory
+from src.infrastructure.s3 import S3BucketService, s3_bucket_service_factory
 from src.user.dao import UserDAO
 from src.utils.image_utils import save_image_in_s3
 
@@ -18,21 +19,33 @@ from .dao import GroupDAO
 from .models import GroupModel
 from .schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/groups", tags=["group"])
 
 
 @router.get("/avatar/{group_id}")
 async def get_avatar(
-    group_id: UUID, s3: Annotated[s3_bucket_service_factory, Depends()]
-):
-    response = await s3.get_file_object(f"groups/{group_id}.jpg")
+    group_id: UUID,
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+    s3: Annotated[S3BucketService, Depends(s3_bucket_service_factory)],
+) -> Response:
+    group: GroupModel | None = await GroupDAO.get_one_or_none_by_field(
+        session, id=group_id
+    )
+
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    if not group.avatar_path:
+        raise HTTPException(status_code=404, detail="Avatar not found")
+
+    response = await s3.get_file_object("groups", f"{group_id}_avatar.jpg")
 
     if response is None:
         raise HTTPException(status_code=404, detail="Avatar not found")
 
-    image = await response.read()
-
-    return Response(content=image, media_type="image/png")
+    return Response(content=response, media_type="image/png")
 
 
 @router.post("/avatar/{group_id}")
@@ -40,25 +53,35 @@ async def upload_avatar(
     group_id: UUID,
     image: UploadFile,
     session: Annotated[AsyncSession, Depends(get_async_session)],
-    s3: Annotated[s3_bucket_service_factory, Depends()],
+    s3: Annotated[S3BucketService, Depends(s3_bucket_service_factory)],
 ):
-    prefix = await save_image_in_s3("groups", group_id, image, s3)
+    prefix = await save_image_in_s3("groups", str(group_id) + "_avatar", image, s3)
     await GroupDAO.update(session, {"avatar_path": prefix}, id=group_id)
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
 @router.get("/panorama/{group_id}")
 async def load_panorama(
-    group_id: UUID, s3: Annotated[s3_bucket_service_factory, Depends()]
-):
-    response = await s3.get_file_object(f"groups/{group_id}.jpg")
+    group_id: UUID,
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+    s3: Annotated[S3BucketService, Depends(s3_bucket_service_factory)],
+) -> Response:
+    group: GroupModel | None = await GroupDAO.get_one_or_none_by_field(
+        session, id=group_id
+    )
+
+    if group is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    if not group.panorama_path:
+        raise HTTPException(status_code=404, detail="Avatar not found")
+
+    response = await s3.get_file_object("groups", f"{group_id}_panorama.jpg")
 
     if response is None:
         raise HTTPException(status_code=404, detail="Avatar not found")
 
-    image = await response.read()
-
-    return Response(content=image, media_type="image/png")
+    return Response(content=response, media_type="image/png")
 
 
 @router.post("/panorama/{group_id}")
@@ -66,9 +89,9 @@ async def upload_panorama(
     group_id: UUID,
     image: UploadFile,
     session: Annotated[AsyncSession, Depends(get_async_session)],
-    s3: Annotated[s3_bucket_service_factory, Depends()],
+    s3: Annotated[S3BucketService, Depends(s3_bucket_service_factory)],
 ):
-    prefix = await save_image_in_s3("groups", group_id, image, s3)
+    prefix = await save_image_in_s3("groups", str(group_id) + "_panorama", image, s3)
     await GroupDAO.update(session, {"panorama_path": prefix}, id=group_id)
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 

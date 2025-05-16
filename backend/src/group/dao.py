@@ -13,7 +13,7 @@ class GroupDAO(DAOBase):
     model = GroupModel
 
     @classmethod
-    async def create(cls, session, obj: GroupModel, user_id: UUID):
+    async def create(cls, session, obj, user_id: UUID):
         session.add(obj)
 
         await session.flush()

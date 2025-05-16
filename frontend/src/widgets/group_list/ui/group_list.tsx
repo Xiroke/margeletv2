@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import GroupCard from "@/entities/group/ui";
 import styles from "./group_list.module.scss";
-import { useAppDispatch } from "@/shared/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 import { setGroupData } from "@/entities/group/model/slice";
 import { apiGroup, ReadGroupSchema } from "@/entities/group/model";
 import { setChatId } from "@/entities/chat/model/slice";
@@ -16,19 +16,26 @@ export const GroupList = ({ className }: GroupListProps) => {
   const { data }: { data: ReadGroupSchema[] | undefined } =
     apiGroup.getMyGroups();
 
+  const searchQuery = useAppSelector((state) => state.group.search_query);
+
   const onClick = (id: string, title: string) => {
     dispatch(setGroupData({ id, title }));
     dispatch(setChatId(null));
   };
 
+  const filteredData = searchQuery
+    ? data?.filter((value) => value.title.includes(searchQuery))
+    : data;
+
   return (
     <div className={clsx(styles.groups, className)}>
-      {data &&
-        data.map((item) => (
+      {filteredData &&
+        filteredData.map((item) => (
           <GroupCard
-            key={item.id}
+            key={item.title}
             id={item.id}
             onClick={() => onClick(item.id, item.title)}
+            data={item}
           />
         ))}
     </div>

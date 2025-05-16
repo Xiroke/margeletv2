@@ -1,7 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode, useState, StrictMode } from "react";
+import { ReactNode, useState, StrictMode, useEffect } from "react";
 import { Provider } from "react-redux";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -21,6 +21,29 @@ OpenAPIConfig.WITH_CREDENTIALS = true;
 export function Providers({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [queryClient] = useState(() => new QueryClient({}));
+
+  useEffect(() => {
+    if (typeof window == "undefined") {
+      return;
+    }
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((reg) => console.log("Service Worker registered"))
+        .catch((err) => console.error("Service Worker registration failed"));
+
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.active.postMessage({
+          type: "SET_PARAMS",
+          payload: {
+            ALLOWED_ORIGINS: [settings.NEXT_PUBLIC_API_URL],
+            ALLOWED_CACHED_PATHS: settings.NEXT_PUBLIC_ALLOWED_CACHED_PATHS,
+          },
+        });
+      });
+    }
+  }, []);
 
   return (
     <StrictMode>

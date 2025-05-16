@@ -33,15 +33,15 @@ export type Body_reset_reset_password_api_auth_reset_password_post = {
     password: string;
 };
 
-export type Body_upload_avatar_api_groups_avatar__group_uuid__post = {
+export type Body_upload_avatar_api_groups_avatar__group_id__post = {
     image: (Blob | File);
 };
 
-export type Body_upload_avatar_api_users_avatar__group_uuid__post = {
+export type Body_upload_avatar_api_users_avatar__group_id__post = {
     image: (Blob | File);
 };
 
-export type Body_upload_panorama_api_groups_panorama__group_uuid__post = {
+export type Body_upload_panorama_api_groups_panorama__group_id__post = {
     image: (Blob | File);
 };
 
@@ -63,14 +63,12 @@ export type CreateGroupSchema = {
 };
 
 export type CreateMessageSchema = {
+    /**
+     * Message must be less than 2000 characters
+     */
     message: string;
     user_id?: string | null;
     to_chat_id: string;
-    is_group: boolean;
-};
-
-export type CreatePersonalChatSchema = {
-    title: string;
 };
 
 export type CreateRoleGroupSchema = {
@@ -109,18 +107,14 @@ export type ReadGroupSchema = {
 export type ReadMessageSchema = {
     id: string;
     id_in_chat: number;
+    /**
+     * Message must be less than 2000 characters
+     */
     message: string;
     user_id: string;
     to_chat_id: string;
-    is_group: boolean;
     created_at: string;
     author?: string | null;
-};
-
-export type ReadPersonalChatSchema = {
-    id: string;
-    title: string;
-    created_at: string;
 };
 
 export type ReadRoleGroupSchema = {
@@ -143,11 +137,10 @@ export type UpdateGroupSchema = {
 };
 
 export type UpdateMessageSchema = {
+    /**
+     * Message must be less than 2000 characters
+     */
     message: string | null;
-};
-
-export type UpdatePersonalChatSchema = {
-    title?: string | null;
 };
 
 export type UpdateRoleGroupSchema = {
@@ -190,18 +183,18 @@ export type ValidationError = {
     type: string;
 };
 
-export type GetApiUsersAvatarByGroupUuidData = {
-    groupUuid: string;
+export type GetApiUsersAvatarByGroupIdData = {
+    groupId: string;
 };
 
-export type GetApiUsersAvatarByGroupUuidResponse = unknown;
+export type GetApiUsersAvatarByGroupIdResponse = unknown;
 
-export type PostApiUsersAvatarByGroupUuidData = {
-    formData: Body_upload_avatar_api_users_avatar__group_uuid__post;
-    groupUuid: string;
+export type PostApiUsersAvatarByGroupIdData = {
+    formData: Body_upload_avatar_api_users_avatar__group_id__post;
+    groupId: string;
 };
 
-export type PostApiUsersAvatarByGroupUuidResponse = unknown;
+export type PostApiUsersAvatarByGroupIdResponse = unknown;
 
 export type GetApiUsersMeResponse = UserRead;
 
@@ -274,31 +267,31 @@ export type GetApiAuthenticatedRouteResponse = unknown;
 
 export type GetApiResponse = unknown;
 
-export type GetApiGroupsAvatarByGroupUuidData = {
-    groupUuid: string;
+export type GetApiGroupsAvatarByGroupIdData = {
+    groupId: string;
 };
 
-export type GetApiGroupsAvatarByGroupUuidResponse = unknown;
+export type GetApiGroupsAvatarByGroupIdResponse = unknown;
 
-export type PostApiGroupsAvatarByGroupUuidData = {
-    formData: Body_upload_avatar_api_groups_avatar__group_uuid__post;
-    groupUuid: string;
+export type PostApiGroupsAvatarByGroupIdData = {
+    formData: Body_upload_avatar_api_groups_avatar__group_id__post;
+    groupId: string;
 };
 
-export type PostApiGroupsAvatarByGroupUuidResponse = unknown;
+export type PostApiGroupsAvatarByGroupIdResponse = unknown;
 
-export type GetApiGroupsPanoramaByGroupUuidData = {
-    groupUuid: string;
+export type GetApiGroupsPanoramaByGroupIdData = {
+    groupId: string;
 };
 
-export type GetApiGroupsPanoramaByGroupUuidResponse = unknown;
+export type GetApiGroupsPanoramaByGroupIdResponse = unknown;
 
-export type PostApiGroupsPanoramaByGroupUuidData = {
-    formData: Body_upload_panorama_api_groups_panorama__group_uuid__post;
-    groupUuid: string;
+export type PostApiGroupsPanoramaByGroupIdData = {
+    formData: Body_upload_panorama_api_groups_panorama__group_id__post;
+    groupId: string;
 };
 
-export type PostApiGroupsPanoramaByGroupUuidResponse = unknown;
+export type PostApiGroupsPanoramaByGroupIdResponse = unknown;
 
 export type GetApiGroupsInviteByGroupIdData = {
     groupId: string;
@@ -320,55 +313,30 @@ export type GetApiGroupsUserGroupsByUserIdData = {
 
 export type GetApiGroupsUserGroupsByUserIdResponse = unknown;
 
-export type GetApiGroupsByGroupUuidData = {
-    groupUuid: string;
+export type GetApiGroupsByGroupIdData = {
+    groupId: string;
 };
 
-export type GetApiGroupsByGroupUuidResponse = ReadGroupSchema;
+export type GetApiGroupsByGroupIdResponse = ReadGroupSchema;
 
-export type PatchApiGroupsByGroupUuidData = {
-    groupUuid: string;
+export type PatchApiGroupsByGroupIdData = {
+    groupId: string;
     requestBody: UpdateGroupSchema;
 };
 
-export type PatchApiGroupsByGroupUuidResponse = unknown;
+export type PatchApiGroupsByGroupIdResponse = unknown;
 
-export type DeleteApiGroupsByGroupUuidData = {
-    groupUuid: string;
+export type DeleteApiGroupsByGroupIdData = {
+    groupId: string;
 };
 
-export type DeleteApiGroupsByGroupUuidResponse = unknown;
+export type DeleteApiGroupsByGroupIdResponse = unknown;
 
 export type PostApiGroupsData = {
     requestBody: CreateGroupSchema;
 };
 
 export type PostApiGroupsResponse = unknown;
-
-export type GetApiPersonalChatsByPersonalChatUuidData = {
-    personalChatUuid: string;
-};
-
-export type GetApiPersonalChatsByPersonalChatUuidResponse = ReadPersonalChatSchema;
-
-export type PatchApiPersonalChatsByPersonalChatUuidData = {
-    personalChatUuid: string;
-    requestBody: UpdatePersonalChatSchema;
-};
-
-export type PatchApiPersonalChatsByPersonalChatUuidResponse = unknown;
-
-export type DeleteApiPersonalChatsByPersonalChatUuidData = {
-    personalChatUuid: string;
-};
-
-export type DeleteApiPersonalChatsByPersonalChatUuidResponse = unknown;
-
-export type PostApiPersonalChatsData = {
-    requestBody: CreatePersonalChatSchema;
-};
-
-export type PostApiPersonalChatsResponse = unknown;
 
 export type GetApiChatsChatsMeResponse = unknown;
 
@@ -461,9 +429,9 @@ export type PostApiMessagesData = {
 export type PostApiMessagesResponse = unknown;
 
 export type $OpenApiTs = {
-    '/api/users/avatar/{group_uuid}': {
+    '/api/users/avatar/{group_id}': {
         get: {
-            req: GetApiUsersAvatarByGroupUuidData;
+            req: GetApiUsersAvatarByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -476,7 +444,7 @@ export type $OpenApiTs = {
             };
         };
         post: {
-            req: PostApiUsersAvatarByGroupUuidData;
+            req: PostApiUsersAvatarByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -763,12 +731,12 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/groups/avatar/{group_uuid}': {
+    '/api/groups/avatar/{group_id}': {
         get: {
-            req: GetApiGroupsAvatarByGroupUuidData;
+            req: GetApiGroupsAvatarByGroupIdData;
             res: {
                 /**
-                 * Successful Response
+                 * Returns the avatar image
                  */
                 200: unknown;
                 /**
@@ -778,7 +746,7 @@ export type $OpenApiTs = {
             };
         };
         post: {
-            req: PostApiGroupsAvatarByGroupUuidData;
+            req: PostApiGroupsAvatarByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -791,12 +759,12 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/groups/panorama/{group_uuid}': {
+    '/api/groups/panorama/{group_id}': {
         get: {
-            req: GetApiGroupsPanoramaByGroupUuidData;
+            req: GetApiGroupsPanoramaByGroupIdData;
             res: {
                 /**
-                 * Successful Response
+                 * Returns the panorama image
                  */
                 200: unknown;
                 /**
@@ -806,7 +774,7 @@ export type $OpenApiTs = {
             };
         };
         post: {
-            req: PostApiGroupsPanoramaByGroupUuidData;
+            req: PostApiGroupsPanoramaByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -874,9 +842,9 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/groups/{group_uuid}': {
+    '/api/groups/{group_id}': {
         get: {
-            req: GetApiGroupsByGroupUuidData;
+            req: GetApiGroupsByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -889,7 +857,7 @@ export type $OpenApiTs = {
             };
         };
         patch: {
-            req: PatchApiGroupsByGroupUuidData;
+            req: PatchApiGroupsByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -902,7 +870,7 @@ export type $OpenApiTs = {
             };
         };
         delete: {
-            req: DeleteApiGroupsByGroupUuidData;
+            req: DeleteApiGroupsByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -918,62 +886,6 @@ export type $OpenApiTs = {
     '/api/groups/': {
         post: {
             req: PostApiGroupsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/personal_chats/{personal_chat_uuid}': {
-        get: {
-            req: GetApiPersonalChatsByPersonalChatUuidData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ReadPersonalChatSchema;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: PatchApiPersonalChatsByPersonalChatUuidData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: DeleteApiPersonalChatsByPersonalChatUuidData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/personal_chats/': {
-        post: {
-            req: PostApiPersonalChatsData;
             res: {
                 /**
                  * Successful Response

@@ -5,8 +5,12 @@
   --second: #c4e0ef;
 }
 
+::-webkit-scrollbar-button {
+  content: none;
+}
+
 body {
-  font-family: Roboto, Arial, sans-serif;
+  font-family: Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
@@ -34,4 +38,9 @@ a {
   padding: 5px;
   border-radius: 5px;
   background-color: var(--primary-background);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--second);
+  }
 }

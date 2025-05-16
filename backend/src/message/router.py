@@ -1,7 +1,15 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, Query, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Body,
+    Depends,
+    Query,
+    WebSocket,
+    WebSocketDisconnect,
+    WebSocketException,
+)
 from fastapi.responses import JSONResponse
 from fastapi_users.authentication import JWTStrategy
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -128,7 +136,11 @@ class ConnectionManager:
 
         del self.active_connections[user_id]
         for chat_id in chats_id:
-            self.chats_connections[chat_id].remove(user_id)
+            try:
+                self.chats_connections[chat_id].remove(user_id)
+            # TODO FIX IT
+            except Exception:
+                pass
 
     async def broadcast(self, user: UserModel, raw_message: CreateMessageSchema):
         """Send message to all users of current chat (from message)"""
@@ -162,13 +174,15 @@ async def websocket_endpoint(
     websocket: WebSocket,
     access_token: Annotated[str, Query()],
 ):
+    user_db = await anext(get_user_db(session))
+    user_manager = await anext(get_user_manager(user_db))
     user: UserModel | None = await jwt_strategy.read_token(
         access_token,
-        user_manager=await anext(get_user_manager(await anext(get_user_db(session)))),
+        user_manager=user_manager,
     )
 
     if user is None:
-        pass
+        raise WebSocketException(401, "Unauthorized")
 
     chats_id = await ChatDAO.get_all_chats_by_user(session, user.id)
     await connection_manager_users.connect(websocket, user.id, chats_id)

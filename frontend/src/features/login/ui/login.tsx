@@ -14,25 +14,27 @@ export const LoginForm = ({}: LoginFormProps) => {
   const loginApi = apiLogin.login();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loginApi.isSuccess) {
-      return;
-    }
-    //when get response after communiction, we redirect a user
-    router.push("/communication");
-  }, [loginApi.isSuccess]);
-
-  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+  const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
 
-    loginApi.mutate({
-      formData: {
-        username: formData.get("email") as string,
-        password: formData.get("password") as string,
-      },
-    });
+    await loginApi
+      .mutateAsync({
+        formData: {
+          username: formData.get("email") as string,
+          password: formData.get("password") as string,
+        },
+      })
+      .then((data) => {
+        console.log(data);
+        router.push("/communication");
+      })
+      .catch((reason) => {
+        console.log(
+          reason.status == 400 && alert("Вы ввели неверную почту или пароль")
+        );
+      });
   };
 
   return (

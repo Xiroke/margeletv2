@@ -1,33 +1,41 @@
 import {
-  useGroupServiceGetApiGroupsByGroupUuid,
-  useGroupServiceGetApiGroupsAvatarByGroupUuid,
-  useGroupServiceGetApiGroupsPanoramaByGroupUuid,
-  useGroupServiceDeleteApiGroupsByGroupUuid,
-  useGroupServicePatchApiGroupsByGroupUuid,
+  useGroupServiceGetApiGroupsByGroupId,
+  useGroupServiceGetApiGroupsAvatarByGroupId,
+  useGroupServiceGetApiGroupsPanoramaByGroupId,
+  useGroupServiceDeleteApiGroupsByGroupId,
+  useGroupServicePatchApiGroupsByGroupId,
   useGroupServicePostApiGroups,
-  useGroupServicePostApiGroupsAvatarByGroupUuid,
-  useGroupServicePostApiGroupsPanoramaByGroupUuid,
+  useGroupServicePostApiGroupsAvatarByGroupId,
+  useGroupServicePostApiGroupsPanoramaByGroupId,
   useGroupServiceGetApiGroupsInviteByGroupId,
   useGroupServicePostApiGroupsInvite,
   useGroupServiceGetApiGroupsUserGroupsMe,
   useGroupServiceGetApiGroupsUserGroupsByUserId,
   useGroupServiceGetApiGroupsUserGroupsMeKey,
 } from "@/shared/api/queries";
+import settings from "@/shared/config";
 
 export const apiGroup = {
-  get: useGroupServiceGetApiGroupsByGroupUuid, // GET /groups/{group_uuid}
-  delete: useGroupServiceDeleteApiGroupsByGroupUuid, // DELETE /groups/{group_uuid}
-  patch: useGroupServicePatchApiGroupsByGroupUuid, // PATCH /groups/{group_uuid}
-  post: useGroupServicePostApiGroups, // POST /groups/{group_uuid}
-  loadAvatar: useGroupServiceGetApiGroupsAvatarByGroupUuid, // GET /groups/avatar/{group_uuid}
-  loadPanorama: useGroupServiceGetApiGroupsPanoramaByGroupUuid, // GET /groups/panorama/{group_uuid}
-  uploadAvatar: useGroupServicePostApiGroupsAvatarByGroupUuid, // POST /groups/avatar/{group_uuid}
-  uploadPanorama: useGroupServicePostApiGroupsPanoramaByGroupUuid, // POST /groups/panorama/{group_uuid}
-  getInviteToken: useGroupServiceGetApiGroupsInviteByGroupId, // GET /groups/invite/{group_uuid}
-  postInviteToken: useGroupServicePostApiGroupsInvite, // POST /groups/invite/{group_uuid}
-  getMyGroups: useGroupServiceGetApiGroupsUserGroupsMe, // GET /groups/user_groups/me
-  getGroupsByUserId: useGroupServiceGetApiGroupsUserGroupsByUserId, // GET /groups/user_groups/{user_id}
+  get: useGroupServiceGetApiGroupsByGroupId,
+  delete: useGroupServiceDeleteApiGroupsByGroupId,
+  patch: useGroupServicePatchApiGroupsByGroupId,
+  post: useGroupServicePostApiGroups,
+  loadAvatar: useGroupServiceGetApiGroupsAvatarByGroupId,
+  uploadAvatar: useGroupServicePostApiGroupsAvatarByGroupId,
+  uploadPanorama: useGroupServicePostApiGroupsPanoramaByGroupId,
+  getInviteToken: useGroupServiceGetApiGroupsInviteByGroupId,
+  postInviteToken: useGroupServicePostApiGroupsInvite,
+  getMyGroups: useGroupServiceGetApiGroupsUserGroupsMe,
+  getGroupsByUserId: useGroupServiceGetApiGroupsUserGroupsByUserId,
   getMyGroupsKey: useGroupServiceGetApiGroupsUserGroupsMeKey,
+  loadPanorama: (groupId: string) =>
+    fetch(`${settings.NEXT_PUBLIC_API_URL}/api/groups/panorama/${groupId}`, {
+      credentials: "include",
+    }).then((res) => {
+      if (!res.ok) throw new Error(res.statusText);
+      return res.blob();
+    }),
+  avatar: (groupId: string) => `/api/groups/avatar/${groupId}`,
 };
 
 export type {
