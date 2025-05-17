@@ -1,12 +1,12 @@
 import { HTMLAttributes } from "react";
 
 import styles from "./user_card.module.scss";
-import { apiUser } from "../model";
+import { useApiUser } from "../model";
 
 export interface UserCardProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const UserCard = ({ ...props }: UserCardProps) => {
-  const { data } = apiUser.get();
+  const { data } = useApiUser.get();
 
   if (!data) {
     return null;

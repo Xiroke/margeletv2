@@ -15,7 +15,7 @@ client = TestClient(app)
 async def test_create_group(session):
     response = client.post("/api/groups", json={"title": "Group"})
     assert response.status_code == 200
-    group_db = await GroupDAO.get_one_by_field(session, title="Group")
+    group_db = await GroupDAO.get_one_or_none_by_field(session, title="Group")
     assert group_db.title == "Group"
 
 
@@ -40,7 +40,7 @@ async def test_delete_group(session, group):
     assert response.status_code == 200
 
     with pytest.raises(HTTPException):
-        await GroupDAO.get_one_by_field(session, id=group.id)
+        await GroupDAO.get_one_or_none_by_field(session, id=group.id)
 
 
 @pytest.mark.asyncio

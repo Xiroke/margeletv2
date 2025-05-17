@@ -12,6 +12,8 @@ class BaseTokenSchema(BaseModel):
     user_id: UUID
     created_at: datetime
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class ReadTokenSchema(BaseTokenSchema):
-    model_config = ConfigDict(from_attributes=True)
+    pass

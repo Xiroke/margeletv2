@@ -3,7 +3,7 @@ import { HTMLAttributes } from "react";
 
 import styles from "./group_settings.module.scss";
 import Container from "@/shared/ui/container";
-import { apiGroup } from "@/entities/group/model";
+import { useApiGroup } from "@/entities/group/model";
 import ImageUploader from "@/shared/ui/image_uploader";
 import { useAppSelector } from "@/shared/lib/hooks";
 import { useRouter } from "next/navigation";
@@ -14,8 +14,8 @@ export interface GroupSettingsProps extends HTMLAttributes<HTMLDivElement> {}
 export const GroupSettings = ({}: GroupSettingsProps) => {
   const groupId = useAppSelector((state) => state.group.id);
   const router = useRouter();
-  const uploadAvatar = apiGroup.uploadAvatar();
-  const uploadPanorama = apiGroup.uploadPanorama();
+  const uploadAvatar = useApiGroup.uploadAvatar();
+  const uploadPanorama = useApiGroup.uploadPanorama();
 
   const uploadAvatarCallback = (file: File) => {
     if (!groupId) {

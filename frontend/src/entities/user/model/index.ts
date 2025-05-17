@@ -4,7 +4,7 @@ import {
   useUsersServiceGetApiUsersMe,
 } from "@/shared/api/queries";
 
-export const apiUser = {
+export const useApiUser = {
   getAvatar: useUsersServiceGetApiUsersAvatarByGroupId,
   getUserById: useUsersServiceGetApiUsersById,
   get: useUsersServiceGetApiUsersMe,

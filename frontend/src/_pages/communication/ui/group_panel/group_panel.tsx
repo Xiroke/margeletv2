@@ -9,9 +9,9 @@ import { useAppSelector } from "@/shared/lib/hooks";
 import ChatList from "@/widgets/chat_list/ui";
 import GroupDropdown from "../group_dropdown";
 import DialogCreateChat from "../dialog_create_chat";
-import { apiChat } from "@/entities/chat/model";
+import { useApiChat } from "@/entities/chat/model";
 import useMediaQuery from "@/shared/lib/hooks/use_media_query";
-import { apiGroup } from "@/entities/group/model";
+import { useApiGroup } from "@/entities/group/model";
 
 export interface GroupPanelProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -25,7 +25,7 @@ export const GroupPanel = ({ className }: GroupPanelProps) => {
   const groupName = useAppSelector((state) => state.group.title);
   const panorama_path = useAppSelector((state) => state.group.panorama_path);
   const [panoramaUrl, setPanoramaUrl] = useState<string | null>(null);
-  const { mutateAsync } = apiChat.create();
+  const { mutateAsync } = useApiChat.create();
   const isLaptop = useMediaQuery("(min-width: 1024px)");
 
   if (!groupId) {
@@ -38,7 +38,7 @@ export const GroupPanel = ({ className }: GroupPanelProps) => {
     }
 
     const load = async () => {
-      const result = await apiGroup.loadPanorama(groupId);
+      const result = await useApiGroup.loadPanorama(groupId);
 
       const url = URL.createObjectURL(result);
       setPanoramaUrl(url);
@@ -55,7 +55,7 @@ export const GroupPanel = ({ className }: GroupPanelProps) => {
     await mutateAsync({ groupId, requestBody: { title: value } });
 
     queryClient.invalidateQueries({
-      queryKey: [apiChat.getGroupChatsKey, { groupId: groupId }],
+      queryKey: [useApiChat.getGroupChatsKey, { groupId: groupId }],
     });
   };
 

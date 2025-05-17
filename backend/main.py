@@ -46,6 +46,10 @@ app.include_router(prefix="/api", router=chat_router)
 app.include_router(prefix="/api", router=role_group_router)
 app.include_router(prefix="/api", router=message_router)
 
+from src.group_clean.router import router as group_clean_router
+
+app.include_router(prefix="/api", router=group_clean_router)
+
 
 @app.get("/api")
 def ping():

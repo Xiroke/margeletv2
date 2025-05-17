@@ -21,7 +21,9 @@ import clsx from "clsx";
 export interface CommunicationProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const Communication = ({}: CommunicationProps) => {
-  const isTablet = useMediaQuery("(min-width: 768px)");
+  const isTablet = useMediaQuery("(min-width: 768px)", {
+    initializeWithValue: false,
+  });
   const groupId = useAppSelector((state) => state.group.id);
   const { data, isLoading } = apiAuth.getAccessToken(undefined, {
     retry: 2,

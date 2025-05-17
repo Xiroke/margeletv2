@@ -15,9 +15,11 @@ class BaseRoleGroupSchema(BaseModel):
     group_id: UUID
     created_at: datetime
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class ReadRoleGroupSchema(BaseRoleGroupSchema):
-    model_config = ConfigDict(from_attributes=True)
+    pass
 
 
 class CreateRoleGroupSchema(BaseModel):

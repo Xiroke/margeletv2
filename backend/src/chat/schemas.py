@@ -11,10 +11,11 @@ class BaseChatSchema(BaseModel):
     title: str
     created_at: datetime
     group_id: UUID
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ReadChatSchema(BaseChatSchema):
-    model_config = ConfigDict(from_attributes=True)
+    pass
 
 
 class CreateChatSchema(BaseModel):

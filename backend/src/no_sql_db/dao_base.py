@@ -13,7 +13,7 @@ class NoSqlDAOBase[T: Document](ABC):
         return result
 
     @classmethod
-    async def get_one_by_field(cls, *filter) -> T | None:
+    async def get_one_or_none_by_field(cls, *filter) -> T | None:
         result = await cls.model.find_one(*filter, fetch_links=True)
         return result
 

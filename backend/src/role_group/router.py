@@ -19,7 +19,7 @@ router = APIRouter(prefix="/roles_group", tags=["role_group"])
 async def get_role_group(
     role_group_id: int, session: Annotated[AsyncSession, Depends(get_async_session)]
 ) -> ReadRoleGroupSchema:
-    return await RoleGroupDAO.get_one_by_field(session, id=role_group_id)
+    return await RoleGroupDAO.get_one_or_none_by_field(session, id=role_group_id)
 
 
 @router.post("/")

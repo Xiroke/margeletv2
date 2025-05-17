@@ -38,7 +38,7 @@ async def get_group_chats(
 async def get_chat(
     chat_uuid: UUID, session: Annotated[AsyncSession, Depends(get_async_session)]
 ) -> ReadChatSchema:
-    return await ChatDAO.get_one_by_field(session, id=chat_uuid)
+    return await ChatDAO.get_one_or_none_by_field(session, id=chat_uuid)
 
 
 @router.post("/{group_id}")

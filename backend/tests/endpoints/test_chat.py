@@ -17,7 +17,7 @@ async def test_create_chat(session, group):
         "/api/chats", json={"title": "chat", "group_id": str(group.id)}
     )
     assert response.status_code == 200
-    chat_db = await ChatDAO.get_one_by_field(session, title="chat")
+    chat_db = await ChatDAO.get_one_or_none_by_field(session, title="chat")
     assert chat_db.title == "chat"
 
 
@@ -42,4 +42,4 @@ async def test_delete_chat(session, chat):
     assert response.status_code == 200
 
     with pytest.raises(HTTPException):
-        await ChatDAO.get_one_by_field(session, id=chat.id)
+        await ChatDAO.get_one_or_none_by_field(session, id=chat.id)

@@ -7,7 +7,7 @@ import {
   useMessagesServicePostApiMessages,
 } from "@/shared/api/queries";
 
-export const apiMessage = {
+export const useApiMessage = {
   get: useMessagesServiceGetApiMessagesByMessageId,
   getAllMessageChat: useMessagesServiceGetApiMessagesChatByChatId,
   create: useMessagesServicePostApiMessages,

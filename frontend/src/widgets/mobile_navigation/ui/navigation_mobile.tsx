@@ -8,6 +8,7 @@ import UserCard from "@/entities/user/ui";
 export interface NavigationMobileProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const NavigationMobile = ({}: NavigationMobileProps) => {
+  // the panel on the top of window for mobile with additional logic
   return (
     <div className={styles["navigation_mobile"]}>
       <UserDropdown>

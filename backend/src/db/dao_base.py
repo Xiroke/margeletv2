@@ -1,52 +1,72 @@
-from typing import Sequence
+from abc import ABC, abstractmethod
+from typing import Any
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.utils.exc_handler import MapNoResultFound, handle_error
-
-from .database import Base
+from src.db.models import Base
 
 
-class DAOBase[T: Base]:
-    model: type[T]
+class DAOBase[T](ABC):
+    """Abstract class for DAO"""
 
-    @classmethod
-    @handle_error([MapNoResultFound])
-    async def get_one_by_field(cls, session: AsyncSession, **filter):
-        result = await session.execute(select(cls.model).filter_by(**filter))
-        return result.scalars().one()
+    @abstractmethod
+    async def get_one_or_none_by_field(self, **filter: Any) -> T | None:
+        pass
 
-    @classmethod
-    async def get_one_or_none_by_field(
-        cls, session: AsyncSession, **filter
-    ) -> T | None:
-        result = await session.execute(select(cls.model).filter_by(**filter))
+    @abstractmethod
+    async def get_all_by_field(self, **filter: Any) -> list[T]:
+        pass
+
+    @abstractmethod
+    async def get_all(self) -> list[T]:
+        pass
+
+    @abstractmethod
+    async def create(self, obj: Any) -> T:
+        pass
+
+    @abstractmethod
+    async def update(self, values: dict, **filter: Any) -> T:
+        pass
+
+    @abstractmethod
+    async def delete(self, obj: Any) -> None:
+        pass
+
+
+class SQLAlchemyDAO[SM: Base](DAOBase[SM]):
+    "SQLAlchemy implementation of DAO"
+
+    def __init__(self, session: AsyncSession, model: type[SM]):
+        self.session = session
+        self.model = model
+
+    async def get_one_or_none_by_field(self, **filter) -> SM | None:
+        result = await self.session.execute(select(self.model).filter_by(**filter))
         return result.scalars().one_or_none()
 
-    @classmethod
-    async def get_all_by_field(cls, session: AsyncSession, **filter) -> Sequence[T]:
-        result = await session.execute(select(cls.model).filter_by(**filter))
-        return result.scalars().all()
+    async def get_all_by_field(self, **filter) -> list[SM]:
+        result = await self.session.execute(select(self.model).filter_by(**filter))
+        return list(result.scalars().all())
 
-    @classmethod
-    async def get_all(cls, session: AsyncSession) -> Sequence[T]:
-        result = await session.execute(select(cls.model))
-        return result.scalars().all()
+    async def get_all(self) -> list[SM]:
+        result = await self.session.execute(select(self.model))
+        return list(result.scalars().all())
 
-    @classmethod
-    async def create(cls, session: AsyncSession, obj: T) -> T:
-        session.add(obj)
-        await session.commit()
-        await session.refresh(obj)
+    async def create(self, obj: SM) -> SM:
+        self.session.add(obj)
+        await self.session.commit()
+        await self.session.refresh(obj)
         return obj
 
-    @classmethod
-    async def update(cls, session: AsyncSession, obj: dict, **filter) -> None:
-        await session.execute(update(cls.model).filter_by(**filter).values(**obj))
-        await session.commit()
+    async def update(self, values: dict, **filter) -> SM:
+        result = await self.session.execute(
+            update(self.model).filter_by(**filter).values(**obj)
+        )
+        await self.session.commit()
+        return result.scalars().one()
 
-    @classmethod
-    async def delete(cls, session: AsyncSession, id) -> None:
-        await session.execute(delete(cls.model).filter_by(id=id))
-        await session.commit()
+    async def delete(self, id) -> None:
+        await self.session.execute(delete(self.model).filter_by(id=id))
+        await self.session.commit()

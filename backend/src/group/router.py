@@ -102,7 +102,7 @@ async def get_invite_token(
     current_user: Annotated[UserModel, Depends(current_active_user)],
     session: Annotated[AsyncSession, Depends(get_async_session)],
 ):
-    group = await GroupDAO.get_one_by_field(session, id=group_id)
+    group = await GroupDAO.get_one_or_none_by_field(session, id=group_id)
     if group is None:
         raise HTTPException(status_code=404, detail="Group not found")
     token = jwt.encode(
@@ -125,7 +125,7 @@ async def join_group(
         raise HTTPException(status_code=400, detail="Invalid token")  # noqa: B904
 
     try:
-        user_creatur_token = await UserDAO.get_one_by_field(
+        user_creatur_token = await UserDAO.get_one_or_none_by_field(
             session, id=payload["user_id"]
         )
         await GroupDAO.is_user_in_group(
@@ -162,7 +162,7 @@ async def get_user_groups(
 async def get_group(
     group_id: UUID, session: Annotated[AsyncSession, Depends(get_async_session)]
 ) -> ReadGroupSchema:
-    return await GroupDAO.get_one_by_field(session, id=group_id)
+    return await GroupDAO.get_one_or_none_by_field(session, id=group_id)
 
 
 @router.post("/")

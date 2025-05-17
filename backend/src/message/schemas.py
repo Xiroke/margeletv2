@@ -17,9 +17,11 @@ class BaseMessageSchema(BaseModel):
     created_at: datetime
     author: str | None = None  # optional must be get from IdToUserName
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class ReadMessageSchema(BaseMessageSchema):
-    model_config = ConfigDict(from_attributes=True)
+    pass
 
 
 class CreateMessageSchema(BaseModel):

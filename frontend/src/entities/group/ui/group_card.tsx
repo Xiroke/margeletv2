@@ -3,7 +3,7 @@ import { HTMLAttributes, MouseEventHandler, useEffect } from "react";
 import Image from "next/image";
 
 import styles from "./group_card.module.scss";
-import { apiGroup } from "../model";
+import { useApiGroup } from "../model";
 import { useAppDispatch } from "@/shared/lib/hooks";
 import { setPanoramaPath } from "../model/slice";
 

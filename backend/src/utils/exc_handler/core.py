@@ -26,7 +26,7 @@ def handle_error(
 
     example usage:
     @handle_error([MapNoResultFound])
-    async def get_one_by_field(cls, session: AsyncSession, **filter):
+    async def get_one_or_none_by_field(cls, session: AsyncSession, **filter):
         result = await session.execute(select(cls.model).filter_by(**filter))
         return result.scalars().one()
     """

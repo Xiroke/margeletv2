@@ -5,13 +5,13 @@ import { useState } from "react";
 
 import styles from "./group_dropdown.module.scss";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import DialogInvitation from "../dialog_invitation";
-import Button from "@/shared/ui/button";
 import Link from "next/link";
+import DialogInvitation from "../dialog_invitation";
 
 export interface GroupDropdownProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const GroupDropdown = ({ className, children }: GroupDropdownProps) => {
+  // dropdown with logic for group
   const [openDialog, setOpenDialog] = useState(false);
 
   return (

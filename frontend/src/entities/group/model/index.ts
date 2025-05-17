@@ -15,7 +15,7 @@ import {
 } from "@/shared/api/queries";
 import settings from "@/shared/config";
 
-export const apiGroup = {
+export const useApiGroup = {
   get: useGroupServiceGetApiGroupsByGroupId,
   delete: useGroupServiceDeleteApiGroupsByGroupId,
   patch: useGroupServicePatchApiGroupsByGroupId,

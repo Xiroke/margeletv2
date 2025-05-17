@@ -10,6 +10,7 @@ import clsx from "clsx";
 export interface NavigationProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const Navigation = ({ className }: NavigationProps) => {
+  // a panel on the left of window
   return (
     <div className={clsx(styles.navigation, className)}>
       <UserDropdown>

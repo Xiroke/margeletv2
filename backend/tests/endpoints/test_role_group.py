@@ -17,7 +17,7 @@ async def test_create_role_group(session, group):
         "/api/roles_group", json={"title": "Role", "group_id": str(group.id)}
     )
     assert response.status_code == 200
-    role_group_db = await RoleGroupDAO.get_one_by_field(session, title="Role")
+    role_group_db = await RoleGroupDAO.get_one_or_none_by_field(session, title="Role")
     assert role_group_db.title == "Role"
 
 
@@ -44,4 +44,4 @@ async def test_delete_role_group(session, role_group):
     assert response.status_code == 200
 
     with pytest.raises(HTTPException):
-        await RoleGroupDAO.get_one_by_field(session, id=role_group.id)
+        await RoleGroupDAO.get_one_or_none_by_field(session, id=role_group.id)

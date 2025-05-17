@@ -2,7 +2,7 @@ import { HTMLAttributes } from "react";
 import clsx from "clsx";
 
 import styles from "./chat_list.module.scss";
-import { apiChat, ReadChatSchema } from "@/entities/chat/model";
+import { useApiChat, ReadChatSchema } from "@/entities/chat/model";
 import { useAppSelector } from "@/shared/lib/hooks";
 import Chat from "@/entities/chat/ui";
 import { useAppDispatch } from "@/shared/lib/hooks";
@@ -14,12 +14,13 @@ export const ChatList = ({ className }: ChatListProps) => {
   const dispatch = useAppDispatch();
   const groupId = useAppSelector((state) => state.group.id);
 
+  // if groupId is null, then dont render
   if (!groupId) {
     return null;
   }
 
   const { data }: { data: ReadChatSchema[] | undefined } =
-    apiChat.getGroupChats({
+    useApiChat.getGroupChats({
       groupId: groupId,
     });
 

@@ -8,7 +8,7 @@ import {
   useChatServiceGetApiChatsGroupChatsByGroupIdKey,
 } from "@/shared/api/queries";
 
-export const apiChat = {
+export const useApiChat = {
   get: useChatServiceGetApiChatsByChatUuid,
   getGroupChats: useChatServiceGetApiChatsGroupChatsByGroupId,
   create: useChatServicePostApiChatsByGroupId,

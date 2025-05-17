@@ -5,7 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./dialog_invitation.module.scss";
 import InputText from "@/shared/ui/inputs/input_text";
 import Button from "@/shared/ui/button";
-import { apiGroup } from "@/entities/group/model";
+import { useApiGroup } from "@/entities/group/model";
 import { useAppSelector } from "@/shared/lib/hooks";
 import settings from "@/shared/config";
 
@@ -21,7 +21,7 @@ const DialogInvitation = ({
 }: DialogInvitationProps) => {
   const groupId = useAppSelector((state) => state.group.id);
   var { data: inivitationToken }: { data: string | undefined } =
-    apiGroup.getInviteToken({ groupId: groupId! }, undefined, {
+    useApiGroup.getInviteToken({ groupId: groupId! }, undefined, {
       enabled: !!groupId,
     });
 

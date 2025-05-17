@@ -6,7 +6,7 @@ import GroupCard from "@/entities/group/ui";
 import styles from "./group_list.module.scss";
 import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 import { setGroupData } from "@/entities/group/model/slice";
-import { apiGroup, ReadGroupSchema } from "@/entities/group/model";
+import { useApiGroup, ReadGroupSchema } from "@/entities/group/model";
 import { setChatId } from "@/entities/chat/model/slice";
 
 export interface GroupListProps extends HTMLAttributes<HTMLDivElement> {}
@@ -14,8 +14,9 @@ export interface GroupListProps extends HTMLAttributes<HTMLDivElement> {}
 export const GroupList = ({ className }: GroupListProps) => {
   const dispatch = useAppDispatch();
   const { data }: { data: ReadGroupSchema[] | undefined } =
-    apiGroup.getMyGroups();
+    useApiGroup.getMyGroups();
 
+  // filter group by name
   const searchQuery = useAppSelector((state) => state.group.search_query);
 
   const onClick = (id: string, title: string) => {

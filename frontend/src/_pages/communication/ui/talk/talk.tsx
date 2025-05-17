@@ -14,7 +14,7 @@ import config from "@/shared/config";
 import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 import Sending from "../sending";
 import Message from "@/entities/message/ui";
-import { apiMessage, ReadMessageSchema } from "@/entities/message/model";
+import { useApiMessage, ReadMessageSchema } from "@/entities/message/model";
 import { useWS } from "@/shared/lib/context";
 import { useQueryClient } from "@tanstack/react-query";
 import useMediaQuery from "@/shared/lib/hooks/use_media_query";
@@ -28,10 +28,10 @@ export const Talk = ({ className }: TalkProps) => {
   const { send, onMessage } = useWS();
   const isLaptop = useMediaQuery("(min-width: 1024px)");
   const [toBottom, setToBottom] = useState(true);
-  const [messages, setMessages] = useState();
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   const { data: messages }: { data: ReadMessageSchema[] | undefined } =
-    apiMessage.getAllMessageChat(
+    useApiMessage.getAllMessageChat(
       {
         chatId: chatId!,
       },
@@ -41,8 +41,6 @@ export const Talk = ({ className }: TalkProps) => {
       }
     );
 
-  const messagesRef = useRef<HTMLDivElement>(null);
-
   const handleScroll = () => {
     // event when get new message we scroll to the end messages
     const messages = messagesRef.current;
@@ -50,12 +48,6 @@ export const Talk = ({ className }: TalkProps) => {
     const { scrollTop, scrollHeight, clientHeight } = messages;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
 
-    console.log(
-      scrollHeight,
-      scrollTop,
-      clientHeight,
-      scrollHeight - scrollTop - clientHeight
-    );
     if (distanceFromBottom >= 500) {
       return;
     }
@@ -89,7 +81,7 @@ export const Talk = ({ className }: TalkProps) => {
   const updateMessage = (newMessage: ReadMessageSchema) => {
     // add new message to messages
     queryClient.setQueryData(
-      [apiMessage.getAllMessageChatKey, { chatId }],
+      [useApiMessage.getAllMessageChatKey, { chatId }],
       (oldData: ReadMessageSchema[] | undefined) => {
         return oldData ? [...oldData, newMessage] : [newMessage];
       }

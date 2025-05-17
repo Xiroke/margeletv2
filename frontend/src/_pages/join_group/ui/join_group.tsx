@@ -2,7 +2,7 @@
 import { HTMLAttributes, use, useEffect } from "react";
 
 import styles from "./join_group.module.scss";
-import { apiGroup } from "@/entities/group/model";
+import { useApiGroup } from "@/entities/group/model";
 import { useRouter } from "next/navigation";
 
 export interface JoinGroupProps extends HTMLAttributes<HTMLDivElement> {
@@ -12,7 +12,7 @@ export interface JoinGroupProps extends HTMLAttributes<HTMLDivElement> {
 // component must be in /[id]
 export const JoinGroup = ({ params }: JoinGroupProps) => {
   const { id } = use(params);
-  const { mutate } = apiGroup.postInviteToken();
+  const { mutate } = useApiGroup.postInviteToken();
   const router = useRouter();
 
   useEffect(() => {
