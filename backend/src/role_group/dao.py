@@ -1,7 +1,7 @@
-from src.db.dao_base import DAOBase
+from src.core.abstract.dao_base import DaoBase
 
 from .models import RoleGroupModel
 
 
-class RoleGroupDAO(DAOBase):
+class RoleGroupDao(DaoBase):
     model = RoleGroupModel

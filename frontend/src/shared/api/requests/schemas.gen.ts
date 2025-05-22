@@ -157,7 +157,7 @@ export const $Body_upload_avatar_api_groups_avatar__group_id__post = {
     title: 'Body_upload_avatar_api_groups_avatar__group_id__post'
 } as const;
 
-export const $Body_upload_avatar_api_users_avatar__group_id__post = {
+export const $Body_upload_avatar_api_users_avatar_me_post = {
     properties: {
         image: {
             type: 'string',
@@ -167,7 +167,7 @@ export const $Body_upload_avatar_api_users_avatar__group_id__post = {
     },
     type: 'object',
     required: ['image'],
-    title: 'Body_upload_avatar_api_users_avatar__group_id__post'
+    title: 'Body_upload_avatar_api_users_avatar_me_post'
 } as const;
 
 export const $Body_upload_panorama_api_groups_panorama__group_id__post = {
@@ -272,23 +272,6 @@ export const $CreateMessageSchema = {
     type: 'object',
     required: ['message', 'to_chat_id'],
     title: 'CreateMessageSchema'
-} as const;
-
-export const $CreateRoleGroupSchema = {
-    properties: {
-        title: {
-            type: 'string',
-            title: 'Title'
-        },
-        group_id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Group Id'
-        }
-    },
-    type: 'object',
-    required: ['title', 'group_id'],
-    title: 'CreateRoleGroupSchema'
 } as const;
 
 export const $ErrorModel = {
@@ -474,39 +457,6 @@ export const $ReadMessageSchema = {
     title: 'ReadMessageSchema'
 } as const;
 
-export const $ReadRoleGroupSchema = {
-    properties: {
-        id: {
-            type: 'integer',
-            title: 'Id'
-        },
-        title: {
-            type: 'string',
-            title: 'Title'
-        },
-        permissions: {
-            items: {
-                '$ref': '#/components/schemas/RolePermissionsEnum'
-            },
-            type: 'array',
-            title: 'Permissions'
-        },
-        group_id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Group Id'
-        },
-        created_at: {
-            type: 'string',
-            format: 'date-time',
-            title: 'Created At'
-        }
-    },
-    type: 'object',
-    required: ['id', 'title', 'permissions', 'group_id', 'created_at'],
-    title: 'ReadRoleGroupSchema'
-} as const;
-
 export const $RolePermissionsEnum = {
     type: 'string',
     enum: ['can_all', 'can_edit_roles', 'can_set_avatar', 'can_set_panorama', 'can_control_chats', 'can_send_message'],
@@ -579,24 +529,6 @@ export const $UpdateMessageSchema = {
     type: 'object',
     required: ['message'],
     title: 'UpdateMessageSchema'
-} as const;
-
-export const $UpdateRoleGroupSchema = {
-    properties: {
-        title: {
-            anyOf: [
-                {
-                    type: 'string'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Title'
-        }
-    },
-    type: 'object',
-    title: 'UpdateRoleGroupSchema'
 } as const;
 
 export const $UserCreate = {

@@ -1,11 +1,9 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2 
 
 import { type QueryClient } from "@tanstack/react-query";
-import { AuthService, ChatService, DefaultService, GroupService, MessagesService, RoleGroupService, UsersService } from "../requests/services.gen";
+import { AuthService, ChatService, DefaultService, GroupService, MessagesService, UsersService } from "../requests/services.gen";
 import * as Common from "./common";
-export const ensureUseUsersServiceGetApiUsersAvatarByGroupIdData = (queryClient: QueryClient, { groupId }: {
-  groupId: string;
-}) => queryClient.ensureQueryData({ queryKey: Common.UseUsersServiceGetApiUsersAvatarByGroupIdKeyFn({ groupId }), queryFn: () => UsersService.getApiUsersAvatarByGroupId({ groupId }) });
+export const ensureUseUsersServiceGetApiUsersAvatarMeData = (queryClient: QueryClient) => queryClient.ensureQueryData({ queryKey: Common.UseUsersServiceGetApiUsersAvatarMeKeyFn(), queryFn: () => UsersService.getApiUsersAvatarMe() });
 export const ensureUseUsersServiceGetApiUsersMeData = (queryClient: QueryClient) => queryClient.ensureQueryData({ queryKey: Common.UseUsersServiceGetApiUsersMeKeyFn(), queryFn: () => UsersService.getApiUsersMe() });
 export const ensureUseUsersServiceGetApiUsersByIdData = (queryClient: QueryClient, { id }: {
   id: string;
@@ -36,9 +34,6 @@ export const ensureUseChatServiceGetApiChatsGroupChatsByGroupIdData = (queryClie
 export const ensureUseChatServiceGetApiChatsByChatUuidData = (queryClient: QueryClient, { chatUuid }: {
   chatUuid: string;
 }) => queryClient.ensureQueryData({ queryKey: Common.UseChatServiceGetApiChatsByChatUuidKeyFn({ chatUuid }), queryFn: () => ChatService.getApiChatsByChatUuid({ chatUuid }) });
-export const ensureUseRoleGroupServiceGetApiRolesGroupByRoleGroupIdData = (queryClient: QueryClient, { roleGroupId }: {
-  roleGroupId: number;
-}) => queryClient.ensureQueryData({ queryKey: Common.UseRoleGroupServiceGetApiRolesGroupByRoleGroupIdKeyFn({ roleGroupId }), queryFn: () => RoleGroupService.getApiRolesGroupByRoleGroupId({ roleGroupId }) });
 export const ensureUseMessagesServiceGetApiMessagesChatByChatIdData = (queryClient: QueryClient, { chatId }: {
   chatId: string;
 }) => queryClient.ensureQueryData({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) });

@@ -1,7 +1,11 @@
-from src.no_sql_db.dao_base import NoSqlDAOBase
+from src.core.abstract.dao_base import DaoBase, MongoDaoBaseDefault
 
-from .no_sql_models import MessageModel
+from .nosql_models import MessageModel
 
 
-class MessageDAO(NoSqlDAOBase[MessageModel]):
-    model = MessageModel
+class MessageDaoBase[D](DaoBase[D]):
+    pass
+
+
+class MessageMongoDao(MongoDaoBaseDefault[MessageModel], MessageDaoBase[MessageModel]):
+    pass

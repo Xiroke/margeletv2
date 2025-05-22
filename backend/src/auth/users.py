@@ -15,7 +15,7 @@ from fastapi_users.authentication.strategy.db import (
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from config import settings
-from src.db.models import UserModel
+from src.core.db.models import UserModel
 from src.refresh_token.dao import get_refresh_token_db
 from src.refresh_token.models import TokenModel
 from src.user.utils import get_user_db
@@ -82,5 +82,3 @@ def get_jwt_strategy() -> JWTStrategy:
 
 
 fastapi_users = FastAPIUsers[UserModel, uuid.UUID](get_user_manager, [auth_backend])
-
-current_active_user = fastapi_users.current_user(active=True)

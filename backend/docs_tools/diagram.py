@@ -27,8 +27,8 @@ if sys.platform == "win32":
 import erdantic as erd
 from eralchemy import render_er
 
-from src.db.database import Base
-from src.db.models import *  # noqa: F403
+from src.core.db.database import Base
+from src.core.db.models import *  # noqa: F403
 
 ## Draw from SQLAlchemy base
 render_er(Base, "postgres_diagram.png")

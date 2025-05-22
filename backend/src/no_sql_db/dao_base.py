@@ -4,7 +4,7 @@ from uuid import UUID
 from beanie import Document
 
 
-class NoSqlDAOBase[T: Document](ABC):
+class NoSqlDaoBaseBase[T: Document](ABC):
     model: type[T]
 
     @classmethod
@@ -13,12 +13,12 @@ class NoSqlDAOBase[T: Document](ABC):
         return result
 
     @classmethod
-    async def get_one_or_none_by_field(cls, *filter) -> T | None:
+    async def get_one_by_field(cls, *filter) -> T | None:
         result = await cls.model.find_one(*filter, fetch_links=True)
         return result
 
     @classmethod
-    async def get_all_by_field(cls, *filter) -> list[T]:
+    async def get_many_by_field(cls, *filter) -> list[T]:
         result = await cls.model.find(*filter, fetch_links=True).to_list()
         return result
 

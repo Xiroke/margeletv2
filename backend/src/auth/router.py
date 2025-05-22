@@ -6,11 +6,11 @@ from fastapi.routing import APIRouter
 from fastapi_users.authentication import JWTStrategy
 
 from config import settings
-from src.db.models import UserModel
+from src.user.depends import current_active_user_factory
 from src.user.router import router as user_router
 
 from .schemas import UserCreate, UserRead, UserUpdate
-from .users import auth_backend, current_active_user, fastapi_users, get_jwt_strategy
+from .users import auth_backend, fastapi_users, get_jwt_strategy
 
 router = APIRouter(prefix="")
 
@@ -41,14 +41,14 @@ router.include_router(
 
 
 @router.get("/authenticated-route")
-async def authenticated_route(user: Annotated[UserModel, Depends(current_active_user)]):
+async def authenticated_route(user: current_active_user_factory):
     return {"message": f"Hello {user.email}!"}
 
 
 @router.get("/auth/access_token", tags=["auth"])
 async def get_access_token(
     jwt_strategy: Annotated[JWTStrategy, Depends(get_jwt_strategy)],
-    user: Annotated[UserModel, Depends(current_active_user)],
+    user: current_active_user_factory,
     response: Response,
 ):
     """

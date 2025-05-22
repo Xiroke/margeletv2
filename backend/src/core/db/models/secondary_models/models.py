@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Table
 from sqlalchemy.dialects.postgresql import UUID
 
-from src.db.database import Base
+from src.core.db.database import Base
 
 UserToGroupModel = Table(
     "user_to_group",

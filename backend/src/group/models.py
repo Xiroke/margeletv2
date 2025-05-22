@@ -7,7 +7,7 @@ from uuid import uuid4
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.db.database import Base
+from src.core.db.database import Base
 
 if TYPE_CHECKING:
     from src.chat.models import ChatModel
@@ -40,7 +40,3 @@ class GroupModel(Base):
     roles: Mapped[list["RoleGroupModel"]] = relationship(
         back_populates="group", lazy="selectin"
     )
-
-    __mapper_args__ = {
-        "polymorphic_identity": "group",
-    }

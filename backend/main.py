@@ -4,14 +4,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from config import global_setttigns
+from config import global_setttigns, settings
 from config_logging import setup_logging
 from src.auth.router import router as auth_router
 from src.chat.router import router as chat_router
 from src.group.router import router as group_router
 from src.message.router import router as message_router
 from src.no_sql_db.database import init_mongo_db
-from src.role_group.router import router as role_group_router
+from src.user.router import router as user_router
 
 # set settings and color for logging
 setup_logging()
@@ -42,13 +42,10 @@ app.add_middleware(
 # /api/messages/{chat_id}?token=jwt
 app.include_router(prefix="/api", router=auth_router)
 app.include_router(prefix="/api", router=group_router)
+app.include_router(prefix="/api", router=user_router)
 app.include_router(prefix="/api", router=chat_router)
-app.include_router(prefix="/api", router=role_group_router)
+# app.include_router(prefix="/api", router=role_group_router)
 app.include_router(prefix="/api", router=message_router)
-
-from src.group_clean.router import router as group_clean_router
-
-app.include_router(prefix="/api", router=group_clean_router)
 
 
 @app.get("/api")
@@ -57,6 +54,12 @@ def ping():
 
 
 if __name__ == "__main__":
+    assert not settings.TEST_MODE
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+    )

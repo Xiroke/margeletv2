@@ -1,41 +1,33 @@
-from typing import Annotated
-from uuid import UUID
-
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi import APIRouter, UploadFile
 from fastapi.responses import JSONResponse, Response
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.database import get_async_session
-from src.infrastructure.s3 import S3BucketService, s3_bucket_service_factory
-from src.utils.image_utils import save_image_in_s3
-
-from .dao import UserDAO
+from .depends import current_active_user_factory, user_service_factory
 
 # search include router in auth router.py
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/avatar/{group_id}")
+@router.get("/avatar/me")
 async def load_avatar(
-    group_id: UUID, s3: Annotated[S3BucketService, Depends(s3_bucket_service_factory)]
+    current_user: current_active_user_factory, user_service: user_service_factory
 ):
-    response = await s3.get_file_object("users", f"{group_id}.jpg")
+    permission = await user_service.permission_manager()
+    await permission.is_has_value("avatar_path")
 
-    if response is None:
-        raise HTTPException(status_code=404, detail="Avatar not found")
+    response = await user_service.load_avatar(f"/users/{current_user.id}.jpg")
 
-    image = await response.read()
-
-    return Response(content=image, media_type="image/png")
+    return Response(content=response, media_type="image/png")
 
 
-@router.post("/avatar/{group_id}")
+@router.post("/avatar/me")
 async def upload_avatar(
-    group_id: UUID,
+    current_user: current_active_user_factory,
+    user_service: user_service_factory,
     image: UploadFile,
-    session: Annotated[AsyncSession, Depends(get_async_session)],
-    s3: Annotated[S3BucketService, Depends(s3_bucket_service_factory)],
 ):
-    prefix = await save_image_in_s3("users", str(group_id), image, s3)
-    await UserDAO.update(session, {"avatar_path": prefix}, id=group_id)
+    permission = await user_service.permission_manager()
+    await permission.is_exist(current_user.id)
+
+    path = await user_service.upload_avatar(f"users/{str(current_user.id)}", image)
+    await user_service.update({"avatar_path": path}, id=current_user.id)
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})

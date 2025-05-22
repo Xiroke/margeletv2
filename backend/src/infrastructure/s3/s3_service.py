@@ -3,14 +3,16 @@ from io import BytesIO
 
 import aioboto3
 from botocore.exceptions import ClientError
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
+from PIL import Image
 
-from config import global_setttigns, settings
+from src.core.abstract.storage_base import StorageBase
+from src.utils.exeptions import ServerException, ServiceNotFoundException
 
 logger = logging.getLogger(__name__)
 
 
-class S3BucketService:
+class S3BucketService(StorageBase):
     def __init__(
         self, bucket_name: str, endpoint: str, access_key: str, secret_key: str
     ):
@@ -19,7 +21,7 @@ class S3BucketService:
         self.access_key = access_key
         self.secret_key = secret_key
 
-    async def create_s3_client(self):
+    async def _create_s3_client(self):
         """
         Create S3 client context
         """
@@ -32,58 +34,36 @@ class S3BucketService:
             aws_secret_access_key=self.secret_key,
         )
 
-    async def upload_file_object(
+    async def save(
         self,
-        prefix: str,
-        source_file_name: str,
-        content: str | bytes,
+        key: str,
+        value: str | bytes,
     ) -> None:
         """
         Upload file to S3
-
-        Args:
-            prefix (str): Path to the file in the bucket
-            source_file_name (str): Name which will be used in the bucket
-            content (str | bytes): Content of the file or path to the file
-
-        Example:
-            upload_file_object(
-                "/margelet/files",
-                "file1.txt",
-                "Hello world"
-            )
+        key - path to file
+        value - file
         """
-        client_context = await self.create_s3_client()
-        destination_file_name = str(f"/{prefix}/{source_file_name}")
+        client_context = await self._create_s3_client()
+        destination_file_name = key
 
-        if isinstance(content, bytes):
-            buffer = BytesIO(content)
+        if isinstance(value, bytes):
+            buffer = BytesIO(value)
         else:
-            buffer = BytesIO(content.encode("utf-8"))
+            buffer = BytesIO(value.encode("utf-8"))
 
         async with client_context() as client:
             await client.upload_fileobj(buffer, self.bucket_name, destination_file_name)
 
-    async def list_objects(self, prefix: str) -> list[str]:
+    async def list_objects(self, key: str) -> list[str]:
         """
         List objects in the bucket
-
-        Args:
-            prefix (str): Path to the file in the bucket
-
-        Returns:
-            list[str]: List of objects in the bucket
-
-        Example:
-            list_objects("margelet/files")
-            # ["margelet/files/file1.txt", "margelet/files/file2.txt"]
+        key - path to file
         """
-        client_context = await self.create_s3_client()
+        client_context = await self._create_s3_client()
 
         async with client_context() as client:
-            response = await client.list_objects_v2(
-                Bucket=self.bucket_name, Prefix=prefix
-            )
+            response = await client.list_objects_v2(Bucket=self.bucket_name, Prefix=key)
 
         storage_content: list[str] = []
 
@@ -97,27 +77,16 @@ class S3BucketService:
 
         return storage_content
 
-    async def get_file_object(
-        self, prefix: str, source_file_name: str, chunk_size: int = 69 * 1024
-    ):
+    async def get(self, key: str, chunk_size: int = 69 * 1024):
         """
         Get file object from S3
-
-        Args:
-            prefix (str): Path to the file in the bucket
-
-        Example:
-            file_body = await s3_service.get_file_object("margelet/files/file1.txt")
-            content = await file_body.read()
+        key - path to file
         """
-        destination_file_name = str(f"/{prefix}/{source_file_name}")
 
-        client_context = await self.create_s3_client()
+        client_context = await self._create_s3_client()
         async with client_context() as client:
             try:
-                file_obj = await client.get_object(
-                    Bucket=self.bucket_name, Key=destination_file_name
-                )
+                file_obj = await client.get_object(Bucket=self.bucket_name, Key=key)
 
                 file_data = await file_obj["Body"].read()
 
@@ -130,27 +99,38 @@ class S3BucketService:
                 logger.error(str(e))
                 raise HTTPException(500, "Unknown error")
 
+        if file_data is None:
+            raise ServiceNotFoundException()
+
         return file_data
 
-    async def delete_file_object(self, prefix: str, source_file_name: str) -> None:
+    async def delete(self, key: str) -> None:
         """
         Delete file object from S3
-
-        Args:
-            prefix (str): Path to the file in the bucket
-            source_file_name (str): Name which will be used in the bucket
+        key - path to file
         """
-        destination_file_name = str(f"/{prefix}/{source_file_name}")
 
-        client_context = await self.create_s3_client()
+        client_context = await self._create_s3_client()
         async with client_context() as client:
-            client.delete_object(Bucket=self.bucket_name, Key=destination_file_name)
+            client.delete_object(Bucket=self.bucket_name, Key=key)
 
+    async def save_image(self, key: str, value: UploadFile):
+        """Upload file to S3
+        key - path to file
+        value - image"""
+        if key[len(key) - 4 :] != ".jpg":
+            raise ServerException()
 
-def s3_bucket_service_factory() -> S3BucketService:
-    return S3BucketService(
-        settings.S3_BUCKET_NAME,
-        settings.S3_PATH + ":" + global_setttigns.S3_PORT,
-        global_setttigns.S3_USER,
-        global_setttigns.S3_PASSWORD,
-    )
+        try:
+            # convert image to .jpg and save
+            with Image.open(BytesIO(await value.read())) as img:
+                img = img.convert("RGB")
+                img_byte_arr = BytesIO()
+                img.save(img_byte_arr, format="JPEG")
+                img_byte_arr.seek(0)
+
+            await self.save(key, img_byte_arr.getvalue())
+        except Exception:
+            raise ServerException()
+
+        return key

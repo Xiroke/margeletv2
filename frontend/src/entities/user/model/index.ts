@@ -1,11 +1,11 @@
 import {
-  useUsersServiceGetApiUsersAvatarByGroupId,
+  useUsersServiceGetApiUsersAvatarMe,
   useUsersServiceGetApiUsersById,
   useUsersServiceGetApiUsersMe,
 } from "@/shared/api/queries";
 
 export const useApiUser = {
-  getAvatar: useUsersServiceGetApiUsersAvatarByGroupId,
+  getAvatar: useUsersServiceGetApiUsersAvatarMe,
   getUserById: useUsersServiceGetApiUsersById,
   get: useUsersServiceGetApiUsersMe,
 };

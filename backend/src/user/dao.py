@@ -1,7 +1,11 @@
-from src.db.dao_base import DAOBase
+from src.core.abstract.dao_base import DaoBase, SqlDaoBaseDefault
 
 from .models import UserModel
 
 
-class UserDAO(DAOBase):
+class UserDaoBase[SM](DaoBase[SM]):
+    pass
+
+
+class UserSqlDao(SqlDaoBaseDefault[UserModel]):
     model = UserModel

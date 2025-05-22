@@ -14,19 +14,15 @@ from fastapi.responses import JSONResponse
 from fastapi_users.authentication import JWTStrategy
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.users import (
-    current_active_user,
-    get_jwt_strategy,
-    get_user_db,
-    get_user_manager,
-)
-from src.db.dao import ChatDAO
-from src.db.database import get_async_session
-from src.db.models import UserModel
+from src.auth.users import get_jwt_strategy, get_user_db, get_user_manager
+from src.chat.depends import chat_service_factory
+from src.core.db.database import get_async_session
+from src.core.db.models import UserModel
+from src.user.depends import current_active_user_factory
 
-from .dao import MessageDAO
-from .id_to_username.dao import IdToUsernameDAO
-from .no_sql_models import MessageModel
+from .depends import message_service_factory
+from .id_to_username.dao import IdToUsernameDao
+from .nosql_models import MessageModel
 from .schemas import (
     CreateMessageSchema,
     ReadMessageSchema,
@@ -39,17 +35,21 @@ router = APIRouter(prefix="/messages", tags=["messages"])
 
 @router.get("/chat/{chat_id}")
 async def get_all_messages_chat(
-    user: Annotated[UserModel, Depends(current_active_user)], chat_id: UUID
+    user: current_active_user_factory,
+    chat_id: UUID,
+    message_service: message_service_factory,
 ) -> list[ReadMessageSchema]:
-    raw_messages = await MessageDAO.get_all_by_field(MessageModel.to_chat_id == chat_id)
+    raw_messages = await message_service.get_many_by_field(
+        MessageModel.to_chat_id == chat_id
+    )
 
     messages = []
     for message in raw_messages:
         message = ReadMessageSchema.model_validate(message)
-        username_db = await IdToUsernameDAO.get_one_by_id(message.user_id)
+        username_db = await IdToUsernameDao.get_one_by_id(message.user_id)
 
         if not username_db:
-            username_db = await IdToUsernameDAO.create(
+            username_db = await IdToUsernameDao.create(
                 {"id": message.user_id, "username": user.name}
             )
 
@@ -62,17 +62,19 @@ async def get_all_messages_chat(
 @router.get("/{message_id}")
 async def get_message_by_id(
     message_id: UUID,
+    message_service: message_service_factory,
 ) -> ReadMessageSchema:
-    return await MessageDAO.get_one_by_id(message_id)
+    return await message_service.get_one_by_id(MessageModel.id == message_id)
 
 
 @router.patch("/{message_id}")
 async def update_message(
     message_id: int,
     message: Annotated[UpdateMessageSchema, Body()],
+    message_service: message_service_factory,
 ):
     """not work"""
-    await MessageDAO.update(message.model_dump(exclude_none=True), id=message_id)
+    await message_service.update(message.model_dump(exclude_none=True), id=message_id)
 
     return JSONResponse(status_code=200, content={"message": "Message updated"})
 
@@ -80,19 +82,21 @@ async def update_message(
 @router.delete("/{message_id}")
 async def delete_message(
     message_id: int,
+    message_service: message_service_factory,
 ):
-    await MessageDAO.delete(message_id)
+    await message_service.delete(message_id)
 
     return JSONResponse(status_code=200, content={"message": "Message deleted"})
 
 
 @router.post("/")
 async def create_message(
-    user: Annotated[UserModel, Depends(current_active_user)],
+    current_user: current_active_user_factory,
     message: Annotated[CreateMessageSchema, Body()],
+    message_service: message_service_factory,
 ):
-    message.user_id = user.id
-    new_message = await MessageDAO.create(message.model_dump())
+    message.user_id = current_user.id
+    new_message = await message_service.create(message.model_dump())
     return new_message
 
 
@@ -142,17 +146,21 @@ class ConnectionManager:
             except Exception:
                 pass
 
-    async def broadcast(self, user: UserModel, raw_message: CreateMessageSchema):
+    async def broadcast(
+        self, user: UserModel, raw_message: CreateMessageSchema, message_service
+    ):
         """Send message to all users of current chat (from message)"""
 
         # --- we get data and add username to it
-        message_db: MessageModel = await MessageDAO.create(raw_message.model_dump())
+        message_db: MessageModel = await message_service.create(
+            raw_message.model_dump()
+        )
 
         message = ReadMessageSchema.model_validate(message_db)
-        username_db = await IdToUsernameDAO.get_one_by_id(message.user_id)
+        username_db = await IdToUsernameDao.get_one_by_id(message.user_id)
 
         if not username_db:
-            username_db = await IdToUsernameDAO.create(
+            username_db = await IdToUsernameDao.create(
                 {"id": message.user_id, "username": user.name}
             )
 
@@ -173,6 +181,8 @@ async def websocket_endpoint(
     jwt_strategy: Annotated[JWTStrategy, Depends(get_jwt_strategy)],
     websocket: WebSocket,
     access_token: Annotated[str, Query()],
+    message_service: message_service_factory,
+    chat_service: chat_service_factory,
 ):
     user_db = await anext(get_user_db(session))
     user_manager = await anext(get_user_manager(user_db))
@@ -184,13 +194,13 @@ async def websocket_endpoint(
     if user is None:
         raise WebSocketException(401, "Unauthorized")
 
-    chats_id = await ChatDAO.get_all_chats_by_user(session, user.id)
+    chats_id = await chat_service.get_all_chats_by_user(user.id)
     await connection_manager_users.connect(websocket, user.id, chats_id)
     try:
         while True:
             data = RecivedDataDTO(**await websocket.receive_json())
             data.user_id = user.id
-            await connection_manager_users.broadcast(user, data)
+            await connection_manager_users.broadcast(user, data, message_service)
 
     except WebSocketDisconnect:
         print("disconnect")

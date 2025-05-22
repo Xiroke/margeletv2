@@ -8,7 +8,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY, ENUM, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.db.database import Base
+from src.core.db.database import Base
 
 if TYPE_CHECKING:
     from src.group.models import GroupModel

@@ -1,11 +1,9 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2 
 
 import { UseQueryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { AuthService, ChatService, DefaultService, GroupService, MessagesService, RoleGroupService, UsersService } from "../requests/services.gen";
+import { AuthService, ChatService, DefaultService, GroupService, MessagesService, UsersService } from "../requests/services.gen";
 import * as Common from "./common";
-export const useUsersServiceGetApiUsersAvatarByGroupIdSuspense = <TData = Common.UsersServiceGetApiUsersAvatarByGroupIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupId }: {
-  groupId: string;
-}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseUsersServiceGetApiUsersAvatarByGroupIdKeyFn({ groupId }, queryKey), queryFn: () => UsersService.getApiUsersAvatarByGroupId({ groupId }) as TData, ...options });
+export const useUsersServiceGetApiUsersAvatarMeSuspense = <TData = Common.UsersServiceGetApiUsersAvatarMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseUsersServiceGetApiUsersAvatarMeKeyFn(queryKey), queryFn: () => UsersService.getApiUsersAvatarMe() as TData, ...options });
 export const useUsersServiceGetApiUsersMeSuspense = <TData = Common.UsersServiceGetApiUsersMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseUsersServiceGetApiUsersMeKeyFn(queryKey), queryFn: () => UsersService.getApiUsersMe() as TData, ...options });
 export const useUsersServiceGetApiUsersByIdSuspense = <TData = Common.UsersServiceGetApiUsersByIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ id }: {
   id: string;
@@ -36,9 +34,6 @@ export const useChatServiceGetApiChatsGroupChatsByGroupIdSuspense = <TData = Com
 export const useChatServiceGetApiChatsByChatUuidSuspense = <TData = Common.ChatServiceGetApiChatsByChatUuidDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ chatUuid }: {
   chatUuid: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseChatServiceGetApiChatsByChatUuidKeyFn({ chatUuid }, queryKey), queryFn: () => ChatService.getApiChatsByChatUuid({ chatUuid }) as TData, ...options });
-export const useRoleGroupServiceGetApiRolesGroupByRoleGroupIdSuspense = <TData = Common.RoleGroupServiceGetApiRolesGroupByRoleGroupIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ roleGroupId }: {
-  roleGroupId: number;
-}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseRoleGroupServiceGetApiRolesGroupByRoleGroupIdKeyFn({ roleGroupId }, queryKey), queryFn: () => RoleGroupService.getApiRolesGroupByRoleGroupId({ roleGroupId }) as TData, ...options });
 export const useMessagesServiceGetApiMessagesChatByChatIdSuspense = <TData = Common.MessagesServiceGetApiMessagesChatByChatIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ chatId }: {
   chatId: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }, queryKey), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) as TData, ...options });

@@ -8,7 +8,7 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.db.database import Base
+from src.core.db.database import Base
 
 if TYPE_CHECKING:
     from src.group.models import GroupModel
