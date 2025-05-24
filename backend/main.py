@@ -6,12 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import global_setttigns, settings
 from config_logging import setup_logging
-from src.auth.router import router as auth_router
-from src.chat.router import router as chat_router
-from src.group.router import router as group_router
-from src.message.router import router as message_router
-from src.no_sql_db.database import init_mongo_db
-from src.user.router import router as user_router
+from src.core.nosql.database import init_mongo_db
+from src.endpoints.auth.router import router as auth_router
+from src.endpoints.chat.router import router as chat_router
+from src.endpoints.group.router import router as group_router
+from src.endpoints.message.router import router as message_router
+from src.endpoints.user.router import router as user_router
 
 # set settings and color for logging
 setup_logging()

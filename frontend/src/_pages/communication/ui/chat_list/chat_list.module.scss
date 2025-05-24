@@ -1,0 +1,13 @@
+.chat_list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  overflow-y: auto;
+  scrollbar-width: thin;
+
+  .chat_item {
+    font-size: 16px;
+    font-weight: 800;
+  }
+}

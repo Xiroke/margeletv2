@@ -8,9 +8,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, className, styleType, ...props }, ref) => {
+  ({ children, className, styleType = "default", ...props }, ref) => {
     return (
       <button
+        ref={ref}
         {...props}
         className={clsx(
           styleType == "invert" ? styles.invert_button : styles.button,

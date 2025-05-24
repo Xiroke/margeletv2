@@ -1,20 +1,23 @@
-import { HTMLAttributes, RefObject, forwardRef } from 'react';
+import { HTMLAttributes, RefObject, forwardRef } from "react";
 
-import styles from './sending.module.scss';
-import InputText from '@/shared/ui/inputs/input_text';
+import styles from "./sending.module.scss";
+import stylesInput from "@/shared/ui/inputs/input_text/input_text.module.scss";
+import clsx from "clsx";
 
 export interface SendingProps extends HTMLAttributes<HTMLInputElement> {}
 
-export const Sending = forwardRef<HTMLInputElement, SendingProps>(({ onKeyDown }, ref) => {
-  return (
-    <InputText
-      ref={ref}
-      name="send_message"
-      placeholder="Введите сообщение..."
-      classNameInput={styles.sending_input}
-      onKeyDown={onKeyDown}
-    />
-  );
-});
+export const Sending = forwardRef<HTMLInputElement, SendingProps>(
+  ({ onKeyDown }, ref) => {
+    return (
+      <input
+        ref={ref}
+        name="send_message"
+        placeholder="Введите сообщение..."
+        className={clsx(stylesInput.input_text, styles.sending_input)}
+        onKeyDown={onKeyDown}
+      />
+    );
+  }
+);
 
 export default Sending;

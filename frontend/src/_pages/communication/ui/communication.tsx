@@ -3,7 +3,7 @@ import { HTMLAttributes, useEffect } from "react";
 
 import styles from "./communication.module.scss";
 import Container from "@/shared/ui/container";
-import GroupList from "@/widgets/group_list/ui";
+import GroupList from "@/_pages/communication/ui/group_list";
 import SearchInput from "./search_input";
 import Navigation from "@/widgets/navigation/ui";
 import CurrentGroup from "./current_group";

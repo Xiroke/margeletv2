@@ -1,4 +1,5 @@
 # Python-generated files
+src/core/db/alembic/versions/*
 __pycache__/
 *.pytest_cache
 *.py[oc]

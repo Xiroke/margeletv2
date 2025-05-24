@@ -1,9 +1,8 @@
-# noqa: F401
-from src.chat.models import ChatModel
-from src.group.models import GroupModel
-from src.refresh_token.models import TokenModel
-from src.role_group.models import RoleGroupModel
-from src.user.models import UserModel
+from src.endpoints.chat.models import ChatModel
+from src.endpoints.group.models import GroupModel
+from src.endpoints.refresh_token.models import TokenModel
+from src.endpoints.role_group.models import RoleGroupModel
+from src.endpoints.user.models import UserModel
 
 from .secondary_models.models import UserToGroupModel
 

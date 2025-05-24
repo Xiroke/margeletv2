@@ -1,12 +1,10 @@
 :root {
   --primary: #444444;
+  --primary-light: #6b6b74;
   --primary-foreground: #fdfdfd;
   --primary-background: #e7e7e7;
   --second: #c4e0ef;
-}
-
-::-webkit-scrollbar-button {
-  content: none;
+  --accent: #364eb0;
 }
 
 body {

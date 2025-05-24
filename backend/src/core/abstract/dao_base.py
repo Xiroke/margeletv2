@@ -13,6 +13,10 @@ class DaoBase[T](ABC):
     """Abstract class for Dao"""
 
     @abstractmethod
+    async def get_one_by_id(self, id: int | UUID) -> T:
+        pass
+
+    @abstractmethod
     async def get_one_by_field(self, *filter) -> T:
         """You should pass filter as Model.id == id"""
         pass
@@ -54,6 +58,12 @@ class SqlDaoBaseDefault[SM: Base](SqlDaoBase[SM]):
     def __init__(self, session: AsyncSession, model: type[SM]):
         super().__init__(session, model)
 
+    async def get_one_by_id(self, id: int | UUID):
+        result = await self.session.execute(
+            select(self.model).filter(self.model.id == id)
+        )
+        return result.scalars().one()
+
     async def get_one_by_field(self, *filter) -> SM:
         result = await self.session.execute(select(self.model).filter(*filter))
         return result.scalars().one()
@@ -80,7 +90,9 @@ class SqlDaoBaseDefault[SM: Base](SqlDaoBase[SM]):
         return result.scalars().one()
 
     async def delete(self, id) -> None:
-        await self.session.execute(delete(self.model).filter(self.model.id == id))
+        assert hasattr(self.model, "id")
+
+        await self.session.execute(delete(self.model).filter(self.model.id == id))  # type: ignore
         await self.session.commit()
 
 

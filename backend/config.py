@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     S3_BUCKET_NAME: str
     S3_PATH: str
 
+    JWT_ACCESS_TOKEN_SECRET_KEY: str
+    JWT_ALGORITHM: str
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 

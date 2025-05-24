@@ -10,9 +10,9 @@ class PermissionBase:
     raise exeptions, which handled in exception handler
     """
 
-    def is_has_value(self, field: str) -> None:
+    def is_has_value(self, obj: Any, field: str) -> None:
         """Is required field in object has any data"""
-        assert hasattr(self, field)
+        assert hasattr(self, obj)
 
         result = getattr(self, field)
 
@@ -37,5 +37,18 @@ class PermissionDaoBase(PermissionBase):
 
         if result is None:
             raise NotFoundModelException()
+
+        return result
+
+    def is_has_value_model(self, id: Any, field: str) -> None:
+        """checks if the model instance contains a field"""
+        db_result = self.dao.get_one_by_id(id)
+
+        assert hasattr(db_result, field)
+
+        result = getattr(db_result, field)
+
+        if result is not None:
+            raise PermissionNotHasAttributeError()
 
         return result

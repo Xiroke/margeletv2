@@ -6,9 +6,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 sys.path.append("./")
 
+from config import settings
 from main import app
 from src.core.db.database import Base, async_session_maker, engine
 from src.core.db.models import GroupModel
+
+assert settings.TEST_MODE
 
 
 @pytest_asyncio.fixture

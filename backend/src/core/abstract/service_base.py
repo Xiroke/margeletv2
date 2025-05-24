@@ -1,10 +1,19 @@
 from typing import Any
+from uuid import UUID
 
 from src.core.abstract.dao_base import DaoBase
 from src.core.abstract.permission_base import PermissionDaoBase
 
 
-class DaoBaseService[T]:
+class BaseService:
+    """
+    Root class for all Service class
+    """
+
+    pass
+
+
+class DaoBaseService[T](BaseService):
     """Abstract class founded dao methods with permission,
     T - return type"""
 
@@ -14,6 +23,9 @@ class DaoBaseService[T]:
 
     async def permission_manager(self):
         return self._permission
+
+    async def get_one_by_id(self, id: int | UUID) -> T | None:
+        return await self.dao.get_one_by_id(id)
 
     async def get_one_by_field(self, *filter: Any) -> T | None:
         return await self.dao.get_one_by_field(*filter)

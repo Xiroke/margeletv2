@@ -1,3 +1,6 @@
+from fastapi import HTTPException, status
+
+
 class ServiceNotFoundException(Exception):
     message = "File not found"
 
@@ -24,3 +27,13 @@ class PermissionNotHasAttributeError(Exception):
     """raise when the required field is not found in the model"""
 
     message = "Permission no has data"
+
+
+class HTTPExpiredSignatureError(HTTPException):
+    message = "Token expired"
+    status_code = status.HTTP_401_UNAUTHORIZED
+
+
+class HTTPInvalidTokenError(HTTPException):
+    message = "Invalid token"
+    status_code = status.HTTP_400_BAD_REQUEST

@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from src.group.models import GroupModel
+from src.endpoints.group.models import GroupModel
 
 # def test_load_avatar(client: TestClient, group: GroupModel):
 #     res = client.get(f"/groups/avatar/{group.id}")

@@ -6,7 +6,7 @@ import { IconPlus } from "@tabler/icons-react";
 
 import styles from "./group_panel.module.scss";
 import { useAppSelector } from "@/shared/lib/hooks";
-import ChatList from "@/widgets/chat_list/ui";
+import ChatList from "../chat_list";
 import GroupDropdown from "../group_dropdown";
 import DialogCreateChat from "../dialog_create_chat";
 import { useApiChat } from "@/entities/chat/model";

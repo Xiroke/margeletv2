@@ -2,9 +2,9 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 65px;
+  height: 60px;
   width: 100%;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 25px 15px 15px 25px;
 
   &:hover {
@@ -14,7 +14,8 @@
 
   .avatar {
     height: inherit;
-    width: 65px;
+    flex-shrink: 0;
+    width: 60px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -23,7 +24,7 @@
   }
 
   .information {
-    margin-left: 40px;
+    margin-left: 20px;
 
     .title {
       font-weight: 800;
