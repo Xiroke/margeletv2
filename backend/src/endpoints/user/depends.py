@@ -1,20 +1,19 @@
 from typing import Annotated
 
 from fastapi import Depends
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.database import get_async_session
-from src.endpoints.auth.users import fastapi_users
 from src.endpoints.user.models import UserModel
-from src.endpoints.user.permissions import UserPermissionDao
 from src.infrastructure.s3 import s3_service_factory
 
 from .dao import UserSqlDao
 from .service import UserService
 
-current_active_user = fastapi_users.current_user(active=True)
 
-current_active_user_factory = Annotated[UserModel, Depends(current_active_user)]
+async def get_user_db(session: Annotated[AsyncSession, Depends(get_async_session)]):
+    yield SQLAlchemyUserDatabase(session, UserModel)
 
 
 def get_user_dao(session: Annotated[AsyncSession, Depends(get_async_session)]):
@@ -24,19 +23,14 @@ def get_user_dao(session: Annotated[AsyncSession, Depends(get_async_session)]):
 user_dao_factory = Annotated[UserSqlDao, Depends(get_user_dao)]
 
 
-def get_user_permission(dao: user_dao_factory):
-    return UserPermissionDao(dao, UserModel)
-
-
-user_permission_factory = Annotated[UserPermissionDao, Depends(get_user_permission)]
-
-
 def get_user_service(
     dao: user_dao_factory,
     storage: s3_service_factory,
-    permission: user_permission_factory,
 ) -> UserService:
-    return UserService(dao, storage, permission)
+    return UserService(dao, storage)
 
 
 user_service_factory = Annotated[UserService, Depends(get_user_service)]
+
+
+__all__ = ["user_dao_factory", "user_service_factory"]

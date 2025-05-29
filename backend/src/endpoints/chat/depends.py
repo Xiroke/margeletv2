@@ -8,7 +8,6 @@ from src.infrastructure.s3 import s3_service_factory
 
 from .dao import SqlChatDao
 from .models import ChatModel
-from .permissions import ChatPermissionDao
 from .service import ChatService
 
 
@@ -19,19 +18,13 @@ def get_chat_dao(session: Annotated[AsyncSession, Depends(get_async_session)]):
 chat_dao_factory = Annotated[SqlChatDao, Depends(get_chat_dao)]
 
 
-def get_chat_permission(dao: chat_dao_factory):
-    return ChatPermissionDao(dao, ChatModel)
-
-
-chat_permission_factory = Annotated[ChatPermissionDao, Depends(get_chat_permission)]
-
-
 def get_chat_service(
     dao: chat_dao_factory,
     storage: s3_service_factory,
-    permission: chat_permission_factory,
 ) -> ChatService:
-    return ChatService(dao, storage, permission)
+    return ChatService(dao, storage)
 
 
 chat_service_factory = Annotated[ChatService, Depends(get_chat_service)]
+
+__all__ = ["chat_dao_factory", "chat_service_factory"]

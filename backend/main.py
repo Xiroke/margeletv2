@@ -6,11 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import global_setttigns, settings
 from config_logging import setup_logging
+from exceptions import exception_handler
 from src.core.nosql.database import init_mongo_db
 from src.endpoints.auth.router import router as auth_router
 from src.endpoints.chat.router import router as chat_router
 from src.endpoints.group.router import router as group_router
 from src.endpoints.message.router import router as message_router
+from src.endpoints.role.router import router as role_router
 from src.endpoints.user.router import router as user_router
 
 # set settings and color for logging
@@ -44,8 +46,10 @@ app.include_router(prefix="/api", router=auth_router)
 app.include_router(prefix="/api", router=group_router)
 app.include_router(prefix="/api", router=user_router)
 app.include_router(prefix="/api", router=chat_router)
-# app.include_router(prefix="/api", router=role_group_router)
+app.include_router(prefix="/api", router=role_router)
 app.include_router(prefix="/api", router=message_router)
+
+exception_handler(app)
 
 
 @app.get("/api")

@@ -8,4 +8,5 @@ class MessageDaoBase[D](DaoBase[D]):
 
 
 class MessageMongoDao(MongoDaoBaseDefault[MessageModel], MessageDaoBase[MessageModel]):
-    pass
+    def __init__(self):
+        super().__init__(MessageModel)

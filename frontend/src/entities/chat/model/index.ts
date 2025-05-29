@@ -1,19 +1,19 @@
 import {
-  useChatServiceDeleteApiChatsByChatUuid,
-  useChatServiceGetApiChatsByChatUuid,
+  useChatServiceDeleteApiChatsByChatId,
+  useChatServiceGetApiChatsByChatId,
   useChatServiceGetApiChatsGroupChatsByGroupId,
-  useChatServicePatchApiChatsByChatUuid,
+  useChatServicePatchApiChatsByChatId,
   useChatServiceGetApiChatsChatsMe,
   useChatServicePostApiChatsByGroupId,
   useChatServiceGetApiChatsGroupChatsByGroupIdKey,
 } from "@/shared/api/queries";
 
 export const useApiChat = {
-  get: useChatServiceGetApiChatsByChatUuid,
+  get: useChatServiceGetApiChatsByChatId,
   getGroupChats: useChatServiceGetApiChatsGroupChatsByGroupId,
   create: useChatServicePostApiChatsByGroupId,
-  update: useChatServicePatchApiChatsByChatUuid,
-  delete: useChatServiceDeleteApiChatsByChatUuid,
+  update: useChatServicePatchApiChatsByChatId,
+  delete: useChatServiceDeleteApiChatsByChatId,
   getChatsMe: useChatServiceGetApiChatsChatsMe,
   getGroupChatsKey: useChatServiceGetApiChatsGroupChatsByGroupIdKey,
 };

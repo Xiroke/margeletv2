@@ -3,150 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetApiUsersAvatarMeResponse, PostApiUsersAvatarMeData, PostApiUsersAvatarMeResponse, GetApiUsersMeResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, GetApiAuthAccessTokenResponse, GetApiAuthenticatedRouteResponse, GetApiResponse, GetApiGroupsAvatarByGroupIdData, GetApiGroupsAvatarByGroupIdResponse, PostApiGroupsAvatarByGroupIdData, PostApiGroupsAvatarByGroupIdResponse, GetApiGroupsPanoramaByGroupIdData, GetApiGroupsPanoramaByGroupIdResponse, PostApiGroupsPanoramaByGroupIdData, PostApiGroupsPanoramaByGroupIdResponse, GetApiGroupsInviteByGroupIdData, GetApiGroupsInviteByGroupIdResponse, GetApiGroupsUserGroupsMeResponse, GetApiGroupsUserGroupsByUserIdData, GetApiGroupsUserGroupsByUserIdResponse, GetApiGroupsByGroupIdData, GetApiGroupsByGroupIdResponse, PatchApiGroupsByGroupIdData, PatchApiGroupsByGroupIdResponse, DeleteApiGroupsByGroupIdData, DeleteApiGroupsByGroupIdResponse, PostApiGroupsData, PostApiGroupsResponse, GetApiChatsChatsMeResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, GetApiChatsByChatUuidData, GetApiChatsByChatUuidResponse, PatchApiChatsByChatUuidData, PatchApiChatsByChatUuidResponse, DeleteApiChatsByChatUuidData, DeleteApiChatsByChatUuidResponse, PostApiChatsByGroupIdData, PostApiChatsByGroupIdResponse, GetApiMessagesChatByChatIdData, GetApiMessagesChatByChatIdResponse, GetApiMessagesByMessageIdData, GetApiMessagesByMessageIdResponse, PatchApiMessagesByMessageIdData, PatchApiMessagesByMessageIdResponse, DeleteApiMessagesByMessageIdData, DeleteApiMessagesByMessageIdResponse, PostApiMessagesData, PostApiMessagesResponse } from './types.gen';
-
-export class UsersService {
-    /**
-     * Load Avatar
-     * @returns unknown Successful Response
-     * @throws ApiError
-     */
-    public static getApiUsersAvatarMe(): CancelablePromise<GetApiUsersAvatarMeResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/users/avatar/me'
-        });
-    }
-    
-    /**
-     * Upload Avatar
-     * @param data The data for the request.
-     * @param data.formData
-     * @returns unknown Successful Response
-     * @throws ApiError
-     */
-    public static postApiUsersAvatarMe(data: PostApiUsersAvatarMeData): CancelablePromise<PostApiUsersAvatarMeResponse> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/users/avatar/me',
-            formData: data.formData,
-            mediaType: 'multipart/form-data',
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Users:Current User
-     * @returns UserRead Successful Response
-     * @throws ApiError
-     */
-    public static getApiUsersMe(): CancelablePromise<GetApiUsersMeResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/users/me',
-            errors: {
-                401: 'Missing token or inactive user.'
-            }
-        });
-    }
-    
-    /**
-     * Users:Patch Current User
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns UserRead Successful Response
-     * @throws ApiError
-     */
-    public static patchApiUsersMe(data: PatchApiUsersMeData): CancelablePromise<PatchApiUsersMeResponse> {
-        return __request(OpenAPI, {
-            method: 'PATCH',
-            url: '/api/users/me',
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: 'Bad Request',
-                401: 'Missing token or inactive user.',
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Users:User
-     * @param data The data for the request.
-     * @param data.id
-     * @returns UserRead Successful Response
-     * @throws ApiError
-     */
-    public static getApiUsersById(data: GetApiUsersByIdData): CancelablePromise<GetApiUsersByIdResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/users/{id}',
-            path: {
-                id: data.id
-            },
-            errors: {
-                401: 'Missing token or inactive user.',
-                403: 'Not a superuser.',
-                404: 'The user does not exist.',
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Users:Patch User
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns UserRead Successful Response
-     * @throws ApiError
-     */
-    public static patchApiUsersById(data: PatchApiUsersByIdData): CancelablePromise<PatchApiUsersByIdResponse> {
-        return __request(OpenAPI, {
-            method: 'PATCH',
-            url: '/api/users/{id}',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: 'Bad Request',
-                401: 'Missing token or inactive user.',
-                403: 'Not a superuser.',
-                404: 'The user does not exist.',
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Users:Delete User
-     * @param data The data for the request.
-     * @param data.id
-     * @returns void Successful Response
-     * @throws ApiError
-     */
-    public static deleteApiUsersById(data: DeleteApiUsersByIdData): CancelablePromise<DeleteApiUsersByIdResponse> {
-        return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/api/users/{id}',
-            path: {
-                id: data.id
-            },
-            errors: {
-                401: 'Missing token or inactive user.',
-                403: 'Not a superuser.',
-                404: 'The user does not exist.',
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-}
+import type { PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, GetApiAuthMeResponse, GetApiAuthMeAlterntiveResponse, PostApiAuthAccessTokenResponse, GetApiUsersMeResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, GetApiUsersAvatarMeResponse, PostApiUsersAvatarMeData, PostApiUsersAvatarMeResponse, GetApiGroupsAvatarByGroupIdData, GetApiGroupsAvatarByGroupIdResponse, PostApiGroupsAvatarByGroupIdData, PostApiGroupsAvatarByGroupIdResponse, GetApiGroupsPanoramaByGroupIdData, GetApiGroupsPanoramaByGroupIdResponse, PostApiGroupsPanoramaByGroupIdData, PostApiGroupsPanoramaByGroupIdResponse, GetApiGroupsInviteByGroupIdData, GetApiGroupsInviteByGroupIdResponse, GetApiGroupsUserGroupsMeResponse, GetApiGroupsUserGroupsByUserIdData, GetApiGroupsUserGroupsByUserIdResponse, GetApiGroupsByGroupIdData, GetApiGroupsByGroupIdResponse, PatchApiGroupsByGroupIdData, PatchApiGroupsByGroupIdResponse, DeleteApiGroupsByGroupIdData, DeleteApiGroupsByGroupIdResponse, PostApiGroupsData, PostApiGroupsResponse, GetApiChatsChatsMeResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, GetApiChatsByChatIdData, GetApiChatsByChatIdResponse, PatchApiChatsByChatIdData, PatchApiChatsByChatIdResponse, DeleteApiChatsByChatIdData, DeleteApiChatsByChatIdResponse, PostApiChatsByGroupIdData, PostApiChatsByGroupIdResponse, GetApiRolesGroupByRoleIdData, GetApiRolesGroupByRoleIdResponse, DeleteApiRolesGroupByRoleIdData, DeleteApiRolesGroupByRoleIdResponse, PostApiRolesGroupByGroupIdData, PostApiRolesGroupByGroupIdResponse, PatchApiRolesGroupByGroupIdByRoleIdData, PatchApiRolesGroupByGroupIdByRoleIdResponse, GetApiMessagesChatByChatIdData, GetApiMessagesChatByChatIdResponse, GetApiMessagesByMessageIdData, GetApiMessagesByMessageIdResponse, PatchApiMessagesByMessageIdData, PatchApiMessagesByMessageIdResponse, DeleteApiMessagesByMessageIdData, DeleteApiMessagesByMessageIdResponse, PostApiMessagesData, PostApiMessagesResponse, GetApiResponse } from './types.gen';
 
 export class AuthService {
     /**
@@ -285,42 +142,182 @@ export class AuthService {
     }
     
     /**
-     * Get Access Token
-     * Get access token using refresh token
+     * Authenticated Route
      * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static getApiAuthAccessToken(): CancelablePromise<GetApiAuthAccessTokenResponse> {
+    public static getApiAuthMe(): CancelablePromise<GetApiAuthMeResponse> {
         return __request(OpenAPI, {
             method: 'GET',
+            url: '/api/auth/me'
+        });
+    }
+    
+    /**
+     * Authenticated Route Alterntive
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getApiAuthMeAlterntive(): CancelablePromise<GetApiAuthMeAlterntiveResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/auth/me_alterntive'
+        });
+    }
+    
+    /**
+     * Get Access Token
+     * Get and set in cookie access token using refresh token
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static postApiAuthAccessToken(): CancelablePromise<PostApiAuthAccessTokenResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
             url: '/api/auth/access_token'
         });
     }
     
 }
 
-export class DefaultService {
+export class UsersService {
     /**
-     * Authenticated Route
-     * @returns unknown Successful Response
+     * Users:Current User
+     * @returns UserRead Successful Response
      * @throws ApiError
      */
-    public static getApiAuthenticatedRoute(): CancelablePromise<GetApiAuthenticatedRouteResponse> {
+    public static getApiUsersMe(): CancelablePromise<GetApiUsersMeResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/authenticated-route'
+            url: '/api/users/me',
+            errors: {
+                401: 'Missing token or inactive user.'
+            }
         });
     }
     
     /**
-     * Ping
+     * Users:Patch Current User
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns UserRead Successful Response
+     * @throws ApiError
+     */
+    public static patchApiUsersMe(data: PatchApiUsersMeData): CancelablePromise<PatchApiUsersMeResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/users/me',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: 'Bad Request',
+                401: 'Missing token or inactive user.',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Users:User
+     * @param data The data for the request.
+     * @param data.id
+     * @returns UserRead Successful Response
+     * @throws ApiError
+     */
+    public static getApiUsersById(data: GetApiUsersByIdData): CancelablePromise<GetApiUsersByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/users/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                401: 'Missing token or inactive user.',
+                403: 'Not a superuser.',
+                404: 'The user does not exist.',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Users:Patch User
+     * @param data The data for the request.
+     * @param data.id
+     * @param data.requestBody
+     * @returns UserRead Successful Response
+     * @throws ApiError
+     */
+    public static patchApiUsersById(data: PatchApiUsersByIdData): CancelablePromise<PatchApiUsersByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/users/{id}',
+            path: {
+                id: data.id
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: 'Bad Request',
+                401: 'Missing token or inactive user.',
+                403: 'Not a superuser.',
+                404: 'The user does not exist.',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Users:Delete User
+     * @param data The data for the request.
+     * @param data.id
+     * @returns void Successful Response
+     * @throws ApiError
+     */
+    public static deleteApiUsersById(data: DeleteApiUsersByIdData): CancelablePromise<DeleteApiUsersByIdResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/users/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                401: 'Missing token or inactive user.',
+                403: 'Not a superuser.',
+                404: 'The user does not exist.',
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Load Avatar
      * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static getApi(): CancelablePromise<GetApiResponse> {
+    public static getApiUsersAvatarMe(): CancelablePromise<GetApiUsersAvatarMeResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api'
+            url: '/api/users/avatar/me'
+        });
+    }
+    
+    /**
+     * Upload Avatar
+     * @param data The data for the request.
+     * @param data.formData
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static postApiUsersAvatarMe(data: PostApiUsersAvatarMeData): CancelablePromise<PostApiUsersAvatarMeResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/users/avatar/me',
+            formData: data.formData,
+            mediaType: 'multipart/form-data',
+            errors: {
+                422: 'Validation Error'
+            }
         });
     }
     
@@ -435,7 +432,7 @@ export class GroupService {
     
     /**
      * Get My Groups
-     * @returns unknown Successful Response
+     * @returns ReadGroupSchema Successful Response
      * @throws ApiError
      */
     public static getApiGroupsUserGroupsMe(): CancelablePromise<GetApiGroupsUserGroupsMeResponse> {
@@ -449,7 +446,7 @@ export class GroupService {
      * Get User Groups
      * @param data The data for the request.
      * @param data.userId
-     * @returns unknown Successful Response
+     * @returns ReadGroupSchema Successful Response
      * @throws ApiError
      */
     public static getApiGroupsUserGroupsByUserId(data: GetApiGroupsUserGroupsByUserIdData): CancelablePromise<GetApiGroupsUserGroupsByUserIdResponse> {
@@ -585,16 +582,16 @@ export class ChatService {
     /**
      * Get Chat
      * @param data The data for the request.
-     * @param data.chatUuid
+     * @param data.chatId
      * @returns ReadChatSchema Successful Response
      * @throws ApiError
      */
-    public static getApiChatsByChatUuid(data: GetApiChatsByChatUuidData): CancelablePromise<GetApiChatsByChatUuidResponse> {
+    public static getApiChatsByChatId(data: GetApiChatsByChatIdData): CancelablePromise<GetApiChatsByChatIdResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/chats/{chat_uuid}',
+            url: '/api/chats/{chat_id}',
             path: {
-                chat_uuid: data.chatUuid
+                chat_id: data.chatId
             },
             errors: {
                 422: 'Validation Error'
@@ -605,17 +602,17 @@ export class ChatService {
     /**
      * Update Chat
      * @param data The data for the request.
-     * @param data.chatUuid
+     * @param data.chatId
      * @param data.requestBody
      * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static patchApiChatsByChatUuid(data: PatchApiChatsByChatUuidData): CancelablePromise<PatchApiChatsByChatUuidResponse> {
+    public static patchApiChatsByChatId(data: PatchApiChatsByChatIdData): CancelablePromise<PatchApiChatsByChatIdResponse> {
         return __request(OpenAPI, {
             method: 'PATCH',
-            url: '/api/chats/{chat_uuid}',
+            url: '/api/chats/{chat_id}',
             path: {
-                chat_uuid: data.chatUuid
+                chat_id: data.chatId
             },
             body: data.requestBody,
             mediaType: 'application/json',
@@ -628,16 +625,16 @@ export class ChatService {
     /**
      * Delete Chat
      * @param data The data for the request.
-     * @param data.chatUuid
+     * @param data.chatId
      * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static deleteApiChatsByChatUuid(data: DeleteApiChatsByChatUuidData): CancelablePromise<DeleteApiChatsByChatUuidResponse> {
+    public static deleteApiChatsByChatId(data: DeleteApiChatsByChatIdData): CancelablePromise<DeleteApiChatsByChatIdResponse> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/api/chats/{chat_uuid}',
+            url: '/api/chats/{chat_id}',
             path: {
-                chat_uuid: data.chatUuid
+                chat_id: data.chatId
             },
             errors: {
                 422: 'Validation Error'
@@ -658,6 +655,97 @@ export class ChatService {
             method: 'POST',
             url: '/api/chats/{group_id}',
             path: {
+                group_id: data.groupId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+}
+
+export class RoleService {
+    /**
+     * Get Role
+     * @param data The data for the request.
+     * @param data.roleId
+     * @returns ReadRoleSchema Successful Response
+     * @throws ApiError
+     */
+    public static getApiRolesGroupByRoleId(data: GetApiRolesGroupByRoleIdData): CancelablePromise<GetApiRolesGroupByRoleIdResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/roles_group/{role_id}',
+            path: {
+                role_id: data.roleId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Role
+     * @param data The data for the request.
+     * @param data.roleId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static deleteApiRolesGroupByRoleId(data: DeleteApiRolesGroupByRoleIdData): CancelablePromise<DeleteApiRolesGroupByRoleIdResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/roles_group/{role_id}',
+            path: {
+                role_id: data.roleId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Role
+     * @param data The data for the request.
+     * @param data.groupId
+     * @param data.requestBody
+     * @returns ReadRoleSchema Successful Response
+     * @throws ApiError
+     */
+    public static postApiRolesGroupByGroupId(data: PostApiRolesGroupByGroupIdData): CancelablePromise<PostApiRolesGroupByGroupIdResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/roles_group/{group_id}',
+            path: {
+                group_id: data.groupId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Role
+     * @param data The data for the request.
+     * @param data.roleId
+     * @param data.groupId
+     * @param data.requestBody
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static patchApiRolesGroupByGroupIdByRoleId(data: PatchApiRolesGroupByGroupIdByRoleIdData): CancelablePromise<PatchApiRolesGroupByGroupIdByRoleIdResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/roles_group/{group_id}/{role_id}',
+            path: {
+                role_id: data.roleId,
                 group_id: data.groupId
             },
             body: data.requestBody,
@@ -771,6 +859,21 @@ export class MessagesService {
             errors: {
                 422: 'Validation Error'
             }
+        });
+    }
+    
+}
+
+export class DefaultService {
+    /**
+     * Ping
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static getApi(): CancelablePromise<GetApiResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api'
         });
     }
     

@@ -17,6 +17,7 @@ import { IconArrowBackUp, IconBurger } from "@tabler/icons-react";
 import { setChatId } from "@/entities/chat/model/slice";
 import { setGroupData } from "@/entities/group/model/slice";
 import clsx from "clsx";
+import NavigationMobile from "@/widgets/mobile_navigation/ui";
 
 export interface CommunicationProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -25,18 +26,9 @@ export const Communication = ({}: CommunicationProps) => {
     initializeWithValue: false,
   });
   const groupId = useAppSelector((state) => state.group.id);
-  const { data, isLoading } = apiAuth.getAccessToken(undefined, {
-    retry: 2,
-    retryDelay: 500,
-  });
+
   const dispatch = useAppDispatch();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!data && !isLoading) {
-      router.push("/");
-    }
-  }, [data, isLoading]);
 
   const onChatBack = () => {
     dispatch(setChatId(null));
@@ -49,9 +41,9 @@ export const Communication = ({}: CommunicationProps) => {
 
   return (
     <Container className={styles.container}>
-      <NavigationMobileLayout className={styles.nav_mobile_layout}>
+      <NavigationMobile className={styles.nav_mobile}>
         {groupId && chatBack}
-      </NavigationMobileLayout>
+      </NavigationMobile>
       <Navigation className={styles.nav} />
       <div className={styles.communication}>
         {((!groupId && !isTablet) || isTablet) && (

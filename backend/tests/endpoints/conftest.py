@@ -87,7 +87,7 @@ async def group(session: AsyncSession):
 
 # @pytest_asyncio.fixture(scope="function")
 # async def role_group(session: AsyncSession, group: GroupModel):
-#     role_group = RoleGroupModel(title="Test role group", group_id=group.id)
+#     role_group = RoleModel(title="Test role group", group_id=group.id)
 #     session.add(role_group)
 #     await session.commit()
 #     await session.refresh(role_group)

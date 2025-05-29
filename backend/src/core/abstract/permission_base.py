@@ -25,24 +25,23 @@ class PermissionBase:
 class PermissionDaoBase(PermissionBase):
     """Abstract class for check permission"""
 
-    def __init__(self, dao: DaoBase, model: Any):
+    def __init__(self, dao: DaoBase):
         self.dao = dao
-        self.model = model
 
-    async def is_exist(self, id: Any) -> None:
+    async def check_exist_by_id(self, id: Any, model: Any) -> None:
         """use for check is exist object, return object for optimization"""
-        assert hasattr(self.model, "id")
+        assert hasattr(model, "id")
 
-        result = await self.dao.get_one_by_field(self.model.id == id)
+        result = await self.dao.get_one_by_field(model.id == id)
 
         if result is None:
             raise NotFoundModelException()
 
         return result
 
-    def is_has_value_model(self, id: Any, field: str) -> None:
+    async def is_has_value_model(self, id: Any, field: str) -> None:
         """checks if the model instance contains a field"""
-        db_result = self.dao.get_one_by_id(id)
+        db_result = await self.dao.get_one_by_id(id)
 
         assert hasattr(db_result, field)
 

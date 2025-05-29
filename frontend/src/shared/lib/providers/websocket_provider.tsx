@@ -13,16 +13,6 @@ import { useRouter } from "next/navigation";
 
 interface WebsocketProviderProps extends PropsWithChildren {}
 
-interface ITokenData {
-  data:
-    | {
-        access_token: string;
-      }
-    | undefined;
-  isLoading: boolean;
-  isError: boolean;
-}
-
 interface IWSContext {
   send: (data: any) => void;
   onMessage: (data: any) => void;
@@ -33,40 +23,46 @@ const WSContext = createContext<IWSContext | null>(null);
 
 const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   const wsRef = useRef<WebSocket | null>(null);
-  const {
-    data: tokenData,
-    isLoading,
-    isError,
-  }: ITokenData = apiAuth.getAccessToken(undefined, { retry: false });
+  const { mutateAsync } = apiAuth.postAccessToken();
   const onMessageFuncRef = useRef<(data: any) => void>((data: any) => {});
 
   useEffect(() => {
-    if (isError) {
+    let ws: WebSocket;
+
+    if (wsRef.current) {
       return;
     }
 
-    if (wsRef.current || isLoading || isError || !tokenData) {
-      return;
-    }
+    mutateAsync().then((data) => {
+      const { access_token } = data as { access_token: string };
+      ws = new WebSocket(
+        `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/?access_token=${access_token}`
+      );
 
-    const ws = new WebSocket(
-      `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/?access_token=${tokenData.access_token}`
-    );
-    wsRef.current = ws;
+      if (!ws) {
+        return;
+      }
 
-    ws.onopen = () => {
-      console.log("connect");
-    };
+      wsRef.current = ws;
 
-    ws.onmessage = (event) => {
-      onMessageFuncRef.current(JSON.parse(event.data));
-    };
+      ws.onopen = () => {
+        console.log("connect");
+      };
 
-    ws.onclose = () => {
-      console.log("disconnect");
-    };
+      ws.onmessage = (event) => {
+        onMessageFuncRef.current(JSON.parse(event.data));
+      };
+
+      ws.onclose = () => {
+        console.log("disconnect");
+      };
+    });
 
     return () => {
+      if (!ws) {
+        return;
+      }
+
       ws.close();
       if (wsRef.current) {
         wsRef.current.close();
@@ -74,7 +70,7 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
         console.log("WebSocket closed");
       }
     };
-  }, [isLoading, tokenData]);
+  }, []);
 
   const send = (data: any) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {

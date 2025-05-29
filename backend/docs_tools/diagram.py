@@ -1,6 +1,8 @@
 r"""
 Paste this in console if you want install it on windows
-uv pip install --config-settings="--global-option=build_ext" --config-settings=" --global-option=-IC:\Program Files\Graphviz\include" --config-settings=" --global-option=-LC:\Program Files\Graphviz\lib" pygraphviz
+uv pip install --config-settings="--global-option=build_ext" --config-settings="
+--global-option=-IC:\Program Files\Graphviz\include" --config-settings="
+--global-option=-LC:\Program Files\Graphviz\lib" pygraphviz
 uv pip install erdantic
 uv pip install eralchemy
 Taken from
@@ -34,6 +36,6 @@ from src.core.db.models import *  # noqa: F403
 render_er(Base, "postgres_diagram.png")
 
 
-from src.no_sql_db.models import IdToUsername, MessageModel
+from src.core.nosql.models import IdToUsername, MessageModel
 
 erd.draw(MessageModel, IdToUsername, out="schema_mongo_db.png")

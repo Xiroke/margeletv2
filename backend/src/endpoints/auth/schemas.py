@@ -22,6 +22,5 @@ class UserUpdate(schemas.BaseUserUpdate, UpdateUserSchema):
     pass
 
 
-class AccessToken(BaseModel):
-    access_token: str
-    token_type: str
+class AccessTokenJWTSchema(BaseModel):
+    user_id: str  # UUID must be converted

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from uuid import UUID
 
 from sqlalchemy import and_, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,17 +10,21 @@ from src.core.db.models.secondary_models.models import UserToGroupModel
 from .models import GroupModel
 
 
-class GroupDaoBase[SM](DaoBase[SM], ABC):
+class GroupDaoBase[M](DaoBase[M], ABC):
     @abstractmethod
-    async def get_user_groups(self, user_id) -> list[SM]:
+    async def create(self, obj: M, user_id: UUID | int) -> M:
         pass
 
     @abstractmethod
-    async def is_user_in_group(self, id, user_id) -> bool:
+    async def get_user_groups(self, user_id: UUID | int) -> list[M]:
         pass
 
     @abstractmethod
-    async def add_user_to_group(self, id, user_id):
+    async def is_user_in_group(self, id: UUID | int, user_id: UUID | int) -> bool:
+        pass
+
+    @abstractmethod
+    async def add_user_to_group(self, id: UUID | int, user_id: UUID | int):
         pass
 
 
@@ -28,7 +33,7 @@ class GroupSqlDao(SqlDaoBaseDefault[GroupModel], GroupDaoBase[GroupModel]):
         super().__init__(session, model)
 
     # ovverride
-    async def create(self, obj, user_id):
+    async def create(self, obj: type[GroupModel], user_id: UUID | int):
         self.session.add(obj)
         await self.session.flush()
         await self.session.execute(
@@ -36,8 +41,9 @@ class GroupSqlDao(SqlDaoBaseDefault[GroupModel], GroupDaoBase[GroupModel]):
         )
         await self.session.commit()
         await self.session.refresh(obj)
+        return obj
 
-    async def get_user_groups(self, user_id):
+    async def get_user_groups(self, user_id: UUID | int) -> list[GroupModel]:
         groups = await self.session.execute(
             select(GroupModel)
             .join(
@@ -49,9 +55,9 @@ class GroupSqlDao(SqlDaoBaseDefault[GroupModel], GroupDaoBase[GroupModel]):
             )
             .filter(UserToGroupModel.c.user_id == user_id)
         )
-        return groups.scalars().all()
+        return list(groups.scalars().all())
 
-    async def is_user_in_group(self, id, user_id):
+    async def is_user_in_group(self, id: UUID | int, user_id: UUID | int):
         result = await self.session.execute(
             select(UserToGroupModel)
             .filter(UserToGroupModel.c.user_id == user_id)
@@ -62,7 +68,7 @@ class GroupSqlDao(SqlDaoBaseDefault[GroupModel], GroupDaoBase[GroupModel]):
 
         return True
 
-    async def add_user_to_group(self, id, user_id):
+    async def add_user_to_group(self, id: UUID | int, user_id: UUID | int):
         await self.session.execute(
             insert(UserToGroupModel).values(group_id=id, user_id=user_id)
         )

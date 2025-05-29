@@ -1,16 +1,15 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2 
 
 import { type QueryClient } from "@tanstack/react-query";
-import { AuthService, ChatService, DefaultService, GroupService, MessagesService, UsersService } from "../requests/services.gen";
+import { AuthService, ChatService, DefaultService, GroupService, MessagesService, RoleService, UsersService } from "../requests/services.gen";
 import * as Common from "./common";
-export const prefetchUseUsersServiceGetApiUsersAvatarMe = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseUsersServiceGetApiUsersAvatarMeKeyFn(), queryFn: () => UsersService.getApiUsersAvatarMe() });
+export const prefetchUseAuthServiceGetApiAuthMe = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseAuthServiceGetApiAuthMeKeyFn(), queryFn: () => AuthService.getApiAuthMe() });
+export const prefetchUseAuthServiceGetApiAuthMeAlterntive = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseAuthServiceGetApiAuthMeAlterntiveKeyFn(), queryFn: () => AuthService.getApiAuthMeAlterntive() });
 export const prefetchUseUsersServiceGetApiUsersMe = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseUsersServiceGetApiUsersMeKeyFn(), queryFn: () => UsersService.getApiUsersMe() });
 export const prefetchUseUsersServiceGetApiUsersById = (queryClient: QueryClient, { id }: {
   id: string;
 }) => queryClient.prefetchQuery({ queryKey: Common.UseUsersServiceGetApiUsersByIdKeyFn({ id }), queryFn: () => UsersService.getApiUsersById({ id }) });
-export const prefetchUseAuthServiceGetApiAuthAccessToken = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseAuthServiceGetApiAuthAccessTokenKeyFn(), queryFn: () => AuthService.getApiAuthAccessToken() });
-export const prefetchUseDefaultServiceGetApiAuthenticatedRoute = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseDefaultServiceGetApiAuthenticatedRouteKeyFn(), queryFn: () => DefaultService.getApiAuthenticatedRoute() });
-export const prefetchUseDefaultServiceGetApi = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseDefaultServiceGetApiKeyFn(), queryFn: () => DefaultService.getApi() });
+export const prefetchUseUsersServiceGetApiUsersAvatarMe = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseUsersServiceGetApiUsersAvatarMeKeyFn(), queryFn: () => UsersService.getApiUsersAvatarMe() });
 export const prefetchUseGroupServiceGetApiGroupsAvatarByGroupId = (queryClient: QueryClient, { groupId }: {
   groupId: string;
 }) => queryClient.prefetchQuery({ queryKey: Common.UseGroupServiceGetApiGroupsAvatarByGroupIdKeyFn({ groupId }), queryFn: () => GroupService.getApiGroupsAvatarByGroupId({ groupId }) });
@@ -31,12 +30,16 @@ export const prefetchUseChatServiceGetApiChatsChatsMe = (queryClient: QueryClien
 export const prefetchUseChatServiceGetApiChatsGroupChatsByGroupId = (queryClient: QueryClient, { groupId }: {
   groupId: string;
 }) => queryClient.prefetchQuery({ queryKey: Common.UseChatServiceGetApiChatsGroupChatsByGroupIdKeyFn({ groupId }), queryFn: () => ChatService.getApiChatsGroupChatsByGroupId({ groupId }) });
-export const prefetchUseChatServiceGetApiChatsByChatUuid = (queryClient: QueryClient, { chatUuid }: {
-  chatUuid: string;
-}) => queryClient.prefetchQuery({ queryKey: Common.UseChatServiceGetApiChatsByChatUuidKeyFn({ chatUuid }), queryFn: () => ChatService.getApiChatsByChatUuid({ chatUuid }) });
+export const prefetchUseChatServiceGetApiChatsByChatId = (queryClient: QueryClient, { chatId }: {
+  chatId: string;
+}) => queryClient.prefetchQuery({ queryKey: Common.UseChatServiceGetApiChatsByChatIdKeyFn({ chatId }), queryFn: () => ChatService.getApiChatsByChatId({ chatId }) });
+export const prefetchUseRoleServiceGetApiRolesGroupByRoleId = (queryClient: QueryClient, { roleId }: {
+  roleId: string;
+}) => queryClient.prefetchQuery({ queryKey: Common.UseRoleServiceGetApiRolesGroupByRoleIdKeyFn({ roleId }), queryFn: () => RoleService.getApiRolesGroupByRoleId({ roleId }) });
 export const prefetchUseMessagesServiceGetApiMessagesChatByChatId = (queryClient: QueryClient, { chatId }: {
   chatId: string;
 }) => queryClient.prefetchQuery({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) });
 export const prefetchUseMessagesServiceGetApiMessagesByMessageId = (queryClient: QueryClient, { messageId }: {
   messageId: string;
 }) => queryClient.prefetchQuery({ queryKey: Common.UseMessagesServiceGetApiMessagesByMessageIdKeyFn({ messageId }), queryFn: () => MessagesService.getApiMessagesByMessageId({ messageId }) });
+export const prefetchUseDefaultServiceGetApi = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey: Common.UseDefaultServiceGetApiKeyFn(), queryFn: () => DefaultService.getApi() });

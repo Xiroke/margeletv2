@@ -4,24 +4,21 @@ from uuid import UUID
 from fastapi import (
     APIRouter,
     Body,
-    Depends,
     Query,
     WebSocket,
     WebSocketDisconnect,
     WebSocketException,
 )
 from fastapi.responses import JSONResponse
-from fastapi_users.authentication import JWTStrategy
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.db.database import get_async_session
-from src.core.db.models import UserModel
-from src.endpoints.auth.users import get_jwt_strategy, get_user_db, get_user_manager
+from src.endpoints.auth.depends import current_user, get_current_user_from_access
 from src.endpoints.chat.depends import chat_service_factory
-from src.endpoints.user.depends import current_active_user_factory
+from src.endpoints.message.id_to_username.depends import id_to_username_dao
+from src.endpoints.user.depends import user_dao_factory
+from src.endpoints.user.models import UserModel
+from src.utils.jwt import jwt_manager
 
 from .depends import message_service_factory
-from .id_to_username.dao import IdToUsernameDao
 from .models import MessageModel
 from .schemas import (
     CreateMessageSchema,
@@ -35,21 +32,22 @@ router = APIRouter(prefix="/messages", tags=["messages"])
 
 @router.get("/chat/{chat_id}")
 async def get_all_messages_chat(
-    user: current_active_user_factory,
+    user: current_user,
     chat_id: UUID,
     message_service: message_service_factory,
+    id_user_dao: id_to_username_dao,
 ) -> list[ReadMessageSchema]:
     raw_messages = await message_service.get_many_by_field(
         MessageModel.to_chat_id == chat_id
     )
 
-    messages = []
+    messages: list[ReadMessageSchema] = []
     for message in raw_messages:
         message = ReadMessageSchema.model_validate(message)
-        username_db = await IdToUsernameDao.get_one_by_id(message.user_id)
+        username_db = await id_user_dao.get_one_by_id(message.user_id)
 
         if not username_db:
-            username_db = await IdToUsernameDao.create(
+            username_db = await id_user_dao.create(
                 {"id": message.user_id, "username": user.name}
             )
 
@@ -64,24 +62,28 @@ async def get_message_by_id(
     message_id: UUID,
     message_service: message_service_factory,
 ) -> ReadMessageSchema:
-    return await message_service.get_one_by_id(MessageModel.id == message_id)
+    return ReadMessageSchema.model_validate(
+        await message_service.get_one_by_id(message_id)
+    )
 
 
 @router.patch("/{message_id}")
 async def update_message(
-    message_id: int,
+    message_id: UUID,
     message: Annotated[UpdateMessageSchema, Body()],
     message_service: message_service_factory,
 ):
     """not work"""
-    await message_service.update(message.model_dump(exclude_none=True), id=message_id)
+    await message_service.update_one_by_id(
+        message.model_dump(exclude_none=True), message_id
+    )
 
     return JSONResponse(status_code=200, content={"message": "Message updated"})
 
 
 @router.delete("/{message_id}")
 async def delete_message(
-    message_id: int,
+    message_id: UUID,
     message_service: message_service_factory,
 ):
     await message_service.delete(message_id)
@@ -91,12 +93,13 @@ async def delete_message(
 
 @router.post("/")
 async def create_message(
-    current_user: current_active_user_factory,
+    user: current_user,
     message: Annotated[CreateMessageSchema, Body()],
     message_service: message_service_factory,
 ):
-    message.user_id = current_user.id
-    new_message = await message_service.create(message.model_dump())
+    message.user_id = user.id
+    message_model = MessageModel(**message.model_dump())
+    new_message = await message_service.create(message_model)
     return new_message
 
 
@@ -147,20 +150,24 @@ class ConnectionManager:
                 pass
 
     async def broadcast(
-        self, user: UserModel, raw_message: CreateMessageSchema, message_service
+        self,
+        user: UserModel,
+        raw_message: CreateMessageSchema,
+        message_service: message_service_factory,
+        id_user_dao: id_to_username_dao,
     ):
         """Send message to all users of current chat (from message)"""
 
         # --- we get data and add username to it
-        message_db: MessageModel = await message_service.create(
-            raw_message.model_dump()
-        )
+        message_model = MessageModel(**raw_message.model_dump())
+
+        message_db: MessageModel = await message_service.create(message_model)
 
         message = ReadMessageSchema.model_validate(message_db)
-        username_db = await IdToUsernameDao.get_one_by_id(message.user_id)
+        username_db = await id_user_dao.get_one_by_id(message.user_id)
 
         if not username_db:
-            username_db = await IdToUsernameDao.create(
+            username_db = await id_user_dao.create(
                 {"id": message.user_id, "username": user.name}
             )
 
@@ -177,19 +184,15 @@ connection_manager_users = ConnectionManager()
 
 @router.websocket("/")
 async def websocket_endpoint(
-    session: Annotated[AsyncSession, Depends(get_async_session)],
-    jwt_strategy: Annotated[JWTStrategy, Depends(get_jwt_strategy)],
     websocket: WebSocket,
     access_token: Annotated[str, Query()],
     message_service: message_service_factory,
     chat_service: chat_service_factory,
+    jwt: jwt_manager,
+    user_dao: user_dao_factory,
+    id_user_dao: id_to_username_dao,
 ):
-    user_db = await anext(get_user_db(session))
-    user_manager = await anext(get_user_manager(user_db))
-    user: UserModel | None = await jwt_strategy.read_token(
-        access_token,
-        user_manager=user_manager,
-    )
+    user = await get_current_user_from_access(access_token, jwt, user_dao)
 
     if user is None:
         raise WebSocketException(401, "Unauthorized")
@@ -200,7 +203,9 @@ async def websocket_endpoint(
         while True:
             data = RecivedDataDTO(**await websocket.receive_json())
             data.user_id = user.id
-            await connection_manager_users.broadcast(user, data, message_service)
+            await connection_manager_users.broadcast(
+                user, data, message_service, id_user_dao
+            )
 
     except WebSocketDisconnect:
         print("disconnect")

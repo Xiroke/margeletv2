@@ -3,8 +3,9 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY, ENUM, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,19 +26,22 @@ class RolePermissionsEnum(Enum):
     CAN_INVITE = "can_invite"
 
 
-class RoleGroupModel(Base):
-    __tablename__ = "role_group"
+class RoleModel(Base):
+    __tablename__ = "role"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     title: Mapped[str] = mapped_column()
     permissions: Mapped[list[str]] = mapped_column(
-        ARRAY(ENUM(RolePermissionsEnum, name="role_permissions")), default=lambda: []
+        ARRAY(ENUM(RolePermissionsEnum, name="role_permissions")),
+        default=lambda: [],
     )
     users: Mapped[list["UserModel"]] = relationship(
-        secondary="user_to_role_group", back_populates="roles"
+        secondary="user_to_role", back_populates="roles"
     )
     group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))
     group: Mapped["GroupModel"] = relationship(back_populates="roles")
     created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

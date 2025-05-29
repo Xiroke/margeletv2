@@ -11,9 +11,9 @@ from src.endpoints.group.models import GroupModel
 from .models import ChatModel
 
 
-class ChatDaoBase[SM](DaoBase[SM]):
+class ChatDaoBase[M](DaoBase[M]):
     @abstractmethod
-    async def get_all_chats_by_user(self, id) -> list[SM]:
+    async def get_all_chats_by_user(self, id: UUID) -> list[M]:
         pass
 
 
@@ -21,15 +21,15 @@ class SqlChatDao(SqlDaoBaseDefault[ChatModel], ChatDaoBase[ChatModel]):
     def __init__(self, session: AsyncSession, model: type[ChatModel]):
         super().__init__(session, model)
 
-    async def get_all_chats_by_user(self, id: UUID):
+    async def get_all_chats_by_user(self, id: UUID) -> list[ChatModel]:
         """
         Using in websocket, when user connect to add user in all chats
         """
         result = await self.session.execute(
-            select(self.model.id)
+            select(self.model)
             .select_from(self.model)
             .join(self.model.group)
             .join(UserToGroupModel, GroupModel.id == UserToGroupModel.c.group_id)
             .filter(UserToGroupModel.c.user_id == id)
         )
-        return result.scalars().all()
+        return list(result.scalars().all())

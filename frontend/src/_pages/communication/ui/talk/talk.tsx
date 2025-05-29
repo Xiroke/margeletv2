@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 import Sending from "../sending";
 import Message from "@/entities/message/ui";
 import { useApiMessage, ReadMessageSchema } from "@/entities/message/model";
-import { useWS } from "@/shared/lib/context";
+import { useWS } from "@/shared/lib/providers";
 import { useQueryClient } from "@tanstack/react-query";
 import useMediaQuery from "@/shared/lib/hooks/use_media_query";
 

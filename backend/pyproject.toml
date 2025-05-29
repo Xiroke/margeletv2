@@ -39,6 +39,8 @@ lint.select = [
     "FAST001", # fastapi
     "FAST002",
     "FAST003",
+    "I", # circular imports
+    "C4",
 ]
 
 [tool.pytest.ini_options]

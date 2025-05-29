@@ -7,10 +7,9 @@ export type BaseChatSchema = {
     group_id: string;
 };
 
-export type BaseRoleGroupSchema = {
-    id: number;
+export type BaseRoleSchema = {
+    id: string;
     title: string;
-    permissions: Array<RolePermissionsEnum>;
     group_id: string;
     created_at: string;
 };
@@ -59,7 +58,7 @@ export type CreateChatSchema = {
 
 export type CreateGroupSchema = {
     title: string;
-    description: string | null;
+    description: string;
 };
 
 export type CreateMessageSchema = {
@@ -69,6 +68,10 @@ export type CreateMessageSchema = {
     message: string;
     user_id?: string | null;
     to_chat_id: string;
+};
+
+export type CreateRoleSchema = {
+    title: string;
 };
 
 export type ErrorModel = {
@@ -91,12 +94,12 @@ export type ReadChatSchema = {
 export type ReadGroupSchema = {
     id: string;
     title: string;
-    description: string | null;
-    avatar_path: string | null;
-    panorama_path: string | null;
+    description: string;
+    avatar_path: string;
+    panorama_path: string;
     created_at: string;
     chats?: Array<BaseChatSchema>;
-    roles?: Array<BaseRoleGroupSchema>;
+    roles?: Array<BaseRoleSchema>;
 };
 
 export type ReadMessageSchema = {
@@ -112,7 +115,15 @@ export type ReadMessageSchema = {
     author?: string | null;
 };
 
-export type RolePermissionsEnum = 'can_all' | 'can_edit_roles' | 'can_set_avatar' | 'can_set_panorama' | 'can_control_chats' | 'can_send_message';
+export type ReadRoleSchema = {
+    id: string;
+    title: string;
+    group_id: string;
+    created_at: string;
+    permissions: Array<RolePermissionsEnum>;
+};
+
+export type RolePermissionsEnum = 'can_all' | 'can_edit_roles' | 'can_set_avatar' | 'can_set_panorama' | 'can_control_chats' | 'can_send_message' | 'can_invite';
 
 export type UpdateChatSchema = {
     title?: string | null;
@@ -128,6 +139,10 @@ export type UpdateMessageSchema = {
      * Message must be less than 2000 characters
      */
     message: string | null;
+};
+
+export type UpdateRoleSchema = {
+    title?: string | null;
 };
 
 export type UserCreate = {
@@ -165,41 +180,6 @@ export type ValidationError = {
     msg: string;
     type: string;
 };
-
-export type GetApiUsersAvatarMeResponse = unknown;
-
-export type PostApiUsersAvatarMeData = {
-    formData: Body_upload_avatar_api_users_avatar_me_post;
-};
-
-export type PostApiUsersAvatarMeResponse = unknown;
-
-export type GetApiUsersMeResponse = UserRead;
-
-export type PatchApiUsersMeData = {
-    requestBody: UserUpdate;
-};
-
-export type PatchApiUsersMeResponse = UserRead;
-
-export type GetApiUsersByIdData = {
-    id: string;
-};
-
-export type GetApiUsersByIdResponse = UserRead;
-
-export type PatchApiUsersByIdData = {
-    id: string;
-    requestBody: UserUpdate;
-};
-
-export type PatchApiUsersByIdResponse = UserRead;
-
-export type DeleteApiUsersByIdData = {
-    id: string;
-};
-
-export type DeleteApiUsersByIdResponse = void;
 
 export type PostApiAuthJwtLoginData = {
     formData: Body_auth_db_cookie_login_api_auth_jwt_login_post;
@@ -239,11 +219,46 @@ export type PostApiAuthVerifyData = {
 
 export type PostApiAuthVerifyResponse = UserRead;
 
-export type GetApiAuthAccessTokenResponse = unknown;
+export type GetApiAuthMeResponse = unknown;
 
-export type GetApiAuthenticatedRouteResponse = unknown;
+export type GetApiAuthMeAlterntiveResponse = unknown;
 
-export type GetApiResponse = unknown;
+export type PostApiAuthAccessTokenResponse = unknown;
+
+export type GetApiUsersMeResponse = UserRead;
+
+export type PatchApiUsersMeData = {
+    requestBody: UserUpdate;
+};
+
+export type PatchApiUsersMeResponse = UserRead;
+
+export type GetApiUsersByIdData = {
+    id: string;
+};
+
+export type GetApiUsersByIdResponse = UserRead;
+
+export type PatchApiUsersByIdData = {
+    id: string;
+    requestBody: UserUpdate;
+};
+
+export type PatchApiUsersByIdResponse = UserRead;
+
+export type DeleteApiUsersByIdData = {
+    id: string;
+};
+
+export type DeleteApiUsersByIdResponse = void;
+
+export type GetApiUsersAvatarMeResponse = unknown;
+
+export type PostApiUsersAvatarMeData = {
+    formData: Body_upload_avatar_api_users_avatar_me_post;
+};
+
+export type PostApiUsersAvatarMeResponse = unknown;
 
 export type GetApiGroupsAvatarByGroupIdData = {
     groupId: string;
@@ -277,13 +292,13 @@ export type GetApiGroupsInviteByGroupIdData = {
 
 export type GetApiGroupsInviteByGroupIdResponse = unknown;
 
-export type GetApiGroupsUserGroupsMeResponse = unknown;
+export type GetApiGroupsUserGroupsMeResponse = Array<ReadGroupSchema>;
 
 export type GetApiGroupsUserGroupsByUserIdData = {
     userId: string;
 };
 
-export type GetApiGroupsUserGroupsByUserIdResponse = unknown;
+export type GetApiGroupsUserGroupsByUserIdResponse = Array<ReadGroupSchema>;
 
 export type GetApiGroupsByGroupIdData = {
     groupId: string;
@@ -318,24 +333,24 @@ export type GetApiChatsGroupChatsByGroupIdData = {
 
 export type GetApiChatsGroupChatsByGroupIdResponse = Array<ReadChatSchema>;
 
-export type GetApiChatsByChatUuidData = {
-    chatUuid: string;
+export type GetApiChatsByChatIdData = {
+    chatId: string;
 };
 
-export type GetApiChatsByChatUuidResponse = ReadChatSchema;
+export type GetApiChatsByChatIdResponse = ReadChatSchema;
 
-export type PatchApiChatsByChatUuidData = {
-    chatUuid: string;
+export type PatchApiChatsByChatIdData = {
+    chatId: string;
     requestBody: UpdateChatSchema;
 };
 
-export type PatchApiChatsByChatUuidResponse = unknown;
+export type PatchApiChatsByChatIdResponse = unknown;
 
-export type DeleteApiChatsByChatUuidData = {
-    chatUuid: string;
+export type DeleteApiChatsByChatIdData = {
+    chatId: string;
 };
 
-export type DeleteApiChatsByChatUuidResponse = unknown;
+export type DeleteApiChatsByChatIdResponse = unknown;
 
 export type PostApiChatsByGroupIdData = {
     groupId: string;
@@ -343,6 +358,33 @@ export type PostApiChatsByGroupIdData = {
 };
 
 export type PostApiChatsByGroupIdResponse = unknown;
+
+export type GetApiRolesGroupByRoleIdData = {
+    roleId: string;
+};
+
+export type GetApiRolesGroupByRoleIdResponse = ReadRoleSchema;
+
+export type DeleteApiRolesGroupByRoleIdData = {
+    roleId: string;
+};
+
+export type DeleteApiRolesGroupByRoleIdResponse = unknown;
+
+export type PostApiRolesGroupByGroupIdData = {
+    groupId: string;
+    requestBody: CreateRoleSchema;
+};
+
+export type PostApiRolesGroupByGroupIdResponse = ReadRoleSchema;
+
+export type PatchApiRolesGroupByGroupIdByRoleIdData = {
+    groupId: string;
+    requestBody: UpdateRoleSchema;
+    roleId: string;
+};
+
+export type PatchApiRolesGroupByGroupIdByRoleIdResponse = unknown;
 
 export type GetApiMessagesChatByChatIdData = {
     chatId: string;
@@ -357,14 +399,14 @@ export type GetApiMessagesByMessageIdData = {
 export type GetApiMessagesByMessageIdResponse = ReadMessageSchema;
 
 export type PatchApiMessagesByMessageIdData = {
-    messageId: number;
+    messageId: string;
     requestBody: UpdateMessageSchema;
 };
 
 export type PatchApiMessagesByMessageIdResponse = unknown;
 
 export type DeleteApiMessagesByMessageIdData = {
-    messageId: number;
+    messageId: string;
 };
 
 export type DeleteApiMessagesByMessageIdResponse = unknown;
@@ -375,146 +417,9 @@ export type PostApiMessagesData = {
 
 export type PostApiMessagesResponse = unknown;
 
+export type GetApiResponse = unknown;
+
 export type $OpenApiTs = {
-    '/api/users/avatar/me': {
-        get: {
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-            };
-        };
-        post: {
-            req: PostApiUsersAvatarMeData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/users/me': {
-        get: {
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserRead;
-                /**
-                 * Missing token or inactive user.
-                 */
-                401: unknown;
-            };
-        };
-        patch: {
-            req: PatchApiUsersMeData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserRead;
-                /**
-                 * Bad Request
-                 */
-                400: ErrorModel;
-                /**
-                 * Missing token or inactive user.
-                 */
-                401: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/users/{id}': {
-        get: {
-            req: GetApiUsersByIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserRead;
-                /**
-                 * Missing token or inactive user.
-                 */
-                401: unknown;
-                /**
-                 * Not a superuser.
-                 */
-                403: unknown;
-                /**
-                 * The user does not exist.
-                 */
-                404: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: PatchApiUsersByIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserRead;
-                /**
-                 * Bad Request
-                 */
-                400: ErrorModel;
-                /**
-                 * Missing token or inactive user.
-                 */
-                401: unknown;
-                /**
-                 * Not a superuser.
-                 */
-                403: unknown;
-                /**
-                 * The user does not exist.
-                 */
-                404: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: DeleteApiUsersByIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                204: void;
-                /**
-                 * Missing token or inactive user.
-                 */
-                401: unknown;
-                /**
-                 * Not a superuser.
-                 */
-                403: unknown;
-                /**
-                 * The user does not exist.
-                 */
-                404: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
     '/api/auth/jwt/login': {
         post: {
             req: PostApiAuthJwtLoginData;
@@ -643,8 +548,28 @@ export type $OpenApiTs = {
             };
         };
     };
+    '/api/auth/me': {
+        get: {
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+            };
+        };
+    };
+    '/api/auth/me_alterntive': {
+        get: {
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+            };
+        };
+    };
     '/api/auth/access_token': {
-        get: {
+        post: {
             res: {
                 /**
                  * Successful Response
@@ -653,7 +578,123 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/authenticated-route': {
+    '/api/users/me': {
+        get: {
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: UserRead;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
+            };
+        };
+        patch: {
+            req: PatchApiUsersMeData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: UserRead;
+                /**
+                 * Bad Request
+                 */
+                400: ErrorModel;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/users/{id}': {
+        get: {
+            req: GetApiUsersByIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: UserRead;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
+                /**
+                 * Not a superuser.
+                 */
+                403: unknown;
+                /**
+                 * The user does not exist.
+                 */
+                404: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        patch: {
+            req: PatchApiUsersByIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: UserRead;
+                /**
+                 * Bad Request
+                 */
+                400: ErrorModel;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
+                /**
+                 * Not a superuser.
+                 */
+                403: unknown;
+                /**
+                 * The user does not exist.
+                 */
+                404: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        delete: {
+            req: DeleteApiUsersByIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                204: void;
+                /**
+                 * Missing token or inactive user.
+                 */
+                401: unknown;
+                /**
+                 * Not a superuser.
+                 */
+                403: unknown;
+                /**
+                 * The user does not exist.
+                 */
+                404: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/users/avatar/me': {
         get: {
             res: {
                 /**
@@ -662,14 +703,17 @@ export type $OpenApiTs = {
                 200: unknown;
             };
         };
-    };
-    '/api': {
-        get: {
+        post: {
+            req: PostApiUsersAvatarMeData;
             res: {
                 /**
                  * Successful Response
                  */
                 200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
             };
         };
     };
@@ -750,7 +794,7 @@ export type $OpenApiTs = {
                 /**
                  * Successful Response
                  */
-                200: unknown;
+                200: Array<ReadGroupSchema>;
             };
         };
     };
@@ -761,7 +805,7 @@ export type $OpenApiTs = {
                 /**
                  * Successful Response
                  */
-                200: unknown;
+                200: Array<ReadGroupSchema>;
                 /**
                  * Validation Error
                  */
@@ -850,9 +894,9 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/chats/{chat_uuid}': {
+    '/api/chats/{chat_id}': {
         get: {
-            req: GetApiChatsByChatUuidData;
+            req: GetApiChatsByChatIdData;
             res: {
                 /**
                  * Successful Response
@@ -865,7 +909,7 @@ export type $OpenApiTs = {
             };
         };
         patch: {
-            req: PatchApiChatsByChatUuidData;
+            req: PatchApiChatsByChatIdData;
             res: {
                 /**
                  * Successful Response
@@ -878,7 +922,7 @@ export type $OpenApiTs = {
             };
         };
         delete: {
-            req: DeleteApiChatsByChatUuidData;
+            req: DeleteApiChatsByChatIdData;
             res: {
                 /**
                  * Successful Response
@@ -894,6 +938,64 @@ export type $OpenApiTs = {
     '/api/chats/{group_id}': {
         post: {
             req: PostApiChatsByGroupIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/roles_group/{role_id}': {
+        get: {
+            req: GetApiRolesGroupByRoleIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: ReadRoleSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        delete: {
+            req: DeleteApiRolesGroupByRoleIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/roles_group/{group_id}': {
+        post: {
+            req: PostApiRolesGroupByGroupIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: ReadRoleSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/roles_group/{group_id}/{role_id}': {
+        patch: {
+            req: PatchApiRolesGroupByGroupIdByRoleIdData;
             res: {
                 /**
                  * Successful Response
@@ -974,6 +1076,16 @@ export type $OpenApiTs = {
                  * Validation Error
                  */
                 422: HTTPValidationError;
+            };
+        };
+    };
+    '/api': {
+        get: {
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
             };
         };
     };

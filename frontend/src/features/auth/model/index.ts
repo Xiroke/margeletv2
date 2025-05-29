@@ -1,9 +1,9 @@
 import {
-  useAuthServiceGetApiAuthAccessToken,
+  useAuthServicePostApiAuthAccessToken,
   useAuthServicePostApiAuthJwtLogout,
 } from "@/shared/api/queries";
 
 export const apiAuth = {
-  getAccessToken: useAuthServiceGetApiAuthAccessToken,
+  postAccessToken: useAuthServicePostApiAuthAccessToken,
   logout: useAuthServicePostApiAuthJwtLogout,
 };

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from beanie import Document
@@ -13,7 +13,7 @@ class DaoBase[T](ABC):
     """Abstract class for Dao"""
 
     @abstractmethod
-    async def get_one_by_id(self, id: int | UUID) -> T:
+    async def get_one_by_id(self, id: UUID) -> T:
         pass
 
     @abstractmethod
@@ -31,65 +31,64 @@ class DaoBase[T](ABC):
         pass
 
     @abstractmethod
-    async def create(self, obj: Any) -> T:
+    async def create(self, obj: T) -> T:
         pass
 
     @abstractmethod
-    async def update(self, values: dict, *filter: Any) -> T:
+    async def update_one_by_id(self, values: dict, id: UUID) -> None:
         """You should pass filter as Model.id == id"""
         pass
 
     @abstractmethod
-    async def delete(self, obj: Any) -> None:
+    async def delete(self, id: UUID) -> None:
         pass
 
 
-class SqlDaoBase[SM: Base](DaoBase[SM]):
+class SqlDaoBase[M: Base](DaoBase[M]):
     "Sql implementation of Dao without any methods"
 
-    def __init__(self, session: AsyncSession, model: type[SM]):
+    def __init__(self, session: AsyncSession, model: type[M]):
         self.session = session
         self.model = model
 
 
-class SqlDaoBaseDefault[SM: Base](SqlDaoBase[SM]):
+class SqlDaoBaseDefault[M: Base](SqlDaoBase[M]):
     """Sql implementation of Dao with default crud methods"""
 
-    def __init__(self, session: AsyncSession, model: type[SM]):
+    def __init__(self, session: AsyncSession, model: type[M]):
         super().__init__(session, model)
 
-    async def get_one_by_id(self, id: int | UUID):
+    async def get_one_by_id(self, id: UUID) -> M:
         result = await self.session.execute(
             select(self.model).filter(self.model.id == id)
         )
         return result.scalars().one()
 
-    async def get_one_by_field(self, *filter) -> SM:
+    async def get_one_by_field(self, *filter) -> M:
         result = await self.session.execute(select(self.model).filter(*filter))
         return result.scalars().one()
 
-    async def get_many_by_field(self, *filter) -> list[SM]:
+    async def get_many_by_field(self, *filter) -> list[M]:
         result = await self.session.execute(select(self.model).filter(*filter))
         return list(result.scalars().all())
 
-    async def get_all(self) -> list[SM]:
+    async def get_all(self) -> list[M]:
         result = await self.session.execute(select(self.model))
         return list(result.scalars().all())
 
-    async def create(self, obj: SM) -> SM:
+    async def create(self, obj: M) -> M:
         self.session.add(obj)
         await self.session.commit()
         await self.session.refresh(obj)
         return obj
 
-    async def update(self, values: dict, *filter) -> SM:
-        result = await self.session.execute(
-            update(self.model).filter(*filter).values(**values)
+    async def update_one_by_id(self, values: dict, id: UUID) -> None:
+        await self.session.execute(
+            update(self.model).filter(self.model.id == id).values(**values)
         )
         await self.session.commit()
-        return result.scalars().one()
 
-    async def delete(self, id) -> None:
+    async def delete(self, id: UUID) -> None:
         assert hasattr(self.model, "id")
 
         await self.session.execute(delete(self.model).filter(self.model.id == id))  # type: ignore
@@ -112,12 +111,20 @@ class MongoDaoBaseDefault[D: Document](MongoDaoBase[D]):
 
         super().__init__(model)
 
-    async def get_one_by_id(self, id: int | UUID):
+    async def get_one_by_id(self, id: UUID) -> D:
         result = await self.model.get(id, fetch_links=True)
+
+        if result is None:
+            raise ValueError("Object not found")
+
         return result
 
-    async def get_one_by_field(self, *filter) -> D | None:
+    async def get_one_by_field(self, *filter) -> D:
         result = await self.model.find_one(*filter, fetch_links=True)
+
+        if result is None:
+            raise ValueError("Object not found")
+
         return result
 
     async def get_many_by_field(self, *filter) -> list[D]:
@@ -128,19 +135,18 @@ class MongoDaoBaseDefault[D: Document](MongoDaoBase[D]):
         result = await self.model.find(fetch_links=True).to_list()
         return result
 
-    async def create(self, obj: dict):
-        document = self.model(**obj)
-        return await document.insert()
+    async def create(self, obj: D) -> D:
+        return await obj.insert()
 
-    async def update(self, values: dict, *filter):
-        result = await self.model.find_one(*filter)
+    async def update_one_by_id(self, values: dict, id: UUID):
+        result = await self.model.find_one(self.model.id == id)
 
         if result is None:
             raise ValueError("Object not found")
 
-        return await result.update_one(**values)
+        await result.update(**values)
 
-    async def delete(self, id: int | UUID):
+    async def delete(self, id: UUID):
         result = await self.model.get(id)
 
         if result is None:

@@ -8,7 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { OpenAPI as OpenAPIConfig } from "@/shared/api/requests/core/OpenAPI";
 import store from "./store";
 import settings from "@/shared/config";
-import WebsocketProvider from "../shared/lib/context/websocket_provider";
+import WebsocketProvider from "../shared/lib/providers/websocket_provider";
 import { usePathname } from "next/navigation";
 
 OpenAPIConfig.BASE = settings.NEXT_PUBLIC_API_URL!;
@@ -37,6 +37,7 @@ export function Providers({ children }: { children: ReactNode }) {
         registration.active.postMessage({
           type: "SET_PARAMS",
           payload: {
+            BACKEND_URL: settings.NEXT_PUBLIC_API_URL,
             ALLOWED_ORIGINS: [settings.NEXT_PUBLIC_API_URL],
             ALLOWED_CACHED_PATHS: settings.NEXT_PUBLIC_ALLOWED_CACHED_PATHS,
           },

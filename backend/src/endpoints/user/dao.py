@@ -5,7 +5,7 @@ from src.core.abstract.dao_base import DaoBase, SqlDaoBaseDefault
 from .models import UserModel
 
 
-class UserDaoBase[SM](DaoBase[SM], ABC):
+class UserDaoBase[M](DaoBase[M], ABC):
     pass
 
 

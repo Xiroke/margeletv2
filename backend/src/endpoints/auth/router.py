@@ -1,18 +1,14 @@
-from fastapi import Response
 from fastapi.routing import APIRouter
 
-from src.endpoints.access_token.depends import write_access_token
-from src.endpoints.role_group.depends import role_group_service_factory
-from src.endpoints.user.depends import current_active_user_factory
-from src.endpoints.user.router import router as user_router
-from src.utils.jwt import user_jwt_manager_factory
+from src.endpoints.auth.depends import current_user, current_user_from_refresh
+from src.endpoints.auth.schemas import AccessTokenJWTSchema
+from src.utils.jwt import jwt_manager
 
 from .schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, fastapi_users
 
 router = APIRouter(prefix="")
 
-router.include_router(user_router)
 router.include_router(
     fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
 )
@@ -38,15 +34,20 @@ router.include_router(
 )
 
 
-@router.get("/authenticated-route")
-async def authenticated_route(user: current_active_user_factory):
+@router.get("/auth/me", tags=["auth"])
+async def authenticated_route(user: current_user_from_refresh):
+    return {"message": f"Hello {user.email}!"}
+
+
+@router.get("/auth/me_alterntive", tags=["auth"])
+async def authenticated_route_alterntive(user: current_user):
     return {"message": f"Hello {user.email}!"}
 
 
 # @router.get("/auth/access_token", tags=["auth"])
 # async def get_access_token(
 #     jwt_strategy: Annotated[JWTStrategy, Depends(get_jwt_strategy)],
-#     user: current_active_user_factory,
+#     user: user_from_refresh_factory,
 #     response: Response,
 # ):
 #     """
@@ -57,17 +58,15 @@ async def authenticated_route(user: current_active_user_factory):
 #     return {"access_token": access_token}
 
 
-@router.get("/auth/access_token", tags=["auth"])
+@router.post("/auth/access_token", tags=["auth"])
 async def get_access_token(
-    user_jwt_manager: user_jwt_manager_factory,
-    roles_group_service: role_group_service_factory,
-    user: current_active_user_factory,
-    response: Response,
+    jwt: jwt_manager,
+    user: current_user_from_refresh,
 ):
     """
-    Get access token using refresh token
+    Get and set in cookie access token using refresh token
     """
-    access_token = await write_access_token(
-        response, user.id, user_jwt_manager, roles_group_service
-    )
+    token_data = AccessTokenJWTSchema(user_id=str(user.id))
+
+    access_token = jwt.encode(token_data)
     return {"access_token": access_token}

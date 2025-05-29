@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class BaseTokenSchema(BaseModel):
-    id: int
+    id: UUID
     value: str
     user_id: UUID
     created_at: datetime

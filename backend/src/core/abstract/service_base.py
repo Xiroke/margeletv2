@@ -2,7 +2,6 @@ from typing import Any
 from uuid import UUID
 
 from src.core.abstract.dao_base import DaoBase
-from src.core.abstract.permission_base import PermissionDaoBase
 
 
 class BaseService:
@@ -17,14 +16,10 @@ class DaoBaseService[T](BaseService):
     """Abstract class founded dao methods with permission,
     T - return type"""
 
-    def __init__(self, dao: DaoBase[T], permission: PermissionDaoBase):
+    def __init__(self, dao: DaoBase[T]):
         self.dao = dao
-        self._permission = permission
 
-    async def permission_manager(self):
-        return self._permission
-
-    async def get_one_by_id(self, id: int | UUID) -> T | None:
+    async def get_one_by_id(self, id: UUID) -> T | None:
         return await self.dao.get_one_by_id(id)
 
     async def get_one_by_field(self, *filter: Any) -> T | None:
@@ -36,11 +31,11 @@ class DaoBaseService[T](BaseService):
     async def get_all(self) -> list[T]:
         return list(await self.dao.get_all())
 
-    async def create(self, obj: T, *args, **kwargs) -> T:
-        return await self.dao.create(obj, *args, **kwargs)
+    async def create(self, obj: T) -> T:
+        return await self.dao.create(obj)
 
-    async def update(self, values: dict, **filter: Any) -> T:
-        return await self.dao.update(values, **filter)
+    async def update_one_by_id(self, values: dict, id: UUID) -> None:
+        await self.dao.update_one_by_id(values, id)
 
     async def delete(self, obj: Any) -> None:
         return await self.dao.delete(obj)

@@ -1,6 +1,3 @@
-from fastapi import HTTPException, status
-
-
 class ServiceNotFoundException(Exception):
     message = "File not found"
 
@@ -29,11 +26,7 @@ class PermissionNotHasAttributeError(Exception):
     message = "Permission no has data"
 
 
-class HTTPExpiredSignatureError(HTTPException):
-    message = "Token expired"
-    status_code = status.HTTP_401_UNAUTHORIZED
+class PermissionGroupDeniedError(Exception):
+    """raise when user does not have permission setted in group"""
 
-
-class HTTPInvalidTokenError(HTTPException):
-    message = "Invalid token"
-    status_code = status.HTTP_400_BAD_REQUEST
+    message = "Permission group denied"

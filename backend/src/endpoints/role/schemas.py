@@ -5,9 +5,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from src.endpoints.role.models import RolePermissionsEnum
 
-class BaseRoleGroupSchema(BaseModel):
-    id: int
+
+class BaseRoleSchema(BaseModel):
+    id: UUID
     title: str
     group_id: UUID
     created_at: datetime
@@ -15,14 +17,13 @@ class BaseRoleGroupSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ReadRoleGroupSchema(BaseRoleGroupSchema):
-    pass
+class ReadRoleSchema(BaseRoleSchema):
+    permissions: list[RolePermissionsEnum]
 
 
-class CreateRoleGroupSchema(BaseModel):
+class CreateRoleSchema(BaseModel):
     title: str
-    group_id: UUID
 
 
-class UpdateRoleGroupSchema(BaseModel):
+class UpdateRoleSchema(BaseModel):
     title: str | None = None

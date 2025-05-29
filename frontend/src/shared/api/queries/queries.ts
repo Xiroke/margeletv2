@@ -1,17 +1,16 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2 
 
 import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import { AuthService, ChatService, DefaultService, GroupService, MessagesService, UsersService } from "../requests/services.gen";
-import { Body_auth_db_cookie_login_api_auth_jwt_login_post, Body_reset_forgot_password_api_auth_forgot_password_post, Body_reset_reset_password_api_auth_reset_password_post, Body_upload_avatar_api_groups_avatar__group_id__post, Body_upload_avatar_api_users_avatar_me_post, Body_upload_panorama_api_groups_panorama__group_id__post, Body_verify_request_token_api_auth_request_verify_token_post, Body_verify_verify_api_auth_verify_post, CreateChatSchema, CreateGroupSchema, CreateMessageSchema, UpdateChatSchema, UpdateGroupSchema, UpdateMessageSchema, UserCreate, UserUpdate } from "../requests/types.gen";
+import { AuthService, ChatService, DefaultService, GroupService, MessagesService, RoleService, UsersService } from "../requests/services.gen";
+import { Body_auth_db_cookie_login_api_auth_jwt_login_post, Body_reset_forgot_password_api_auth_forgot_password_post, Body_reset_reset_password_api_auth_reset_password_post, Body_upload_avatar_api_groups_avatar__group_id__post, Body_upload_avatar_api_users_avatar_me_post, Body_upload_panorama_api_groups_panorama__group_id__post, Body_verify_request_token_api_auth_request_verify_token_post, Body_verify_verify_api_auth_verify_post, CreateChatSchema, CreateGroupSchema, CreateMessageSchema, CreateRoleSchema, UpdateChatSchema, UpdateGroupSchema, UpdateMessageSchema, UpdateRoleSchema, UserCreate, UserUpdate } from "../requests/types.gen";
 import * as Common from "./common";
-export const useUsersServiceGetApiUsersAvatarMe = <TData = Common.UsersServiceGetApiUsersAvatarMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseUsersServiceGetApiUsersAvatarMeKeyFn(queryKey), queryFn: () => UsersService.getApiUsersAvatarMe() as TData, ...options });
+export const useAuthServiceGetApiAuthMe = <TData = Common.AuthServiceGetApiAuthMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseAuthServiceGetApiAuthMeKeyFn(queryKey), queryFn: () => AuthService.getApiAuthMe() as TData, ...options });
+export const useAuthServiceGetApiAuthMeAlterntive = <TData = Common.AuthServiceGetApiAuthMeAlterntiveDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseAuthServiceGetApiAuthMeAlterntiveKeyFn(queryKey), queryFn: () => AuthService.getApiAuthMeAlterntive() as TData, ...options });
 export const useUsersServiceGetApiUsersMe = <TData = Common.UsersServiceGetApiUsersMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseUsersServiceGetApiUsersMeKeyFn(queryKey), queryFn: () => UsersService.getApiUsersMe() as TData, ...options });
 export const useUsersServiceGetApiUsersById = <TData = Common.UsersServiceGetApiUsersByIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ id }: {
   id: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseUsersServiceGetApiUsersByIdKeyFn({ id }, queryKey), queryFn: () => UsersService.getApiUsersById({ id }) as TData, ...options });
-export const useAuthServiceGetApiAuthAccessToken = <TData = Common.AuthServiceGetApiAuthAccessTokenDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseAuthServiceGetApiAuthAccessTokenKeyFn(queryKey), queryFn: () => AuthService.getApiAuthAccessToken() as TData, ...options });
-export const useDefaultServiceGetApiAuthenticatedRoute = <TData = Common.DefaultServiceGetApiAuthenticatedRouteDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseDefaultServiceGetApiAuthenticatedRouteKeyFn(queryKey), queryFn: () => DefaultService.getApiAuthenticatedRoute() as TData, ...options });
-export const useDefaultServiceGetApi = <TData = Common.DefaultServiceGetApiDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseDefaultServiceGetApiKeyFn(queryKey), queryFn: () => DefaultService.getApi() as TData, ...options });
+export const useUsersServiceGetApiUsersAvatarMe = <TData = Common.UsersServiceGetApiUsersAvatarMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseUsersServiceGetApiUsersAvatarMeKeyFn(queryKey), queryFn: () => UsersService.getApiUsersAvatarMe() as TData, ...options });
 export const useGroupServiceGetApiGroupsAvatarByGroupId = <TData = Common.GroupServiceGetApiGroupsAvatarByGroupIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupId }: {
   groupId: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseGroupServiceGetApiGroupsAvatarByGroupIdKeyFn({ groupId }, queryKey), queryFn: () => GroupService.getApiGroupsAvatarByGroupId({ groupId }) as TData, ...options });
@@ -32,20 +31,19 @@ export const useChatServiceGetApiChatsChatsMe = <TData = Common.ChatServiceGetAp
 export const useChatServiceGetApiChatsGroupChatsByGroupId = <TData = Common.ChatServiceGetApiChatsGroupChatsByGroupIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupId }: {
   groupId: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseChatServiceGetApiChatsGroupChatsByGroupIdKeyFn({ groupId }, queryKey), queryFn: () => ChatService.getApiChatsGroupChatsByGroupId({ groupId }) as TData, ...options });
-export const useChatServiceGetApiChatsByChatUuid = <TData = Common.ChatServiceGetApiChatsByChatUuidDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ chatUuid }: {
-  chatUuid: string;
-}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseChatServiceGetApiChatsByChatUuidKeyFn({ chatUuid }, queryKey), queryFn: () => ChatService.getApiChatsByChatUuid({ chatUuid }) as TData, ...options });
+export const useChatServiceGetApiChatsByChatId = <TData = Common.ChatServiceGetApiChatsByChatIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ chatId }: {
+  chatId: string;
+}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseChatServiceGetApiChatsByChatIdKeyFn({ chatId }, queryKey), queryFn: () => ChatService.getApiChatsByChatId({ chatId }) as TData, ...options });
+export const useRoleServiceGetApiRolesGroupByRoleId = <TData = Common.RoleServiceGetApiRolesGroupByRoleIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ roleId }: {
+  roleId: string;
+}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseRoleServiceGetApiRolesGroupByRoleIdKeyFn({ roleId }, queryKey), queryFn: () => RoleService.getApiRolesGroupByRoleId({ roleId }) as TData, ...options });
 export const useMessagesServiceGetApiMessagesChatByChatId = <TData = Common.MessagesServiceGetApiMessagesChatByChatIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ chatId }: {
   chatId: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }, queryKey), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) as TData, ...options });
 export const useMessagesServiceGetApiMessagesByMessageId = <TData = Common.MessagesServiceGetApiMessagesByMessageIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ messageId }: {
   messageId: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseMessagesServiceGetApiMessagesByMessageIdKeyFn({ messageId }, queryKey), queryFn: () => MessagesService.getApiMessagesByMessageId({ messageId }) as TData, ...options });
-export const useUsersServicePostApiUsersAvatarMe = <TData = Common.UsersServicePostApiUsersAvatarMeMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
-  formData: Body_upload_avatar_api_users_avatar_me_post;
-}, TContext>, "mutationFn">) => useMutation<TData, TError, {
-  formData: Body_upload_avatar_api_users_avatar_me_post;
-}, TContext>({ mutationFn: ({ formData }) => UsersService.postApiUsersAvatarMe({ formData }) as unknown as Promise<TData>, ...options });
+export const useDefaultServiceGetApi = <TData = Common.DefaultServiceGetApiDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseDefaultServiceGetApiKeyFn(queryKey), queryFn: () => DefaultService.getApi() as TData, ...options });
 export const useAuthServicePostApiAuthJwtLogin = <TData = Common.AuthServicePostApiAuthJwtLoginMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   formData: Body_auth_db_cookie_login_api_auth_jwt_login_post;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
@@ -77,6 +75,12 @@ export const useAuthServicePostApiAuthVerify = <TData = Common.AuthServicePostAp
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   requestBody: Body_verify_verify_api_auth_verify_post;
 }, TContext>({ mutationFn: ({ requestBody }) => AuthService.postApiAuthVerify({ requestBody }) as unknown as Promise<TData>, ...options });
+export const useAuthServicePostApiAuthAccessToken = <TData = Common.AuthServicePostApiAuthAccessTokenMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, void, TContext>, "mutationFn">) => useMutation<TData, TError, void, TContext>({ mutationFn: () => AuthService.postApiAuthAccessToken() as unknown as Promise<TData>, ...options });
+export const useUsersServicePostApiUsersAvatarMe = <TData = Common.UsersServicePostApiUsersAvatarMeMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  formData: Body_upload_avatar_api_users_avatar_me_post;
+}, TContext>, "mutationFn">) => useMutation<TData, TError, {
+  formData: Body_upload_avatar_api_users_avatar_me_post;
+}, TContext>({ mutationFn: ({ formData }) => UsersService.postApiUsersAvatarMe({ formData }) as unknown as Promise<TData>, ...options });
 export const useGroupServicePostApiGroupsAvatarByGroupId = <TData = Common.GroupServicePostApiGroupsAvatarByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   formData: Body_upload_avatar_api_groups_avatar__group_id__post;
   groupId: string;
@@ -103,6 +107,13 @@ export const useChatServicePostApiChatsByGroupId = <TData = Common.ChatServicePo
   groupId: string;
   requestBody: CreateChatSchema;
 }, TContext>({ mutationFn: ({ groupId, requestBody }) => ChatService.postApiChatsByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
+export const useRoleServicePostApiRolesGroupByGroupId = <TData = Common.RoleServicePostApiRolesGroupByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  groupId: string;
+  requestBody: CreateRoleSchema;
+}, TContext>, "mutationFn">) => useMutation<TData, TError, {
+  groupId: string;
+  requestBody: CreateRoleSchema;
+}, TContext>({ mutationFn: ({ groupId, requestBody }) => RoleService.postApiRolesGroupByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useMessagesServicePostApiMessages = <TData = Common.MessagesServicePostApiMessagesMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   requestBody: CreateMessageSchema;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
@@ -127,18 +138,27 @@ export const useGroupServicePatchApiGroupsByGroupId = <TData = Common.GroupServi
   groupId: string;
   requestBody: UpdateGroupSchema;
 }, TContext>({ mutationFn: ({ groupId, requestBody }) => GroupService.patchApiGroupsByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
-export const useChatServicePatchApiChatsByChatUuid = <TData = Common.ChatServicePatchApiChatsByChatUuidMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
-  chatUuid: string;
+export const useChatServicePatchApiChatsByChatId = <TData = Common.ChatServicePatchApiChatsByChatIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  chatId: string;
   requestBody: UpdateChatSchema;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
-  chatUuid: string;
+  chatId: string;
   requestBody: UpdateChatSchema;
-}, TContext>({ mutationFn: ({ chatUuid, requestBody }) => ChatService.patchApiChatsByChatUuid({ chatUuid, requestBody }) as unknown as Promise<TData>, ...options });
+}, TContext>({ mutationFn: ({ chatId, requestBody }) => ChatService.patchApiChatsByChatId({ chatId, requestBody }) as unknown as Promise<TData>, ...options });
+export const useRoleServicePatchApiRolesGroupByGroupIdByRoleId = <TData = Common.RoleServicePatchApiRolesGroupByGroupIdByRoleIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  groupId: string;
+  requestBody: UpdateRoleSchema;
+  roleId: string;
+}, TContext>, "mutationFn">) => useMutation<TData, TError, {
+  groupId: string;
+  requestBody: UpdateRoleSchema;
+  roleId: string;
+}, TContext>({ mutationFn: ({ groupId, requestBody, roleId }) => RoleService.patchApiRolesGroupByGroupIdByRoleId({ groupId, requestBody, roleId }) as unknown as Promise<TData>, ...options });
 export const useMessagesServicePatchApiMessagesByMessageId = <TData = Common.MessagesServicePatchApiMessagesByMessageIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
-  messageId: number;
+  messageId: string;
   requestBody: UpdateMessageSchema;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
-  messageId: number;
+  messageId: string;
   requestBody: UpdateMessageSchema;
 }, TContext>({ mutationFn: ({ messageId, requestBody }) => MessagesService.patchApiMessagesByMessageId({ messageId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useUsersServiceDeleteApiUsersById = <TData = Common.UsersServiceDeleteApiUsersByIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
@@ -151,13 +171,18 @@ export const useGroupServiceDeleteApiGroupsByGroupId = <TData = Common.GroupServ
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   groupId: string;
 }, TContext>({ mutationFn: ({ groupId }) => GroupService.deleteApiGroupsByGroupId({ groupId }) as unknown as Promise<TData>, ...options });
-export const useChatServiceDeleteApiChatsByChatUuid = <TData = Common.ChatServiceDeleteApiChatsByChatUuidMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
-  chatUuid: string;
+export const useChatServiceDeleteApiChatsByChatId = <TData = Common.ChatServiceDeleteApiChatsByChatIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  chatId: string;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
-  chatUuid: string;
-}, TContext>({ mutationFn: ({ chatUuid }) => ChatService.deleteApiChatsByChatUuid({ chatUuid }) as unknown as Promise<TData>, ...options });
+  chatId: string;
+}, TContext>({ mutationFn: ({ chatId }) => ChatService.deleteApiChatsByChatId({ chatId }) as unknown as Promise<TData>, ...options });
+export const useRoleServiceDeleteApiRolesGroupByRoleId = <TData = Common.RoleServiceDeleteApiRolesGroupByRoleIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  roleId: string;
+}, TContext>, "mutationFn">) => useMutation<TData, TError, {
+  roleId: string;
+}, TContext>({ mutationFn: ({ roleId }) => RoleService.deleteApiRolesGroupByRoleId({ roleId }) as unknown as Promise<TData>, ...options });
 export const useMessagesServiceDeleteApiMessagesByMessageId = <TData = Common.MessagesServiceDeleteApiMessagesByMessageIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
-  messageId: number;
+  messageId: string;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
-  messageId: number;
+  messageId: string;
 }, TContext>({ mutationFn: ({ messageId }) => MessagesService.deleteApiMessagesByMessageId({ messageId }) as unknown as Promise<TData>, ...options });

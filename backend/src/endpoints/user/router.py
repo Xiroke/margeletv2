@@ -1,33 +1,33 @@
 from fastapi import APIRouter, UploadFile
 from fastapi.responses import JSONResponse, Response
 
-from .depends import current_active_user_factory, user_service_factory
+from src.endpoints.auth.depends import current_user
+from src.endpoints.user.models import UserModel
+
+from .depends import user_service_factory
 
 # search include router in auth router.py
 router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/avatar/me")
-async def load_avatar(
-    current_user: current_active_user_factory, user_service: user_service_factory
-):
-    permission = await user_service.permission_manager()
-    permission.is_has_value_model(current_user.id, "avatar_path")
+async def load_avatar(user: current_user, user_service: user_service_factory):
+    await user_service.permission.is_has_value_model(user.id, "avatar_path")
 
-    response = await user_service.load_avatar(f"/users/{current_user.id}.jpg")
+    response = await user_service.load_avatar(f"/users/{user.id}.jpg")
 
     return Response(content=response, media_type="image/png")
 
 
 @router.post("/avatar/me")
 async def upload_avatar(
-    current_user: current_active_user_factory,
+    user: current_user,
     user_service: user_service_factory,
     image: UploadFile,
 ):
-    permission = await user_service.permission_manager()
-    await permission.is_exist(current_user.id)
+    await user_service.permission.check_exist_by_id(user.id, UserModel)
 
-    path = await user_service.upload_avatar(f"users/{str(current_user.id)}", image)
-    await user_service.update({"avatar_path": path}, id=current_user.id)
+    path = f"users/{str(user.id)}.jpg"
+    await user_service.upload_avatar(path, image)
+    await user_service.update_one_by_id({"avatar_path": path}, user.id)
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})

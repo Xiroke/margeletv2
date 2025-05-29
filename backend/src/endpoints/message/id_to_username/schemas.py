@@ -2,12 +2,12 @@ from pydantic import BaseModel
 
 
 class ReadIdToUsernameSchema(BaseModel):
-    author: str
+    username: str
 
 
 class CreateIdToUsernameSchema(BaseModel):
-    author: str
+    username: str
 
 
 class UpdateIdToUsernameSchema(BaseModel):
-    author: str
+    username: str
