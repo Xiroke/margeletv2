@@ -2,8 +2,8 @@ from fastapi.routing import APIRouter
 
 from src.endpoints.auth.depends import current_user, current_user_from_refresh
 from src.endpoints.auth.schemas import AccessTokenJWTSchema
-from src.utils.jwt import jwt_manager
 
+from .depends import jwt_manager_access
 from .schemas import UserCreate, UserRead, UserUpdate
 from .users import auth_backend, fastapi_users
 
@@ -44,23 +44,9 @@ async def authenticated_route_alterntive(user: current_user):
     return {"message": f"Hello {user.email}!"}
 
 
-# @router.get("/auth/access_token", tags=["auth"])
-# async def get_access_token(
-#     jwt_strategy: Annotated[JWTStrategy, Depends(get_jwt_strategy)],
-#     user: user_from_refresh_factory,
-#     response: Response,
-# ):
-#     """
-#     Get access token using refresh token
-#     """
-#     access_token = await jwt_strategy.write_token(user)
-
-#     return {"access_token": access_token}
-
-
 @router.post("/auth/access_token", tags=["auth"])
 async def get_access_token(
-    jwt: jwt_manager,
+    jwt: jwt_manager_access,
     user: current_user_from_refresh,
 ):
     """

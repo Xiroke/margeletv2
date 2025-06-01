@@ -30,3 +30,7 @@ class PermissionGroupDeniedError(Exception):
     """raise when user does not have permission setted in group"""
 
     message = "Permission group denied"
+
+
+class ModelNotFoundException(Exception):
+    message = "Model not found"

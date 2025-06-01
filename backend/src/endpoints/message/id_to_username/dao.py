@@ -1,15 +1,33 @@
-from src.core.abstract.dao_base import DaoBase, MongoDaoBaseDefault
+from typing import Protocol
 
-from .models import IdToUsername
+from src.core.abstract.dao_base import DaoProtocol, MongoDaoImpl
+from src.endpoints.message.id_to_username.schemas import (
+    CreateIdToUsernameModelSchema,
+    ReadIdToUsernameModelSchema,
+    UpdateIdToUsernameModelSchema,
+)
+
+from .models import IdToUsernameModel
 
 
-class IdToUsernameDaoBase(DaoBase[IdToUsername]):
-    """Abstract class for IdToUsernameDao"""
-
+class IdToUsernameModelProtocol(
+    DaoProtocol[
+        IdToUsernameModel,
+        ReadIdToUsernameModelSchema,
+        CreateIdToUsernameModelSchema,
+        UpdateIdToUsernameModelSchema,
+    ],
+    Protocol,
+):
     pass
 
 
-class IdToUsernameDao(MongoDaoBaseDefault[IdToUsername], IdToUsernameDaoBase):
-    "Implementation previous abstract class"
-
+class IdToUsernameModelDao(
+    MongoDaoImpl[
+        IdToUsernameModel,
+        ReadIdToUsernameModelSchema,
+        CreateIdToUsernameModelSchema,
+        UpdateIdToUsernameModelSchema,
+    ]
+):
     pass

@@ -18,9 +18,8 @@ if TYPE_CHECKING:
 
 class RolePermissionsEnum(Enum):
     CAN_ALL = "can_all"
+    CAN_EDIT_GROUP_SETTINGS = "can_edit_group_settings"
     CAN_EDIT_ROLES = "can_edit_roles"
-    CAN_SET_AVATAR = "can_set_avatar"
-    CAN_SET_PANORAMA = "can_set_panorama"
     CAN_CONTROL_CHATS = "can_control_chats"
     CAN_SEND_MESSAGE = "can_send_message"
     CAN_INVITE = "can_invite"
@@ -45,3 +44,25 @@ class RoleModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
+
+
+creator_permissions = [
+    RolePermissionsEnum.CAN_ALL,
+    RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS,
+    RolePermissionsEnum.CAN_EDIT_ROLES,
+    RolePermissionsEnum.CAN_CONTROL_CHATS,
+    RolePermissionsEnum.CAN_SEND_MESSAGE,
+    RolePermissionsEnum.CAN_INVITE,
+]
+
+newbie_permissions = [
+    RolePermissionsEnum.CAN_SEND_MESSAGE,
+    RolePermissionsEnum.CAN_INVITE,
+]
+
+__all__ = [
+    "RoleModel",
+    "RolePermissionsEnum",
+    "creator_permissions",
+    "newbie_permissions",
+]

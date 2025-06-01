@@ -1,29 +1,51 @@
-from typing import TYPE_CHECKING
+from typing import Annotated
 from uuid import UUID
 
-from src.core.abstract.permission_base import PermissionDaoBase
-from src.endpoints.role.dao import RoleDaoBase
-from src.utils.exeptions import PermissionGroupDeniedError
+from fastapi import Depends
+
+from src.core.abstract.permission_base import PermissionService
+from src.endpoints.role.depends import role_service_factory
+from src.endpoints.role.models import RolePermissionsEnum
+from src.endpoints.role.service import RoleService
+from src.utils.exeptions import ModelNotFoundException, PermissionGroupDeniedError
 
 
-class RolePermission(PermissionDaoBase):
-    def __init__(self, dao: RoleDaoBase):
-        if TYPE_CHECKING:
-            self.dao = dao
-
-        super().__init__(dao)
+class RolePermission(PermissionService):
+    def __init__(self, service: RoleService, role_service: RoleService):
+        super().__init__(service)
+        self.role_service = role_service
 
     async def check_user_has_permission(
-        self, permission: str | list[str], user_id: UUID, group_id: UUID
+        self,
+        permission: RolePermissionsEnum | list[RolePermissionsEnum],
+        user_id: UUID,
+        group_id: UUID,
     ) -> None:
-        roles = await self.dao.get_user_group_roles(user_id, group_id)
+        # if you use this funct you must set dao
+        assert self.role_service
+
+        try:
+            roles = await self.role_service.get_user_roles_in_group(user_id, group_id)
+        except ModelNotFoundException:
+            raise PermissionGroupDeniedError()
+
         array_permissions = {perm for role in roles for perm in role.permissions}
 
-        if type(permission) is str:
+        if isinstance(permission, RolePermissionsEnum):
             status = permission in array_permissions
-            if not status:
-                raise PermissionGroupDeniedError()
         else:
             status = all(elem in array_permissions for elem in permission)
-            if not status:
-                raise PermissionGroupDeniedError()
+
+        if not status:
+            raise PermissionGroupDeniedError()
+
+
+def get_role_permission(
+    service: role_service_factory, role_service: role_service_factory
+):
+    return RolePermission(service, role_service)
+
+
+role_permission = Annotated[RolePermission, Depends(get_role_permission)]
+
+__all__ = ["role_permission"]

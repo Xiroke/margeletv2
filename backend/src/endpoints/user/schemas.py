@@ -26,4 +26,6 @@ class CreateUserSchema(BaseModel):
 
 
 class UpdateUserSchema(BaseModel):
-    name: str | None
+    id: UUID
+    name: str | None = None
+    avatar_path: str | None = None

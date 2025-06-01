@@ -6,16 +6,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.db.database import get_async_session
 from src.infrastructure.s3 import s3_service_factory
 
-from .dao import SqlChatDao
-from .models import ChatModel
+from .dao import ChatSqlDao
 from .service import ChatService
 
 
 def get_chat_dao(session: Annotated[AsyncSession, Depends(get_async_session)]):
-    return SqlChatDao(session, model=ChatModel)
+    return ChatSqlDao(session)
 
 
-chat_dao_factory = Annotated[SqlChatDao, Depends(get_chat_dao)]
+chat_dao_factory = Annotated[ChatSqlDao, Depends(get_chat_dao)]
 
 
 def get_chat_service(

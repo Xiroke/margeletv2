@@ -13,17 +13,22 @@ class BaseRoleSchema(BaseModel):
     title: str
     group_id: UUID
     created_at: datetime
+    permissions: list[RolePermissionsEnum]
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ReadRoleSchema(BaseRoleSchema):
-    permissions: list[RolePermissionsEnum]
+    pass
 
 
 class CreateRoleSchema(BaseModel):
     title: str
+    group_id: UUID
+    permissions: list[RolePermissionsEnum] = []
 
 
 class UpdateRoleSchema(BaseModel):
+    id: UUID
     title: str | None = None
+    permissions: list[RolePermissionsEnum] | None = None

@@ -23,3 +23,8 @@ def get_message_service(
 
 
 message_service_factory = Annotated[MessageService, Depends(get_message_service)]
+
+__all__ = [
+    "message_dao_factory",
+    "message_service_factory",
+]

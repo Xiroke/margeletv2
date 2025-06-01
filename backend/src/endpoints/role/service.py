@@ -1,37 +1,36 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from src.core.abstract.service_base import DaoBaseService
-from src.endpoints.role.permissions import RolePermission
+from src.core.abstract.service_base import DaoService
+from src.endpoints.role.models import RoleModel, RolePermissionsEnum
+from src.endpoints.role.schemas import (
+    CreateRoleSchema,
+    ReadRoleSchema,
+    UpdateRoleSchema,
+)
 
-from .dao import RoleDaoBase
-from .models import RoleModel
+from .dao import RoleDaoProtocol
 
 
-class RoleService(DaoBaseService[RoleModel]):
+class RoleService(
+    DaoService[RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
+):
     def __init__(
         self,
-        dao: RoleDaoBase,
+        dao: RoleDaoProtocol,
     ):
-        self.permission = RolePermission(dao)
-
         if TYPE_CHECKING:
             self.dao = dao
 
         super().__init__(dao)
 
-    async def get_user_group_roles(
-        self,
-        user_id: UUID,
-        group_id: UUID,
-    ):
-        return await self.dao.get_user_group_roles(user_id, group_id)
-
-    async def get_user_group_permissions(
+    async def get_user_roles_in_group(
         self, user_id: UUID, group_id: UUID
-    ) -> list[str]:
-        array = []
-        for role in await self.get_user_group_roles(user_id, group_id):
-            for permission in role.permissions:
-                array.append(permission)
-        return array
+    ) -> list[ReadRoleSchema]:
+        return await self.dao.get_user_roles_in_group(user_id, group_id)
+
+    async def get_user_permissions_in_group(
+        self, user_id: UUID, group_id: UUID
+    ) -> set[RolePermissionsEnum]:
+        roles = await self.dao.get_user_roles_in_group(user_id, group_id)
+        return {perm for role in roles for perm in role.permissions}

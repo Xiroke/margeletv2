@@ -1,13 +1,21 @@
-from abc import ABC
+from typing import Protocol
 
-from src.core.abstract.dao_base import DaoBase, SqlDaoBaseDefault
+from src.core.abstract.dao_base import DaoProtocol, SqlDaoImpl
+from src.endpoints.user.models import UserModel
+from src.endpoints.user.schemas import (
+    CreateUserSchema,
+    ReadUserSchema,
+    UpdateUserSchema,
+)
 
-from .models import UserModel
 
-
-class UserDaoBase[M](DaoBase[M], ABC):
+class UserDaoProtocol(
+    DaoProtocol[UserModel, ReadUserSchema, CreateUserSchema, UpdateUserSchema], Protocol
+):
     pass
 
 
-class UserSqlDao(SqlDaoBaseDefault[UserModel], UserDaoBase[UserModel]):
-    model = UserModel
+class UserSqlDao(
+    SqlDaoImpl[UserModel, ReadUserSchema, CreateUserSchema, UpdateUserSchema]
+):
+    pass

@@ -17,7 +17,7 @@ async def get_user_db(session: Annotated[AsyncSession, Depends(get_async_session
 
 
 def get_user_dao(session: Annotated[AsyncSession, Depends(get_async_session)]):
-    return UserSqlDao(session, model=UserModel)
+    return UserSqlDao(session)
 
 
 user_dao_factory = Annotated[UserSqlDao, Depends(get_user_dao)]

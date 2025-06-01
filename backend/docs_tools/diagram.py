@@ -36,6 +36,6 @@ from src.core.db.models import *  # noqa: F403
 render_er(Base, "postgres_diagram.png")
 
 
-from src.core.nosql.models import IdToUsername, MessageModel
+from src.core.nosql.models import IdToUsernameModel, MessageModel
 
-erd.draw(MessageModel, IdToUsername, out="schema_mongo_db.png")
+erd.draw(MessageModel, IdToUsernameModel, out="schema_mongo_db.png")

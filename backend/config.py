@@ -53,3 +53,5 @@ class Settings(BaseSettings):
 settings = Settings()  # type: ignore
 
 global_setttigns = GlobalSettings()  # type: ignore
+
+__all__ = ["settings", "global_setttigns"]

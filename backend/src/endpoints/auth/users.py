@@ -7,7 +7,7 @@ from fastapi_users.authentication import AuthenticationBackend, CookieTransport
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from config import settings
-from src.endpoints.refresh_token.dao import get_database_strategy
+from src.endpoints.auth.refresh_token.dao import get_database_strategy
 from src.endpoints.user.depends import get_user_db
 from src.endpoints.user.models import UserModel
 

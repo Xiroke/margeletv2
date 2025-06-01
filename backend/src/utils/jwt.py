@@ -1,26 +1,30 @@
 import datetime
-from typing import Annotated, Any
+from typing import Generic, TypeVar
 
 import jwt
-from fastapi import Depends
 from pydantic import BaseModel
 
-from config import settings
+DataSchema = TypeVar("DataSchema", bound=BaseModel)
 
 
-class JWTManager:
+class JWTManager(Generic[DataSchema]):
     """
     Class for managing JWT tokens
     """
 
     def __init__(
-        self, secret_key: str, algorithm: str = "HS256", expiration_minutes: int = 30
+        self,
+        secret_key: str,
+        data_schema: type[DataSchema],
+        algorithm: str = "HS256",
+        expiration_minutes: int = 30,
     ):
+        self.data_schema = data_schema
         self.secret_key = secret_key
         self.algorithm = algorithm
         self.expiration_minutes = expiration_minutes
 
-    def encode(self, payload: BaseModel) -> str:
+    def encode(self, payload: DataSchema) -> str:
         data = payload.model_dump()
         data["exp"] = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
             minutes=self.expiration_minutes
@@ -28,19 +32,9 @@ class JWTManager:
         token = jwt.encode(data, self.secret_key, algorithm=self.algorithm)
         return token
 
-    def decode(self, token: str) -> dict[str, Any]:
+    def decode(self, token: str) -> DataSchema:
         decoded = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
-        return decoded
+        return self.data_schema.model_validate(decoded)
 
 
-def get_jwt_manager() -> JWTManager:
-    return JWTManager(
-        settings.JWT_ACCESS_TOKEN_SECRET_KEY,
-        settings.JWT_ALGORITHM,
-        settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
-    )
-
-
-jwt_manager = Annotated[JWTManager, Depends(get_jwt_manager)]
-
-__all__ = ["JWTManager", "jwt_manager"]
+__all__ = ["JWTManager"]

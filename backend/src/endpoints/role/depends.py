@@ -23,3 +23,5 @@ def get_role_service(
 
 
 role_service_factory = Annotated[RoleService, Depends(get_role_service)]
+
+__all__ = ["role_dao_factory", "role_service_factory"]

@@ -15,7 +15,7 @@ class BaseMessageSchema(BaseModel):
     user_id: UUID
     to_chat_id: UUID
     created_at: datetime
-    author: str | None = None  # optional must be get from IdToUserName
+    author: str | None = None  # optional must be get from IdToUsernameModel
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -33,6 +33,7 @@ class CreateMessageSchema(BaseModel):
 
 
 class UpdateMessageSchema(BaseModel):
+    id: UUID
     message: str | None = Field(
         max_length=2000, description="Message must be less than 2000 characters"
     )

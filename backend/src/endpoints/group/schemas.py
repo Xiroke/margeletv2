@@ -13,8 +13,8 @@ class BaseGroupSchema(BaseModel):
     id: UUID
     title: str = Field(max_length=20)
     description: str
-    avatar_path: str | None
-    panorama_path: str | None
+    avatar_path: str | None = None
+    panorama_path: str | None = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -33,5 +33,13 @@ class CreateGroupSchema(BaseModel):
 
 
 class UpdateGroupSchema(BaseModel):
+    id: UUID
     title: str | None = None
     description: str | None = None
+    avatar_path: str | None = None
+    panorama_path: str | None = None
+
+
+class InvitationTokenSchema(BaseModel):
+    user_id: str
+    group_id: str

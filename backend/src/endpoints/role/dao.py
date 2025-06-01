@@ -1,51 +1,36 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 from uuid import UUID
 
-from sqlalchemy import and_, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
-from src.core.abstract.dao_base import DaoBase, SqlDaoBaseDefault
-
-from .models import RoleModel
-from .user_role.models import UserToRoleModel
-
-
-class RoleDaoBase[T](DaoBase[T], ABC):
-    @abstractmethod
-    async def get_user_group_roles(
-        self,
-        user_id: UUID,
-        group_id: UUID,
-    ) -> list[T]:
-        """get roles user in group"""
-        pass
+from src.core.abstract.dao_base import DaoProtocol, SqlDaoImpl
+from src.core.db.models.secondary_models.models import UserToGroupModel
+from src.endpoints.role.models import RoleModel
+from src.endpoints.role.schemas import (
+    CreateRoleSchema,
+    ReadRoleSchema,
+    UpdateRoleSchema,
+)
 
 
-class RoleSqlDao(SqlDaoBaseDefault[RoleModel], RoleDaoBase[RoleModel]):
-    def __init__(
-        self,
-        session: AsyncSession,
-    ):
-        super().__init__(session, RoleModel)
+class RoleDaoProtocol(
+    DaoProtocol[RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema],
+    Protocol,
+):
+    async def get_user_roles_in_group(
+        self, user_id: UUID, group_id: UUID
+    ) -> list[ReadRoleSchema]: ...
 
-    async def get_user_group_roles(
-        self,
-        user_id: UUID,
-        group_id: UUID,
-    ) -> list[RoleModel]:
-        query = (
-            select(self.model)
-            .join(
-                UserToRoleModel,
-                self.model.id == UserToRoleModel.role_id,
-            )
-            .where(
-                and_(
-                    self.model.group_id == group_id,
-                    UserToRoleModel.user_id == user_id,
-                )
-            )
+
+class RoleSqlDao(
+    SqlDaoImpl[RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
+):
+    async def get_user_roles_in_group(
+        self, user_id: UUID, group_id: UUID
+    ) -> list[ReadRoleSchema]:
+        result = await self.session.execute(
+            select(RoleModel)
+            .join(UserToGroupModel, UserToGroupModel.c.user_id == user_id)
+            .filter(RoleModel.group_id == group_id)
         )
-
-        result = await self.session.execute(query)
-        return list(result.scalars().all())
+        return [ReadRoleSchema.model_validate(i) for i in result.scalars().all()]

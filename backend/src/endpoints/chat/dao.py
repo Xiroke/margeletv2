@@ -1,35 +1,42 @@
-from abc import abstractmethod
+from typing import Protocol
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.abstract.dao_base import DaoBase, SqlDaoBaseDefault
+from src.core.abstract.dao_base import DaoProtocol, SqlDaoImpl
 from src.core.db.models.secondary_models.models import UserToGroupModel
+from src.endpoints.chat.models import ChatModel
+from src.endpoints.chat.schemas import (
+    CreateChatSchema,
+    ReadChatSchema,
+    UpdateChatSchema,
+)
 from src.endpoints.group.models import GroupModel
 
-from .models import ChatModel
+
+class ChatDaoProtocol(
+    DaoProtocol[ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema],
+    Protocol,
+):
+    async def get_chats_by_user(self, user_id: UUID) -> list[ReadChatSchema]: ...
+
+    async def get_chats_by_group(self, group_id: UUID) -> list[ReadChatSchema]: ...
 
 
-class ChatDaoBase[M](DaoBase[M]):
-    @abstractmethod
-    async def get_all_chats_by_user(self, id: UUID) -> list[M]:
-        pass
-
-
-class SqlChatDao(SqlDaoBaseDefault[ChatModel], ChatDaoBase[ChatModel]):
-    def __init__(self, session: AsyncSession, model: type[ChatModel]):
-        super().__init__(session, model)
-
-    async def get_all_chats_by_user(self, id: UUID) -> list[ChatModel]:
-        """
-        Using in websocket, when user connect to add user in all chats
-        """
+class ChatSqlDao(
+    SqlDaoImpl[ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema],
+):
+    async def get_chats_by_user(self, user_id: UUID) -> list[ReadChatSchema]:
         result = await self.session.execute(
-            select(self.model)
-            .select_from(self.model)
-            .join(self.model.group)
-            .join(UserToGroupModel, GroupModel.id == UserToGroupModel.c.group_id)
-            .filter(UserToGroupModel.c.user_id == id)
+            select(ChatModel)
+            .join(UserToGroupModel, UserToGroupModel.c.user_id == user_id)
+            .join(GroupModel, GroupModel.id == UserToGroupModel.c.group_id)
+            .filter(ChatModel.group_id == GroupModel.id)
         )
-        return list(result.scalars().all())
+        return [ReadChatSchema.model_validate(i) for i in result.scalars().all()]
+
+    async def get_chats_by_group(self, group_id: UUID) -> list[ReadChatSchema]:
+        result = await self.session.execute(
+            select(ChatModel).filter(ChatModel.group_id == group_id)
+        )
+        return [ReadChatSchema.model_validate(i) for i in result.scalars().all()]

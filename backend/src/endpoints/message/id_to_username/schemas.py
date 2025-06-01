@@ -1,13 +1,20 @@
-from pydantic import BaseModel
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict
 
 
-class ReadIdToUsernameSchema(BaseModel):
+class ReadIdToUsernameModelSchema(BaseModel):
+    id: UUID
+    username: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CreateIdToUsernameModelSchema(BaseModel):
+    id: UUID
     username: str
 
 
-class CreateIdToUsernameSchema(BaseModel):
-    username: str
-
-
-class UpdateIdToUsernameSchema(BaseModel):
+class UpdateIdToUsernameModelSchema(BaseModel):
+    id: UUID
     username: str

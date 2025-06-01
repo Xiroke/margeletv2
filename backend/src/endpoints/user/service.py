@@ -2,22 +2,27 @@ from typing import TYPE_CHECKING
 
 from fastapi import UploadFile
 
-from src.core.abstract.service_base import DaoBaseService
+from src.core.abstract.service_base import DaoService
 from src.core.abstract.storage_base import StorageBase
-from src.endpoints.user.permissions import UserPermission
+from src.endpoints.user.schemas import (
+    CreateUserSchema,
+    ReadUserSchema,
+    UpdateUserSchema,
+)
 
-from .dao import UserDaoBase
+from .dao import UserDaoProtocol
 from .models import UserModel
 
 
-class UserService(DaoBaseService[UserModel]):
+class UserService(
+    DaoService[UserModel, ReadUserSchema, CreateUserSchema, UpdateUserSchema]
+):
     def __init__(
         self,
-        dao: UserDaoBase,
+        dao: UserDaoProtocol,
         storage_service: StorageBase,
     ):
         self.storage_service = storage_service
-        self.permission = UserPermission(dao)
 
         if TYPE_CHECKING:
             self.dao = dao
