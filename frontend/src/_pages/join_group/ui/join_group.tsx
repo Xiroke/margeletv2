@@ -6,21 +6,21 @@ import { useApiGroup } from "@/entities/group/model";
 import { useRouter } from "next/navigation";
 
 export interface JoinGroupProps extends HTMLAttributes<HTMLDivElement> {
-  params: Promise<{ id: string }>;
+  params: Promise<{ token: string }>;
 }
 
 // component must be in /[id]
 export const JoinGroup = ({ params }: JoinGroupProps) => {
-  const { id } = use(params);
-  const { mutate } = useApiGroup.postInviteToken();
+  const { token } = use(params);
+  const { mutate } = useApiGroup.joinGroup();
   const router = useRouter();
 
   useEffect(() => {
-    mutate({ requestBody: id });
+    mutate({ requestBody: token });
     router.push("/communication");
   }, []);
 
-  return <div className={styles["join_group"]}>JoinGroup Component</div>;
+  return <div className={styles.join_group}>JoinGroup Component</div>;
 };
 
 export default JoinGroup;

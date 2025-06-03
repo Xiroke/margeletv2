@@ -12,6 +12,7 @@ export type BaseRoleSchema = {
     title: string;
     group_id: string;
     created_at: string;
+    permissions: Array<RolePermissionsEnum>;
 };
 
 export type Body_auth_db_cookie_login_api_auth_jwt_login_post = {
@@ -54,6 +55,7 @@ export type Body_verify_verify_api_auth_verify_post = {
 
 export type CreateChatSchema = {
     title: string;
+    group_id?: string | null;
 };
 
 export type CreateGroupSchema = {
@@ -61,17 +63,10 @@ export type CreateGroupSchema = {
     description: string;
 };
 
-export type CreateMessageSchema = {
-    /**
-     * Message must be less than 2000 characters
-     */
-    message: string;
-    user_id?: string | null;
-    to_chat_id: string;
-};
-
 export type CreateRoleSchema = {
     title: string;
+    group_id: string;
+    permissions?: Array<RolePermissionsEnum>;
 };
 
 export type ErrorModel = {
@@ -95,8 +90,8 @@ export type ReadGroupSchema = {
     id: string;
     title: string;
     description: string;
-    avatar_path: string;
-    panorama_path: string;
+    avatar_path?: string | null;
+    panorama_path?: string | null;
     created_at: string;
     chats?: Array<BaseChatSchema>;
     roles?: Array<BaseRoleSchema>;
@@ -123,26 +118,25 @@ export type ReadRoleSchema = {
     permissions: Array<RolePermissionsEnum>;
 };
 
-export type RolePermissionsEnum = 'can_all' | 'can_edit_roles' | 'can_set_avatar' | 'can_set_panorama' | 'can_control_chats' | 'can_send_message' | 'can_invite';
+export type RolePermissionsEnum = 'can_all' | 'can_edit_group_settings' | 'can_edit_roles' | 'can_control_chats' | 'can_send_message' | 'can_invite';
 
 export type UpdateChatSchema = {
+    id: string;
     title?: string | null;
 };
 
 export type UpdateGroupSchema = {
+    id?: string | null;
     title?: string | null;
     description?: string | null;
-};
-
-export type UpdateMessageSchema = {
-    /**
-     * Message must be less than 2000 characters
-     */
-    message: string | null;
+    avatar_path?: string | null;
+    panorama_path?: string | null;
 };
 
 export type UpdateRoleSchema = {
+    id: string;
     title?: string | null;
+    permissions?: Array<RolePermissionsEnum> | null;
 };
 
 export type UserCreate = {
@@ -167,7 +161,9 @@ export type UserRead = {
 };
 
 export type UserUpdate = {
-    name: string | null;
+    id: string;
+    name?: string | null;
+    avatar_path?: string | null;
     password?: string | null;
     email?: string | null;
     is_active?: boolean | null;
@@ -260,6 +256,8 @@ export type PostApiUsersAvatarMeData = {
 
 export type PostApiUsersAvatarMeResponse = unknown;
 
+export type GetApiGroupsUserGroupsMeResponse = Array<ReadGroupSchema>;
+
 export type GetApiGroupsAvatarByGroupIdData = {
     groupId: string;
 };
@@ -292,13 +290,11 @@ export type GetApiGroupsInviteByGroupIdData = {
 
 export type GetApiGroupsInviteByGroupIdResponse = unknown;
 
-export type GetApiGroupsUserGroupsMeResponse = Array<ReadGroupSchema>;
-
-export type GetApiGroupsUserGroupsByUserIdData = {
-    userId: string;
+export type PostApiGroupsInviteData = {
+    requestBody: string;
 };
 
-export type GetApiGroupsUserGroupsByUserIdResponse = Array<ReadGroupSchema>;
+export type PostApiGroupsInviteResponse = unknown;
 
 export type GetApiGroupsByGroupIdData = {
     groupId: string;
@@ -325,19 +321,18 @@ export type PostApiGroupsData = {
 
 export type PostApiGroupsResponse = ReadGroupSchema;
 
-export type GetApiChatsChatsMeResponse = Array<ReadChatSchema>;
-
 export type GetApiChatsGroupChatsByGroupIdData = {
     groupId: string;
 };
 
 export type GetApiChatsGroupChatsByGroupIdResponse = Array<ReadChatSchema>;
 
-export type GetApiChatsByChatIdData = {
-    chatId: string;
+export type PostApiChatsByGroupIdData = {
+    groupId: string;
+    requestBody: CreateChatSchema;
 };
 
-export type GetApiChatsByChatIdResponse = ReadChatSchema;
+export type PostApiChatsByGroupIdResponse = unknown;
 
 export type PatchApiChatsByChatIdData = {
     chatId: string;
@@ -352,13 +347,6 @@ export type DeleteApiChatsByChatIdData = {
 
 export type DeleteApiChatsByChatIdResponse = unknown;
 
-export type PostApiChatsByGroupIdData = {
-    groupId: string;
-    requestBody: CreateChatSchema;
-};
-
-export type PostApiChatsByGroupIdResponse = unknown;
-
 export type GetApiRolesGroupByRoleIdData = {
     roleId: string;
 };
@@ -370,6 +358,12 @@ export type DeleteApiRolesGroupByRoleIdData = {
 };
 
 export type DeleteApiRolesGroupByRoleIdResponse = unknown;
+
+export type GetApiRolesGroupPermissionsMeByGroupIdData = {
+    groupId: string;
+};
+
+export type GetApiRolesGroupPermissionsMeByGroupIdResponse = unknown;
 
 export type PostApiRolesGroupByGroupIdData = {
     groupId: string;
@@ -391,31 +385,6 @@ export type GetApiMessagesChatByChatIdData = {
 };
 
 export type GetApiMessagesChatByChatIdResponse = Array<ReadMessageSchema>;
-
-export type GetApiMessagesByMessageIdData = {
-    messageId: string;
-};
-
-export type GetApiMessagesByMessageIdResponse = ReadMessageSchema;
-
-export type PatchApiMessagesByMessageIdData = {
-    messageId: string;
-    requestBody: UpdateMessageSchema;
-};
-
-export type PatchApiMessagesByMessageIdResponse = unknown;
-
-export type DeleteApiMessagesByMessageIdData = {
-    messageId: string;
-};
-
-export type DeleteApiMessagesByMessageIdResponse = unknown;
-
-export type PostApiMessagesData = {
-    requestBody: CreateMessageSchema;
-};
-
-export type PostApiMessagesResponse = unknown;
 
 export type GetApiResponse = unknown;
 
@@ -717,6 +686,16 @@ export type $OpenApiTs = {
             };
         };
     };
+    '/api/groups/user_groups/me': {
+        get: {
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Array<ReadGroupSchema>;
+            };
+        };
+    };
     '/api/groups/avatar/{group_id}': {
         get: {
             req: GetApiGroupsAvatarByGroupIdData;
@@ -788,24 +767,14 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/groups/user_groups/me': {
-        get: {
+    '/api/groups/invite': {
+        post: {
+            req: PostApiGroupsInviteData;
             res: {
                 /**
                  * Successful Response
                  */
-                200: Array<ReadGroupSchema>;
-            };
-        };
-    };
-    '/api/groups/user_groups/{user_id}': {
-        get: {
-            req: GetApiGroupsUserGroupsByUserIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<ReadGroupSchema>;
+                200: unknown;
                 /**
                  * Validation Error
                  */
@@ -869,16 +838,6 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/chats/chats/me': {
-        get: {
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<ReadChatSchema>;
-            };
-        };
-    };
     '/api/chats/group_chats/{group_id}': {
         get: {
             req: GetApiChatsGroupChatsByGroupIdData;
@@ -894,20 +853,22 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/chats/{chat_id}': {
-        get: {
-            req: GetApiChatsByChatIdData;
+    '/api/chats/{group_id}': {
+        post: {
+            req: PostApiChatsByGroupIdData;
             res: {
                 /**
                  * Successful Response
                  */
-                200: ReadChatSchema;
+                200: unknown;
                 /**
                  * Validation Error
                  */
                 422: HTTPValidationError;
             };
         };
+    };
+    '/api/chats/{chat_id}': {
         patch: {
             req: PatchApiChatsByChatIdData;
             res: {
@@ -923,21 +884,6 @@ export type $OpenApiTs = {
         };
         delete: {
             req: DeleteApiChatsByChatIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/chats/{group_id}': {
-        post: {
-            req: PostApiChatsByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -966,6 +912,21 @@ export type $OpenApiTs = {
         };
         delete: {
             req: DeleteApiRolesGroupByRoleIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/roles_group/permissions/me/{group_id}': {
+        get: {
+            req: GetApiRolesGroupPermissionsMeByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -1016,62 +977,6 @@ export type $OpenApiTs = {
                  * Successful Response
                  */
                 200: Array<ReadMessageSchema>;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/messages/{message_id}': {
-        get: {
-            req: GetApiMessagesByMessageIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ReadMessageSchema;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: PatchApiMessagesByMessageIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: DeleteApiMessagesByMessageIdData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/messages/': {
-        post: {
-            req: PostApiMessagesData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
                 /**
                  * Validation Error
                  */

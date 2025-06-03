@@ -1,15 +1,13 @@
 import {
   useGroupServiceGetApiGroupsByGroupId,
   useGroupServiceGetApiGroupsAvatarByGroupId,
-  useGroupServiceGetApiGroupsPanoramaByGroupId,
+  useGroupServicePostApiGroupsInvite,
   useGroupServiceDeleteApiGroupsByGroupId,
-  useGroupServicePatchApiGroupsByGroupId,
   useGroupServicePostApiGroups,
   useGroupServicePostApiGroupsAvatarByGroupId,
   useGroupServicePostApiGroupsPanoramaByGroupId,
   useGroupServiceGetApiGroupsInviteByGroupId,
   useGroupServiceGetApiGroupsUserGroupsMe,
-  useGroupServiceGetApiGroupsUserGroupsByUserId,
   useGroupServiceGetApiGroupsUserGroupsMeKey,
 } from "@/shared/api/queries";
 import settings from "@/shared/config";
@@ -17,14 +15,13 @@ import settings from "@/shared/config";
 export const useApiGroup = {
   get: useGroupServiceGetApiGroupsByGroupId,
   delete: useGroupServiceDeleteApiGroupsByGroupId,
-  patch: useGroupServicePatchApiGroupsByGroupId,
+  // patch: useGroupServicePatchApiGroupsByGroupId,
   post: useGroupServicePostApiGroups,
-  loadAvatar: useGroupServiceGetApiGroupsAvatarByGroupId,
   uploadAvatar: useGroupServicePostApiGroupsAvatarByGroupId,
   uploadPanorama: useGroupServicePostApiGroupsPanoramaByGroupId,
   getInviteToken: useGroupServiceGetApiGroupsInviteByGroupId,
+  joinGroup: useGroupServicePostApiGroupsInvite,
   getMyGroups: useGroupServiceGetApiGroupsUserGroupsMe,
-  getGroupsByUserId: useGroupServiceGetApiGroupsUserGroupsByUserId,
   getMyGroupsKey: useGroupServiceGetApiGroupsUserGroupsMeKey,
   loadPanorama: (groupId: string) =>
     fetch(`${settings.NEXT_PUBLIC_API_URL}/api/groups/panorama/${groupId}`, {

@@ -19,14 +19,19 @@ const DialogInvitation = ({
   open,
   setOpen,
 }: DialogInvitationProps) => {
+  if (!open) return null;
+
   const groupId = useAppSelector((state) => state.group.id);
-  var { data: inivitationToken }: { data: string | undefined } =
+  var {
+    data: inivitationToken,
+    isLoading,
+  }: { data: string | undefined; isLoading: boolean } =
     useApiGroup.getInviteToken({ groupId: groupId! }, undefined, {
       enabled: !!groupId,
     });
 
-  if (!open || !inivitationToken) {
-    return null;
+  if (!inivitationToken && !isLoading) {
+    return alert("Произошла ошибка, попробуйте обновить страницу");
   }
 
   const inviteLink = `${settings.NEXT_PUBLIC_FRONTEND_URL}/communication/join_group/${inivitationToken}`;

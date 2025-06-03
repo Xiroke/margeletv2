@@ -109,6 +109,7 @@ export const ImageUploader = ({
             className={styles.fileInput}
             accept="image/*"
             onChange={handleFileChange}
+            autoComplete="off"
           />
           <div className={styles.dropzoneContent}>
             <div className={styles.iconContainer}>

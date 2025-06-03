@@ -33,7 +33,7 @@ class CreateGroupSchema(BaseModel):
 
 
 class UpdateGroupSchema(BaseModel):
-    id: UUID
+    id: UUID | None = None
     title: str | None = None
     description: str | None = None
     avatar_path: str | None = None

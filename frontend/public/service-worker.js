@@ -16,7 +16,6 @@ self.addEventListener("message", (event) => {
 const accessTokenMiddleware = async (request) => {
   // request access token from api when we get a 401 code
   // in other cases we set the access token in the request headers
-  console.log(self.BACKEND_URL);
   const fetchAccessToken = async () => {
     const response = await fetch(`${self.BACKEND_URL}/api/auth/access_token`, {
       method: "POST",

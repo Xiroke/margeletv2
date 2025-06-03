@@ -32,6 +32,14 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/groups", tags=["group"])
 
 
+@router.get("/user_groups/me")
+async def get_groups_by_user(
+    user: current_user,
+    group_service: group_service_factory,
+) -> list[ReadGroupSchema]:
+    return await group_service.get_groups_by_user(user.id)
+
+
 @router.get("/avatar/{group_id}")
 async def load_avatar(
     group_id: UUID,
@@ -118,9 +126,8 @@ async def get_invite_token(
     return token
 
 
-@router.post("/invite/{group_id}")
+@router.post("/invite")
 async def join_group(
-    group_id: UUID,
     token: Annotated[str, Body()],
     user: current_user,
     user_service: user_service_factory,
@@ -130,17 +137,19 @@ async def join_group(
     role_perm: role_permission,
 ):
     payload = jwt.decode(token)
-    user_payload_id = UUID(payload)
-    group_payload_id = UUID(group_id)
+    # user who generate this token
+    user_payload_id = UUID(payload.user_id)
+    # group where user will join
+    group_payload_id = UUID(payload.group_id)
     user_creator_token = await user_service.get_one_by_id(user_payload_id)
 
     await role_perm.check_user_has_permission(
-        RolePermissionsEnum.CAN_INVITE, user_creator_token.id, group_id
+        RolePermissionsEnum.CAN_INVITE, user_creator_token.id, group_payload_id
     )
 
     await group_service.add_user_to_group(group_payload_id, user.id)
     newbie_role = await role_service.get_one_by_field(
-        RoleModel.title == "newbie", RoleModel.group_id == group_id
+        RoleModel.title == "newbie", RoleModel.group_id == group_payload_id
     )
     await group_service.add_role_to_user(user.id, newbie_role.id)
 
@@ -193,8 +202,9 @@ async def create_group(
     return result
 
 
-@router.patch("/")
+@router.patch("/{group_id}")
 async def update_group(
+    group_id: UUID,
     group: Annotated[UpdateGroupSchema, Body()],
     group_service: group_service_factory,
     user: current_user,
@@ -203,7 +213,9 @@ async def update_group(
     await role_perm.check_user_has_permission(
         RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group.id
     )
-    return await group_service.update(group)
+    return await group_service.update(
+        UpdateGroupSchema(id=group_id, **group.model_dump())
+    )
 
 
 @router.delete("/{group_id}")

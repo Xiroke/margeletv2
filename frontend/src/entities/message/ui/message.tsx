@@ -1,6 +1,6 @@
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes } from "react";
 
-import styles from './message.module.scss';
+import styles from "./message.module.scss";
 
 export interface MessageProps extends HTMLAttributes<HTMLDivElement> {
   author: string;
@@ -18,8 +18,8 @@ export const Message = ({ author, text, time }: MessageProps) => {
       </div>
       <div className={styles.time}>
         {new Date(time).toLocaleString([], {
-          hour: '2-digit',
-          minute: '2-digit',
+          hour: "2-digit",
+          minute: "2-digit",
           hour12: false,
         })}
       </div>

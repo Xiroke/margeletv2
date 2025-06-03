@@ -126,7 +126,6 @@ class ConnectionManager:
         # sebd message to all users
         for user_id in self.chats_connections[message.to_chat_id]:
             for connection in self.active_connections[user_id]:
-                print(connection)
                 await connection.send_text(message.model_dump_json())
 
 

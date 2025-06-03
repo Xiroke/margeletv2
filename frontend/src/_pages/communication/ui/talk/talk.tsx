@@ -108,6 +108,8 @@ export const Talk = ({ className }: TalkProps) => {
     const message = sendMessageRef.current.value;
     if (message.length > 2000) {
       alert("Сообщение не должно быть больше 2000 символов");
+    } else if (message.length == 0) {
+      return;
     }
 
     send({

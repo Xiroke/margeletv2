@@ -37,6 +37,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(
           className={clsx(styles.input_text, classNameInput)}
           placeholder={placeholder}
           onKeyDown={onKeyDown}
+          autoComplete="off"
         />
       </div>
     );

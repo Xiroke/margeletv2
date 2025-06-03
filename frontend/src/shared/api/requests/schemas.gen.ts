@@ -47,10 +47,17 @@ export const $BaseRoleSchema = {
             type: 'string',
             format: 'date-time',
             title: 'Created At'
+        },
+        permissions: {
+            items: {
+                '$ref': '#/components/schemas/RolePermissionsEnum'
+            },
+            type: 'array',
+            title: 'Permissions'
         }
     },
     type: 'object',
-    required: ['id', 'title', 'group_id', 'created_at'],
+    required: ['id', 'title', 'group_id', 'created_at', 'permissions'],
     title: 'BaseRoleSchema'
 } as const;
 
@@ -207,6 +214,18 @@ export const $CreateChatSchema = {
         title: {
             type: 'string',
             title: 'Title'
+        },
+        group_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Group Id'
         }
     },
     type: 'object',
@@ -230,46 +249,28 @@ export const $CreateGroupSchema = {
     title: 'CreateGroupSchema'
 } as const;
 
-export const $CreateMessageSchema = {
-    properties: {
-        message: {
-            type: 'string',
-            maxLength: 2000,
-            title: 'Message',
-            description: 'Message must be less than 2000 characters'
-        },
-        user_id: {
-            anyOf: [
-                {
-                    type: 'string',
-                    format: 'uuid'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'User Id'
-        },
-        to_chat_id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'To Chat Id'
-        }
-    },
-    type: 'object',
-    required: ['message', 'to_chat_id'],
-    title: 'CreateMessageSchema'
-} as const;
-
 export const $CreateRoleSchema = {
     properties: {
         title: {
             type: 'string',
             title: 'Title'
+        },
+        group_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Group Id'
+        },
+        permissions: {
+            items: {
+                '$ref': '#/components/schemas/RolePermissionsEnum'
+            },
+            type: 'array',
+            title: 'Permissions',
+            default: []
         }
     },
     type: 'object',
-    required: ['title'],
+    required: ['title', 'group_id'],
     title: 'CreateRoleSchema'
 } as const;
 
@@ -353,11 +354,25 @@ export const $ReadGroupSchema = {
             title: 'Description'
         },
         avatar_path: {
-            type: 'string',
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'Avatar Path'
         },
         panorama_path: {
-            type: 'string',
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
             title: 'Panorama Path'
         },
         created_at: {
@@ -383,7 +398,7 @@ export const $ReadGroupSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'avatar_path', 'panorama_path', 'created_at'],
+    required: ['id', 'title', 'description', 'created_at'],
     title: 'ReadGroupSchema'
 } as const;
 
@@ -472,12 +487,17 @@ export const $ReadRoleSchema = {
 
 export const $RolePermissionsEnum = {
     type: 'string',
-    enum: ['can_all', 'can_edit_roles', 'can_set_avatar', 'can_set_panorama', 'can_control_chats', 'can_send_message', 'can_invite'],
+    enum: ['can_all', 'can_edit_group_settings', 'can_edit_roles', 'can_control_chats', 'can_send_message', 'can_invite'],
     title: 'RolePermissionsEnum'
 } as const;
 
 export const $UpdateChatSchema = {
     properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
         title: {
             anyOf: [
                 {
@@ -491,11 +511,24 @@ export const $UpdateChatSchema = {
         }
     },
     type: 'object',
+    required: ['id'],
     title: 'UpdateChatSchema'
 } as const;
 
 export const $UpdateGroupSchema = {
     properties: {
+        id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Id'
+        },
         title: {
             anyOf: [
                 {
@@ -517,35 +550,41 @@ export const $UpdateGroupSchema = {
                 }
             ],
             title: 'Description'
+        },
+        avatar_path: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Avatar Path'
+        },
+        panorama_path: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Panorama Path'
         }
     },
     type: 'object',
     title: 'UpdateGroupSchema'
 } as const;
 
-export const $UpdateMessageSchema = {
-    properties: {
-        message: {
-            anyOf: [
-                {
-                    type: 'string',
-                    maxLength: 2000
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Message',
-            description: 'Message must be less than 2000 characters'
-        }
-    },
-    type: 'object',
-    required: ['message'],
-    title: 'UpdateMessageSchema'
-} as const;
-
 export const $UpdateRoleSchema = {
     properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
         title: {
             anyOf: [
                 {
@@ -556,9 +595,24 @@ export const $UpdateRoleSchema = {
                 }
             ],
             title: 'Title'
+        },
+        permissions: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/RolePermissionsEnum'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Permissions'
         }
     },
     type: 'object',
+    required: ['id'],
     title: 'UpdateRoleSchema'
 } as const;
 
@@ -671,6 +725,11 @@ export const $UserRead = {
 
 export const $UserUpdate = {
     properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
         name: {
             anyOf: [
                 {
@@ -681,6 +740,17 @@ export const $UserUpdate = {
                 }
             ],
             title: 'Name'
+        },
+        avatar_path: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Avatar Path'
         },
         password: {
             anyOf: [
@@ -740,7 +810,7 @@ export const $UserUpdate = {
         }
     },
     type: 'object',
-    required: ['name'],
+    required: ['id'],
     title: 'UserUpdate'
 } as const;
 

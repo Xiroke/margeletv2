@@ -2,7 +2,6 @@ from fastapi import APIRouter, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 from src.endpoints.auth.depends import current_user
-from src.endpoints.group.schemas import ReadGroupSchema
 from src.endpoints.user.models import UserModel
 from src.endpoints.user.permissions import user_permission
 from src.endpoints.user.schemas import UpdateUserSchema
@@ -39,11 +38,3 @@ async def upload_avatar(
     await user_service.upload_avatar(path, image)
     await user_service.update(UpdateUserSchema(id=user.id, avatar_path=path))
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
-
-
-@router.get("/permissions/me")
-async def get_my_groups(
-    user: current_user,
-    user_service: user_service_factory,
-) -> list[ReadGroupSchema]:
-    return await user_service.get_permissions_in_group(user.id)

@@ -15,6 +15,7 @@ export const Sending = forwardRef<HTMLInputElement, SendingProps>(
         placeholder="Введите сообщение..."
         className={clsx(stylesInput.input_text, styles.sending_input)}
         onKeyDown={onKeyDown}
+        autoComplete="off"
       />
     );
   }
