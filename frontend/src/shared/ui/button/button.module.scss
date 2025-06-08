@@ -1,7 +1,4 @@
-.button,
-.invert_button {
-  height: 40px;
-  width: 250px;
+.button {
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -14,36 +11,50 @@
   letter-spacing: 0.5px;
 }
 
-.button:hover,
-.invert_button:hover {
+.button:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.button:active,
-.invert_button:active {
+.button:active {
   transform: translateY(0);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.button:focus,
-.invert_button:focus {
+.button:focus {
   outline: none;
   box-shadow: 0 0 0 3px var(--second);
 }
 
-.button:hover {
+.default:hover {
   background-color: var(--primary-light);
 }
 
-.button {
+.default {
   border: none;
   background-color: var(--primary);
   color: var(--primary-foreground);
 }
 
-.invert_button {
+.invert {
   background-color: var(--primary-foreground);
   color: var(--primary);
   stroke: 1px solid var(--primary-background);
+}
+
+.small {
+  width: 120px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.medium {
+  width: 160px;
+  height: 36px;
+}
+
+.large {
+  width: 200px;
+  height: 60px;
+  font-size: 18px;
 }

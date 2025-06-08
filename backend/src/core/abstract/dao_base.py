@@ -6,7 +6,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.database import Base
-from src.utils.exeptions import ModelNotFoundException
+from src.utils.exceptions import ModelNotFoundException
 from src.utils.types import (
     CreateSchemaType,
     ModelType,
@@ -34,7 +34,7 @@ class DaoProtocol(
 
     async def create(self, obj: CreateSchemaType) -> ReadSchemaType: ...
 
-    async def update(self, obj: UpdateSchemaType) -> ReadSchemaType:
+    async def update_by_id(self, id: UUID, obj: UpdateSchemaType) -> ReadSchemaType:
         """Pass id in values, You should pass filter as Model.id == id"""
         ...
 
@@ -114,11 +114,11 @@ class SqlDaoImpl(Dao[ModelType, ReadSchemaType, CreateSchemaType, UpdateSchemaTy
         await self.session.refresh(obj_model)
         return self.read_schema_type.model_validate(obj_model)
 
-    async def update(self, obj: UpdateSchemaType) -> ReadSchemaType:
+    async def update_by_id(self, id: UUID, obj: UpdateSchemaType) -> ReadSchemaType:
         result = await self.session.execute(
             update(self.model_type)
             .filter(self.model_type.id == id)
-            .values(obj.model_dump(exclude={"id"}, exclude_unset=True))
+            .values(obj.model_dump(exclude_unset=True))
             .returning(self.model_type),
         )
         await self.session.commit()
@@ -166,15 +166,13 @@ class MongoDaoImpl(Dao[ModelType, ReadSchemaType, CreateSchemaType, UpdateSchema
         result = await obj_model.insert()
         return self.read_schema_type.model_validate(result)
 
-    async def update(self, obj: UpdateSchemaType) -> ReadSchemaType:
+    async def update_by_id(self, id: UUID, obj: UpdateSchemaType) -> ReadSchemaType:
         obj_model = await self.model_type.find_one(obj.id == id)
 
         if obj_model is None:
             raise ModelNotFoundException(self.model_type.__name__, id)
 
-        result = await obj_model.update(
-            obj.model_dump(exclude={"id"}, exclude_unset=True)
-        )
+        result = await obj_model.update(obj.model_dump(exclude_unset=True))
 
         return self.read_schema_type.model_validate(result)
 

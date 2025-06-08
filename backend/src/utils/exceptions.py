@@ -20,13 +20,13 @@ class NotFoundModelException(Exception):
     message = "Model not found"
 
 
-class PermissionNotHasAttributeError(Exception):
+class PermissionNotHasAttributeException(Exception):
     """raise when the required field is not found in the model"""
 
     message = "Permission no has data"
 
 
-class PermissionGroupDeniedError(Exception):
+class PermissionGroupDeniedException(Exception):
     """raise when user does not have permission setted in group"""
 
     message = "Permission group denied"
@@ -34,3 +34,8 @@ class PermissionGroupDeniedError(Exception):
 
 class ModelNotFoundException(Exception):
     message = "Model not found"
+
+
+class UniqueViolationException(Exception):
+    def __init__(self, message: str):
+        self.message = message

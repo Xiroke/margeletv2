@@ -104,6 +104,14 @@ export const ImageUploader = ({
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className={styles.previewImage}
+            />
+          )}
+
           <input
             type="file"
             className={styles.fileInput}
@@ -111,6 +119,7 @@ export const ImageUploader = ({
             onChange={handleFileChange}
             autoComplete="off"
           />
+
           <div className={styles.dropzoneContent}>
             <div className={styles.iconContainer}>
               <IconCloudUpload size={50} strokeWidth={1} />
@@ -120,30 +129,18 @@ export const ImageUploader = ({
           </div>
         </div>
 
-        {previewUrl && (
-          <div className={styles.previewContainer}>
-            <div className={styles.previewHeader}>
-              <h3 className={styles.previewTitle}>Выбранное изображение</h3>
-              <button
-                type="button"
-                className={styles.clearButton}
-                onClick={clearSelection}
-              >
-                Очистить
-              </button>
-            </div>
-            <div className={styles.imageContainer}>
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className={styles.previewImage}
-              />
-            </div>
-          </div>
-        )}
-
         <div className={styles.actionContainer}>
-          <Button onClick={handleSubmit} className={styles.uploadButton}>
+          {previewUrl && (
+            <Button
+              styleType="invert"
+              className={styles.button}
+              onClick={clearSelection}
+            >
+              Очистить
+            </Button>
+          )}
+
+          <Button onClick={handleSubmit} className={styles.button}>
             Загрузить изображение
           </Button>
         </div>

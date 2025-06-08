@@ -42,3 +42,23 @@ a {
     background-color: var(--second);
   }
 }
+
+ul,
+ol {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::selection {
+  background-color: #ffcc00;
+  color: var(--primary);
+}
+
+.hidden {
+  display: none;
+}

@@ -5,7 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./dialog_invitation.module.scss";
 import InputText from "@/shared/ui/inputs/input_text";
 import Button from "@/shared/ui/button";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 import { useAppSelector } from "@/shared/lib/hooks";
 import settings from "@/shared/config";
 
@@ -14,29 +14,30 @@ export interface DialogInvitationProps extends HTMLAttributes<HTMLDivElement> {
   setOpen: (open: boolean) => void;
 }
 
-const DialogInvitation = ({
-  children,
-  open,
-  setOpen,
-}: DialogInvitationProps) => {
-  if (!open) return null;
-
+const DialogInvitation = ({ open, setOpen }: DialogInvitationProps) => {
   const groupId = useAppSelector((state) => state.group.id);
-  var {
-    data: inivitationToken,
+  const {
+    data: invitationToken,
     isLoading,
-  }: { data: string | undefined; isLoading: boolean } =
-    useApiGroup.getInviteToken({ groupId: groupId! }, undefined, {
-      enabled: !!groupId,
-    });
+  }: { data: string | undefined; isLoading: boolean } = apiGroup.getInviteToken(
+    { groupId: groupId! },
+    undefined,
+    {
+      enabled: !!groupId && open,
+    }
+  );
 
-  if (!inivitationToken && !isLoading) {
-    return alert("Произошла ошибка, попробуйте обновить страницу");
+  if (!invitationToken && !isLoading) {
+    return null;
   }
 
-  const inviteLink = `${settings.NEXT_PUBLIC_FRONTEND_URL}/communication/join_group/${inivitationToken}`;
+  const inviteLink = `${settings.NEXT_PUBLIC_FRONTEND_URL}/communication/join_group/${invitationToken}`;
 
   const handleCopy = async () => {
+    if (!invitationToken && !isLoading) {
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(inviteLink);
     } catch (err) {
@@ -51,7 +52,10 @@ const DialogInvitation = ({
           <Dialog.Overlay className={styles.dialog_overlay} />
 
           <div className={styles.dialog_content_layout}>
-            <Dialog.Content className={styles.dialog_content}>
+            <Dialog.Content
+              className={styles.dialog_content}
+              aria-describedby={undefined}
+            >
               <div className={styles.title}>
                 <Dialog.Title className={styles.title_text}>
                   Пригласить участника

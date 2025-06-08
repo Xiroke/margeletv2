@@ -28,7 +28,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(
   ) => {
     return (
       <div className={clsx(styles.input, className)}>
-        {labelText && <label>{labelText}</label>}
+        {labelText && <label className={styles.input_label}>{labelText}</label>}
         <input
           {...props}
           ref={ref}

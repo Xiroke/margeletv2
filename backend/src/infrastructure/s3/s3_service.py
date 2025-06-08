@@ -7,7 +7,7 @@ from fastapi import HTTPException, UploadFile
 from PIL import Image
 
 from src.core.abstract.storage_base import StorageBase
-from src.utils.exeptions import ServerException, ServiceNotFoundException
+from src.utils.exceptions import ServerException, ServiceNotFoundException
 
 logger = logging.getLogger(__name__)
 

@@ -54,7 +54,7 @@ async def update_chat(
     await role_perm.check_user_has_permission(
         RolePermissionsEnum.CAN_CONTROL_CHATS, user.id, chat_db.group_id
     )
-    await chat_service.update(UpdateChatSchema(id=chat_id, **chat.model_dump()))
+    await chat_service.update_by_id(chat_id, chat)
 
     return JSONResponse(status_code=200, content={"message": "Chat updated"})
 

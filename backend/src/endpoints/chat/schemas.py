@@ -24,5 +24,4 @@ class CreateChatSchema(BaseModel):
 
 
 class UpdateChatSchema(BaseModel):
-    id: UUID
     title: str | None = None

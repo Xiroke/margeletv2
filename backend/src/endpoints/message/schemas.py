@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 from datetime import datetime
+from enum import StrEnum
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class WebsocketEvent(StrEnum):
+    MESSAGE = "message"
 
 
 class BaseMessageSchema(BaseModel):
@@ -33,11 +39,20 @@ class CreateMessageSchema(BaseModel):
 
 
 class UpdateMessageSchema(BaseModel):
-    id: UUID
     message: str | None = Field(
         max_length=2000, description="Message must be less than 2000 characters"
     )
 
 
-class RecivedDataDTO(CreateMessageSchema):
+class ReciveDataDTO(CreateMessageSchema):
     pass
+
+
+class SendDataSchema(BaseModel):
+    event: WebsocketEvent
+
+
+class SendMessageSchema(SendDataSchema):
+    event: WebsocketEvent = Field(default=WebsocketEvent.MESSAGE)
+    chat_id: UUID
+    data: Any

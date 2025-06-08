@@ -31,6 +31,14 @@ const accessTokenMiddleware = async (request) => {
     return data.access_token;
   };
 
+  if (request.headers.get("Authorization") !== null) {
+    return fetch(request);
+  }
+
+  if (self.accessToken === null) {
+    self.accessToken = await fetchAccessToken();
+  }
+
   const modified = new Request(request, {
     headers: new Headers({
       ...Object.fromEntries(request.headers.entries()),

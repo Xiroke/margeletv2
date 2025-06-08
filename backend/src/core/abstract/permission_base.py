@@ -1,7 +1,10 @@
 from typing import Any
 from uuid import UUID
 
-from src.utils.exeptions import NotFoundModelException, PermissionNotHasAttributeError
+from src.utils.exceptions import (
+    NotFoundModelException,
+    PermissionNotHasAttributeException,
+)
 
 
 class Permission:
@@ -17,7 +20,7 @@ class Permission:
         result = getattr(self, field)
 
         if result is not None:
-            raise PermissionNotHasAttributeError()
+            raise PermissionNotHasAttributeException()
 
         return result
 
@@ -50,7 +53,7 @@ class PermissionService(Permission):
 
         result = getattr(db_result, field)
 
-        if result is not None:
-            raise PermissionNotHasAttributeError()
+        if result is None:
+            raise PermissionNotHasAttributeException()
 
         return result

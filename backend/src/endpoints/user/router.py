@@ -36,5 +36,5 @@ async def upload_avatar(
 
     path = f"users/{str(user.id)}.jpg"
     await user_service.upload_avatar(path, image)
-    await user_service.update(UpdateUserSchema(id=user.id, avatar_path=path))
+    await user_service.update_by_id(user.id, UpdateUserSchema(avatar_path=path))
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})

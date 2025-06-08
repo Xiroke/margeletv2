@@ -121,12 +121,10 @@ export type ReadRoleSchema = {
 export type RolePermissionsEnum = 'can_all' | 'can_edit_group_settings' | 'can_edit_roles' | 'can_control_chats' | 'can_send_message' | 'can_invite';
 
 export type UpdateChatSchema = {
-    id: string;
     title?: string | null;
 };
 
 export type UpdateGroupSchema = {
-    id?: string | null;
     title?: string | null;
     description?: string | null;
     avatar_path?: string | null;
@@ -134,7 +132,6 @@ export type UpdateGroupSchema = {
 };
 
 export type UpdateRoleSchema = {
-    id: string;
     title?: string | null;
     permissions?: Array<RolePermissionsEnum> | null;
 };
@@ -161,7 +158,6 @@ export type UserRead = {
 };
 
 export type UserUpdate = {
-    id: string;
     name?: string | null;
     avatar_path?: string | null;
     password?: string | null;
@@ -296,6 +292,12 @@ export type PostApiGroupsInviteData = {
 
 export type PostApiGroupsInviteResponse = unknown;
 
+export type PostApiGroupsLeaveByGroupIdData = {
+    groupId: string;
+};
+
+export type PostApiGroupsLeaveByGroupIdResponse = unknown;
+
 export type GetApiGroupsByGroupIdData = {
     groupId: string;
 };
@@ -320,6 +322,13 @@ export type PostApiGroupsData = {
 };
 
 export type PostApiGroupsResponse = ReadGroupSchema;
+
+export type PatchApiGroupsTitleByGroupIdData = {
+    groupId: string;
+    requestBody: string;
+};
+
+export type PatchApiGroupsTitleByGroupIdResponse = ReadGroupSchema;
 
 export type GetApiChatsGroupChatsByGroupIdData = {
     groupId: string;
@@ -782,6 +791,21 @@ export type $OpenApiTs = {
             };
         };
     };
+    '/api/groups/leave/{group_id}': {
+        post: {
+            req: PostApiGroupsLeaveByGroupIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
     '/api/groups/{group_id}': {
         get: {
             req: GetApiGroupsByGroupIdData;
@@ -826,6 +850,21 @@ export type $OpenApiTs = {
     '/api/groups/': {
         post: {
             req: PostApiGroupsData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: ReadGroupSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/groups/title/{group_id}': {
+        patch: {
+            req: PatchApiGroupsTitleByGroupIdData;
             res: {
                 /**
                  * Successful Response

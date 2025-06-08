@@ -7,7 +7,7 @@ from src.core.abstract.permission_base import PermissionService
 from src.endpoints.role.depends import role_service_factory
 from src.endpoints.role.models import RolePermissionsEnum
 from src.endpoints.role.service import RoleService
-from src.utils.exeptions import ModelNotFoundException, PermissionGroupDeniedError
+from src.utils.exceptions import ModelNotFoundException, PermissionGroupDeniedException
 
 
 class RolePermission(PermissionService):
@@ -27,7 +27,7 @@ class RolePermission(PermissionService):
         try:
             roles = await self.role_service.get_user_roles_in_group(user_id, group_id)
         except ModelNotFoundException:
-            raise PermissionGroupDeniedError()
+            raise PermissionGroupDeniedException()
 
         array_permissions = {perm for role in roles for perm in role.permissions}
 
@@ -37,7 +37,7 @@ class RolePermission(PermissionService):
             status = all(elem in array_permissions for elem in permission)
 
         if not status:
-            raise PermissionGroupDeniedError()
+            raise PermissionGroupDeniedException()
 
 
 def get_role_permission(

@@ -102,7 +102,7 @@ from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from jwt import DecodeError, ExpiredSignatureError, InvalidTokenError
 
-from src.utils.exeptions import PermissionGroupDeniedError
+from src.utils.exeptions import PermissionGroupDeniedException
 
 
 def exception_handler(app: FastAPI):
@@ -127,7 +127,7 @@ def exception_handler(app: FastAPI):
             content={"detail": "Invalid token"},
         )
 
-    @app.exception_handler(PermissionGroupDeniedError)
+    @app.exception_handler(PermissionGroupDeniedException)
     async def permission_denied_handler(request, exc):
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -515,7 +515,7 @@ class MongoDaoImpl(Dao[ModelType, ReadSchemaType, CreateSchemaType, UpdateSchema
 from typing import Any
 from uuid import UUID
 
-from src.utils.exeptions import NotFoundModelException, PermissionNotHasAttributeError
+from src.utils.exeptions import NotFoundModelException, PermissionNotHasAttributeException
 
 
 class Permission:
@@ -531,7 +531,7 @@ class Permission:
         result = getattr(self, field)
 
         if result is not None:
-            raise PermissionNotHasAttributeError()
+            raise PermissionNotHasAttributeException()
 
         return result
 
@@ -565,7 +565,7 @@ class PermissionService(Permission):
         result = getattr(db_result, field)
 
         if result is not None:
-            raise PermissionNotHasAttributeError()
+            raise PermissionNotHasAttributeException()
 
         return result
 
@@ -1849,7 +1849,7 @@ from fastapi import Depends
 from src.core.abstract.permission_base import PermissionService
 from src.endpoints.group.depends import group_service_factory
 from src.endpoints.group.service import GroupService
-from src.utils.exeptions import PermissionGroupDeniedError
+from src.utils.exeptions import PermissionGroupDeniedException
 
 
 class GroupPermission(PermissionService):
@@ -1860,7 +1860,7 @@ class GroupPermission(PermissionService):
         status = await self.service.is_user_in_group(user_id, group_id)
 
         if not status:
-            raise PermissionGroupDeniedError()
+            raise PermissionGroupDeniedException()
 
 
 def get_group_permission(group_service: group_service_factory):
@@ -2801,7 +2801,7 @@ from src.core.abstract.permission_base import PermissionService
 from src.endpoints.role.depends import role_service_factory
 from src.endpoints.role.models import RolePermissionsEnum
 from src.endpoints.role.service import RoleService
-from src.utils.exeptions import ModelNotFoundException, PermissionGroupDeniedError
+from src.utils.exeptions import ModelNotFoundException, PermissionGroupDeniedException
 
 
 class RolePermission(PermissionService):
@@ -2821,7 +2821,7 @@ class RolePermission(PermissionService):
         try:
             roles = await self.role_service.get_user_roles_in_group(user_id, group_id)
         except ModelNotFoundException:
-            raise PermissionGroupDeniedError()
+            raise PermissionGroupDeniedException()
 
         array_permissions = {perm for role in roles for perm in role.permissions}
 
@@ -2831,7 +2831,7 @@ class RolePermission(PermissionService):
             status = all(elem in array_permissions for elem in permission)
 
         if not status:
-            raise PermissionGroupDeniedError()
+            raise PermissionGroupDeniedException()
 
 
 def get_role_permission(
@@ -3491,13 +3491,13 @@ class NotFoundModelException(Exception):
     message = "Model not found"
 
 
-class PermissionNotHasAttributeError(Exception):
+class PermissionNotHasAttributeException(Exception):
     """raise when the required field is not found in the model"""
 
     message = "Permission no has data"
 
 
-class PermissionGroupDeniedError(Exception):
+class PermissionGroupDeniedException(Exception):
     """raise when user does not have permission setted in group"""
 
     message = "Permission group denied"
@@ -3993,7 +3993,7 @@ import {
   useChatServiceGetApiChatsGroupChatsByGroupIdKey,
 } from "@/shared/api/queries";
 
-export const useApiChat = {
+export const apiChat = {
   get: useChatServiceGetApiChatsByChatId,
   getGroupChats: useChatServiceGetApiChatsGroupChatsByGroupId,
   create: useChatServicePostApiChatsByGroupId,
@@ -4098,7 +4098,7 @@ import {
 } from "@/shared/api/queries";
 import settings from "@/shared/config";
 
-export const useApiGroup = {
+export const apiGroup = {
   get: useGroupServiceGetApiGroupsByGroupId,
   delete: useGroupServiceDeleteApiGroupsByGroupId,
   patch: useGroupServicePatchApiGroupsByGroupId,
@@ -4244,7 +4244,7 @@ import { HTMLAttributes, MouseEventHandler, useEffect } from "react";
 import Image from "next/image";
 
 import styles from "./group_card.module.scss";
-import { useApiGroup } from "../model";
+import { apiGroup } from "../model";
 import { useAppDispatch } from "@/shared/lib/hooks";
 import { setPanoramaPath } from "../model/slice";
 
@@ -6083,7 +6083,7 @@ import { HTMLAttributes } from "react";
 import clsx from "clsx";
 
 import styles from "./chat_list.module.scss";
-import { useApiChat, ReadChatSchema } from "@/entities/chat/model";
+import { apiChat, ReadChatSchema } from "@/entities/chat/model";
 import { useAppSelector } from "@/shared/lib/hooks";
 import Chat from "@/entities/chat/ui";
 import { useAppDispatch } from "@/shared/lib/hooks";
@@ -6101,7 +6101,7 @@ export const ChatList = ({ className }: ChatListProps) => {
   }
 
   const { data }: { data: ReadChatSchema[] | undefined } =
-    useApiChat.getGroupChats({
+    apiChat.getGroupChats({
       groupId: groupId,
     });
 
@@ -6409,7 +6409,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./dialog_invitation.module.scss";
 import InputText from "@/shared/ui/inputs/input_text";
 import Button from "@/shared/ui/button";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 import { useAppSelector } from "@/shared/lib/hooks";
 import settings from "@/shared/config";
 
@@ -6430,7 +6430,7 @@ const DialogInvitation = ({
     data: inivitationToken,
     isLoading,
   }: { data: string | undefined; isLoading: boolean } =
-    useApiGroup.getInviteToken({ groupId: groupId! }, undefined, {
+    apiGroup.getInviteToken({ groupId: groupId! }, undefined, {
       enabled: !!groupId,
     });
 
@@ -6635,7 +6635,7 @@ import GroupCard from "@/entities/group/ui";
 import styles from "./group_list.module.scss";
 import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
 import { setGroupData } from "@/entities/group/model/slice";
-import { useApiGroup, ReadGroupSchema } from "@/entities/group/model";
+import { apiGroup, ReadGroupSchema } from "@/entities/group/model";
 import { setChatId } from "@/entities/chat/model/slice";
 
 export interface GroupListProps extends HTMLAttributes<HTMLDivElement> {}
@@ -6643,7 +6643,7 @@ export interface GroupListProps extends HTMLAttributes<HTMLDivElement> {}
 export const GroupList = ({ className }: GroupListProps) => {
   const dispatch = useAppDispatch();
   const { data }: { data: ReadGroupSchema[] | undefined } =
-    useApiGroup.getMyGroups();
+    apiGroup.getMyGroups();
 
   // filter group by name
   const searchQuery = useAppSelector((state) => state.group.search_query);
@@ -6774,9 +6774,9 @@ import { useAppSelector } from "@/shared/lib/hooks";
 import ChatList from "../chat_list";
 import GroupDropdown from "../group_dropdown";
 import DialogCreateChat from "../dialog_create_chat";
-import { useApiChat } from "@/entities/chat/model";
+import { apiChat } from "@/entities/chat/model";
 import useMediaQuery from "@/shared/lib/hooks/use_media_query";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 
 export interface GroupPanelProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -6790,7 +6790,7 @@ export const GroupPanel = ({ className }: GroupPanelProps) => {
   const groupName = useAppSelector((state) => state.group.title);
   const panorama_path = useAppSelector((state) => state.group.panorama_path);
   const [panoramaUrl, setPanoramaUrl] = useState<string | null>(null);
-  const { mutateAsync } = useApiChat.create();
+  const { mutateAsync } = apiChat.create();
   const isLaptop = useMediaQuery("(min-width: 1024px)");
 
   if (!groupId) {
@@ -6803,7 +6803,7 @@ export const GroupPanel = ({ className }: GroupPanelProps) => {
     }
 
     const load = async () => {
-      const result = await useApiGroup.loadPanorama(groupId);
+      const result = await apiGroup.loadPanorama(groupId);
 
       const url = URL.createObjectURL(result);
       setPanoramaUrl(url);
@@ -6820,7 +6820,7 @@ export const GroupPanel = ({ className }: GroupPanelProps) => {
     await mutateAsync({ groupId, requestBody: { title: value } });
 
     queryClient.invalidateQueries({
-      queryKey: [useApiChat.getGroupChatsKey, { groupId: groupId }],
+      queryKey: [apiChat.getGroupChatsKey, { groupId: groupId }],
     });
   };
 
@@ -7212,7 +7212,7 @@ import Container from "@/shared/ui/container";
 import InputText from "@/shared/ui/inputs/input_text";
 import Button from "@/shared/ui/button";
 import Textarea from "@/shared/ui/inputs/textarea";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 import { useRouter } from "next/navigation";
 import FormPage from "@/shared/ui/form_page";
 
@@ -7221,7 +7221,7 @@ export interface CreateGroupProps extends HTMLAttributes<HTMLDivElement> {}
 export const CreateGroup = ({}: CreateGroupProps) => {
   const router = useRouter();
 
-  const { mutate } = useApiGroup.post();
+  const { mutate } = apiGroup.post();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -7306,7 +7306,7 @@ import { HTMLAttributes } from "react";
 
 import styles from "./group_settings.module.scss";
 import Container from "@/shared/ui/container";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 import ImageUploader from "@/shared/ui/image_uploader";
 import { useAppSelector } from "@/shared/lib/hooks";
 import { useRouter } from "next/navigation";
@@ -7317,8 +7317,8 @@ export interface GroupSettingsProps extends HTMLAttributes<HTMLDivElement> {}
 export const GroupSettings = ({}: GroupSettingsProps) => {
   const groupId = useAppSelector((state) => state.group.id);
   const router = useRouter();
-  const uploadAvatar = useApiGroup.uploadAvatar();
-  const uploadPanorama = useApiGroup.uploadPanorama();
+  const uploadAvatar = apiGroup.uploadAvatar();
+  const uploadPanorama = apiGroup.uploadPanorama();
 
   const uploadAvatarCallback = (file: File) => {
     if (!groupId) {
@@ -7391,7 +7391,7 @@ export type { JoinGroupProps } from './join_group';
 import { HTMLAttributes, use, useEffect } from "react";
 
 import styles from "./join_group.module.scss";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 import { useRouter } from "next/navigation";
 
 export interface JoinGroupProps extends HTMLAttributes<HTMLDivElement> {
@@ -7401,7 +7401,7 @@ export interface JoinGroupProps extends HTMLAttributes<HTMLDivElement> {
 // component must be in /[id]
 export const JoinGroup = ({ params }: JoinGroupProps) => {
   const { id } = use(params);
-  const { mutate } = useApiGroup.postInviteToken();
+  const { mutate } = apiGroup.postInviteToken();
   const router = useRouter();
 
   useEffect(() => {

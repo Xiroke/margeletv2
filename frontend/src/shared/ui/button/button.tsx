@@ -5,16 +5,22 @@ import styles from "./button.module.scss";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   styleType?: "default" | "invert";
+  size?: "small" | "medium" | "large";
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, className, styleType = "default", ...props }, ref) => {
+  (
+    { children, className, styleType = "default", size = "medium", ...props },
+    ref
+  ) => {
     return (
       <button
         ref={ref}
         {...props}
         className={clsx(
-          styleType == "invert" ? styles.invert_button : styles.button,
+          styles.button,
+          styles[size],
+          styles[styleType],
           className
         )}
       >

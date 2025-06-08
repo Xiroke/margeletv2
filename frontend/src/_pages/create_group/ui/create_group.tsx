@@ -7,18 +7,21 @@ import Container from "@/shared/ui/container";
 import InputText from "@/shared/ui/inputs/input_text";
 import Button from "@/shared/ui/button";
 import Textarea from "@/shared/ui/inputs/textarea";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 import { useRouter } from "next/navigation";
 import FormPage from "@/shared/ui/form_page";
+import { useToastStatus } from "@/shared/lib/hooks/use_toast";
+import { ApiError } from "@/shared/api/requests";
 
 export interface CreateGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const CreateGroup = ({}: CreateGroupProps) => {
   const router = useRouter();
+  const showToast = useToastStatus();
 
-  const { mutate } = useApiGroup.post();
+  const { mutateAsync } = apiGroup.post();
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const title = formData.get("title") as string;
@@ -26,14 +29,27 @@ export const CreateGroup = ({}: CreateGroupProps) => {
 
     if (!title || !description) return;
 
-    mutate({
-      requestBody: {
-        title: title,
-        description: description,
-      },
-    });
+    try {
+      await mutateAsync({
+        requestBody: {
+          title: title,
+          description: description,
+        },
+      });
 
-    router.push("/communication");
+      router.push("/communication");
+    } catch (error) {
+      console.error(error);
+      if (error instanceof ApiError) {
+        const detail =
+          (
+            error.body as {
+              detail?: string;
+            }
+          )?.detail ?? "Unknown error";
+        showToast("error", "Ошибка", detail);
+      }
+    }
   };
 
   return (
@@ -44,12 +60,14 @@ export const CreateGroup = ({}: CreateGroupProps) => {
           placeholder="Моя группа"
           name="title"
           labelText="Название"
+          required={true}
         />
         <Textarea
           placeholder="Расскажите о вашей группе"
           name="description"
           labelText="Описание"
           classNameInput={styles.input_description}
+          required={true}
         />
         <Button type="submit">Создать</Button>
       </form>

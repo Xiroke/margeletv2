@@ -2,10 +2,15 @@ from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from jwt import DecodeError, ExpiredSignatureError, InvalidTokenError
 
-from src.utils.exeptions import PermissionGroupDeniedError
+from src.utils.exceptions import (
+    PermissionGroupDeniedException,
+    PermissionNotHasAttributeException,
+    UniqueViolationException,
+)
 
 
 def exception_handler(app: FastAPI):
+    # JWT exceptions
     @app.exception_handler(ExpiredSignatureError)
     async def jwt_expired_token_handler(request, exc):
         return JSONResponse(
@@ -27,9 +32,25 @@ def exception_handler(app: FastAPI):
             content={"detail": "Invalid token"},
         )
 
-    @app.exception_handler(PermissionGroupDeniedError)
+    @app.exception_handler(PermissionGroupDeniedException)
     async def permission_denied_handler(request, exc):
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
             content={"detail": "Permission denied"},
+        )
+
+    @app.exception_handler(UniqueViolationException)
+    async def unique_violation_handler(request, exc: UniqueViolationException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"detail": exc.message},
+        )
+
+    @app.exception_handler(PermissionNotHasAttributeException)
+    async def permission_not_has_attribute_handler(
+        request, exc: PermissionNotHasAttributeException
+    ):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"detail": exc.message},
         )

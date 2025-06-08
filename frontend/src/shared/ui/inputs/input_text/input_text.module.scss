@@ -6,7 +6,6 @@
 .input_text {
   text-align: left;
   font-size: 16px;
-  margin-top: 5px;
   border: 2px solid var(--primary-background);
   width: 250px;
   height: 40px;
@@ -15,4 +14,8 @@
 
   outline-color: var(--primary-light);
   outline-width: 0.5px;
+}
+
+.input_label {
+  margin-bottom: 5px;
 }

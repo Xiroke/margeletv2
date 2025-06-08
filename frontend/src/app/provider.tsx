@@ -10,6 +10,7 @@ import store from "./store";
 import settings from "@/shared/config";
 import WebsocketProvider from "../shared/lib/providers/websocket_provider";
 import { usePathname } from "next/navigation";
+import { ToastProvider } from "@/shared/lib/providers/toast_provider";
 
 OpenAPIConfig.BASE = settings.NEXT_PUBLIC_API_URL!;
 OpenAPIConfig.CREDENTIALS = settings.CREDENTIALS as
@@ -50,14 +51,14 @@ export function Providers({ children }: { children: ReactNode }) {
     <StrictMode>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          {/* websoket not needed in other pages */}
-          {pathname == "/communication" ? (
-            <WebsocketProvider>{children}</WebsocketProvider>
-          ) : (
-            children
-          )}
-
-          <ReactQueryDevtools initialIsOpen={false} />
+          <ToastProvider>
+            {/* websoket not needed in other pages */}
+            {pathname == "/communication" ? (
+              <WebsocketProvider>{children}</WebsocketProvider>
+            ) : (
+              children
+            )}
+          </ToastProvider>
         </QueryClientProvider>
       </Provider>
     </StrictMode>

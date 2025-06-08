@@ -11,6 +11,13 @@ import config from "@/shared/config";
 import { apiAuth } from "@/features/auth/model";
 import { useRouter } from "next/navigation";
 
+type WebsocketEvent = "message";
+
+interface SendDataI {
+  event: WebsocketEvent;
+  chat_id: string;
+  data: any;
+}
 interface WebsocketProviderProps extends PropsWithChildren {}
 
 interface IWSContext {
@@ -23,60 +30,72 @@ const WSContext = createContext<IWSContext | null>(null);
 
 const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   const wsRef = useRef<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  // request acceess token
   const { mutateAsync } = apiAuth.postAccessToken();
   const onMessageFuncRef = useRef<(data: any) => void>((data: any) => {});
 
-  useEffect(() => {
-    let ws: WebSocket;
+  const runWebsocket = async (): Promise<WebSocket> => {
+    const data = await mutateAsync();
+    const { access_token } = data as { access_token: string };
+    const ws = new WebSocket(
+      `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/?access_token=${access_token}`
+    );
 
+    ws.onopen = () => {
+      console.log("connect");
+      setIsConnected(true);
+    };
+
+    ws.onmessage = (event) => {
+      const data: SendDataI = JSON.parse(event.data);
+
+      if (data.event != "message") {
+        return;
+      }
+
+      onMessageFuncRef.current(data.data);
+    };
+
+    ws.onclose = () => {
+      console.log("disconnect");
+      setIsConnected(false);
+    };
+    return ws;
+  };
+
+  useEffect(() => {
     if (wsRef.current) {
       return;
     }
 
-    mutateAsync().then((data) => {
-      const { access_token } = data as { access_token: string };
-      ws = new WebSocket(
-        `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/?access_token=${access_token}`
-      );
+    let ws: WebSocket | null = null;
 
-      if (!ws) {
-        return;
-      }
-
+    const connect = async () => {
+      ws = await runWebsocket();
       wsRef.current = ws;
+    };
 
-      ws.onopen = () => {
-        console.log("connect");
-      };
-
-      ws.onmessage = (event) => {
-        onMessageFuncRef.current(JSON.parse(event.data));
-      };
-
-      ws.onclose = () => {
-        console.log("disconnect");
-      };
-    });
+    connect();
 
     return () => {
-      if (!ws) {
-        return;
+      if (ws) {
+        ws.close();
       }
-
-      ws.close();
-      if (wsRef.current) {
-        wsRef.current.close();
-        wsRef.current = null;
-        console.log("WebSocket closed");
-      }
+      wsRef.current = null;
+      setIsConnected(false);
     };
   }, []);
 
   const send = (data: any) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
-    } else {
-      console.warn("websocket not open");
+    } else if (!wsRef.current) {
+      // restart websocket
+      runWebsocket();
+      if (wsRef.current!.readyState === WebSocket.OPEN) {
+        wsRef.current!.send(JSON.stringify(data));
+      }
     }
   };
 
@@ -91,7 +110,7 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
       value={{
         send,
         onMessage,
-        isConnected: wsRef.current?.readyState === WebSocket.OPEN,
+        isConnected,
       }}
     >
       {children}

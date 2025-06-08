@@ -29,8 +29,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json", lifespan=lifespan)
 
+if settings.DEV:
+    origins = ["*"]
+else:
+    origins = [global_setttigns.BACKEND_URL, global_setttigns.FRONTEND_URL]
 
-origins = [global_setttigns.BACKEND_URL, global_setttigns.FRONTEND_URL]
 
 app.add_middleware(
     CORSMiddleware,

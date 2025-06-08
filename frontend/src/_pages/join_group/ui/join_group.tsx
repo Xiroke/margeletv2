@@ -2,25 +2,37 @@
 import { HTMLAttributes, use, useEffect } from "react";
 
 import styles from "./join_group.module.scss";
-import { useApiGroup } from "@/entities/group/model";
+import { apiGroup } from "@/entities/group/model";
 import { useRouter } from "next/navigation";
+import Button from "@/shared/ui/button";
 
 export interface JoinGroupProps extends HTMLAttributes<HTMLDivElement> {
   params: Promise<{ token: string }>;
 }
 
-// component must be in /[id]
+// component must be in /[token]
 export const JoinGroup = ({ params }: JoinGroupProps) => {
   const { token } = use(params);
-  const { mutate } = useApiGroup.joinGroup();
+  const { mutateAsync } = apiGroup.joinGroup();
   const router = useRouter();
+  const join = async () => {
+    await mutateAsync({ requestBody: token });
+  };
+
+  const redirect = () => {
+    router.push("/communication");
+  };
 
   useEffect(() => {
-    mutate({ requestBody: token });
-    router.push("/communication");
+    join();
   }, []);
 
-  return <div className={styles.join_group}>JoinGroup Component</div>;
+  return (
+    <div className={styles.join_group}>
+      <div>Вы присоединились к группе</div>
+      <Button onClick={redirect}>Перейти в мессенджер</Button>
+    </div>
+  );
 };
 
 export default JoinGroup;

@@ -70,7 +70,7 @@ async def upload_avatar(
 
     path = f"groups/{str(group_id)}_avatar.jpg"
     await group_service.upload_avatar(path, image)
-    await group_service.update(UpdateGroupSchema(id=group_id, avatar_path=path))
+    await group_service.update_by_id(group_id, UpdateGroupSchema(avatar_path=path))
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
@@ -100,7 +100,7 @@ async def upload_panorama(
 
     path = f"groups/{str(group_id)}_panorama.jpg"
     await group_service.upload_panorama(path, image)
-    await group_service.update(UpdateGroupSchema(id=group_id, panorama_path=path))
+    await group_service.update_by_id(group_id, UpdateGroupSchema(panorama_path=path))
     return JSONResponse(status_code=200, content={"message": "Panorama uploaded"})
 
 
@@ -156,11 +156,38 @@ async def join_group(
     return JSONResponse(status_code=200, content={"message": "Group joined"})
 
 
+@router.post("/leave/{group_id}")
+async def leave_group(
+    user: current_user,
+    group_id: UUID,
+    group_service: group_service_factory,
+):
+    await group_service.leave_group(group_id, user.id)
+
+    return JSONResponse(status_code=200, content={"message": "Group left"})
+
+
 @router.get("/user_groups/me")
 async def get_my_groups(
     user: current_user, group_service: group_service_factory
 ) -> list[ReadGroupSchema]:
     return await group_service.get_groups_by_user(user.id)
+
+
+@router.patch("/title/{group_id}")
+async def update_group_title(
+    group_id: UUID,
+    group_title: Annotated[str, Body()],
+    group_service: group_service_factory,
+    user: current_user,
+    role_perm: role_permission,
+) -> ReadGroupSchema:
+    await role_perm.check_user_has_permission(
+        RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group_id
+    )
+    return await group_service.update_by_id(
+        group_id, UpdateGroupSchema(title=group_title)
+    )
 
 
 @router.get(

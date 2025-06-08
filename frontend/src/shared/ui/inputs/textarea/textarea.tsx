@@ -1,9 +1,10 @@
-import { forwardRef, RefObject, TextareaHTMLAttributes } from 'react';
-import clsx from 'clsx';
+import { forwardRef, RefObject, TextareaHTMLAttributes } from "react";
+import clsx from "clsx";
 
-import styles from './textarea.module.scss';
+import styles from "./textarea.module.scss";
 
-export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   labelText?: string;
   placeholder: string;
   name: string;
@@ -12,11 +13,23 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ labelText, placeholder, classNameInput, className, name, onKeyDown }, ref) => {
+  (
+    {
+      labelText,
+      placeholder,
+      classNameInput,
+      className,
+      name,
+      onKeyDown,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <div className={clsx(styles.textarea, className)}>
         {labelText && <label>{labelText}</label>}
         <textarea
+          {...props}
           ref={ref}
           name={name}
           className={clsx(styles.textarea_input, classNameInput)}
@@ -25,6 +38,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         />
       </div>
     );
-  },
+  }
 );
 export default Textarea;

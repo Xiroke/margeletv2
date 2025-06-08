@@ -43,5 +43,7 @@ lint.select = [
     "C4",
 ]
 
+ignore = ["B904"] # ignore "raise" in block "except"
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

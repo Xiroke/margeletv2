@@ -28,8 +28,8 @@ export const NavigationMobile = ({
       >
         <Image
           src="/icons/category-plus.svg"
-          width={35}
-          height={35}
+          width={30}
+          height={30}
           alt="add group"
           className={styles.add_group}
         />

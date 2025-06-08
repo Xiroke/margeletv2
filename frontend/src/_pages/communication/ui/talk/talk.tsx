@@ -18,36 +18,41 @@ import { useApiMessage, ReadMessageSchema } from "@/entities/message/model";
 import { useWS } from "@/shared/lib/providers";
 import { useQueryClient } from "@tanstack/react-query";
 import useMediaQuery from "@/shared/lib/hooks/use_media_query";
+import { useToastStatus } from "@/shared/lib/hooks/use_toast";
 
 export interface TalkProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const Talk = ({ className }: TalkProps) => {
   const queryClient = useQueryClient();
   const chatId = useAppSelector((state) => state.chat.id);
-  const sendMessageRef = useRef<HTMLInputElement>(null);
   const { send, onMessage } = useWS();
   const isLaptop = useMediaQuery("(min-width: 1024px)");
-  const [toBottom, setToBottom] = useState(true);
+  const [isBottom, setIsBottom] = useState(false);
+  const sendMessageRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
+  const showToast = useToastStatus();
 
   const { data: messages }: { data: ReadMessageSchema[] | undefined } =
     useApiMessage.getAllMessageChat(
       {
         chatId: chatId!,
       },
-      undefined,
+      [{ chatId }],
       {
         enabled: !!chatId,
       }
     );
 
-  const handleScroll = () => {
+  const handleNewMessageScroll = () => {
     // event when get new message we scroll to the end messages
     const messages = messagesRef.current;
     if (!messages) return;
+
     const { scrollTop, scrollHeight, clientHeight } = messages;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    console.log(scrollTop, scrollHeight, clientHeight, distanceFromBottom);
 
+    // dont scroll if user read old message
     if (distanceFromBottom >= 500) {
       return;
     }
@@ -59,25 +64,22 @@ export const Talk = ({ className }: TalkProps) => {
   };
 
   useEffect(() => {
-    const messages = messagesRef.current;
-    if (messages == null) {
+    const HTMLmessages = messagesRef.current;
+    if (HTMLmessages == null) {
       return;
     }
 
-    if (toBottom == false) {
-      handleScroll();
+    if (isBottom == true) {
+      handleNewMessageScroll();
     } else {
       //scroll to bottom whem open page
-      setToBottom(false);
-      messages.scrollTo({
-        top: messages.scrollHeight,
+      setIsBottom(true);
+      HTMLmessages.scrollTo({
+        top: HTMLmessages.scrollHeight,
       });
     }
-
-    //scroll to bottom if its need
   }, [messages]);
 
-  // Пример изменения данных
   const updateMessage = (newMessage: ReadMessageSchema) => {
     // add new message to messages
     queryClient.setQueryData(
@@ -88,26 +90,40 @@ export const Talk = ({ className }: TalkProps) => {
     );
   };
 
+  const messageHandler = (message: any) => {
+    if (typeof message.id == "undefined" || message.to_chat_id != chatId) {
+      return;
+    }
+
+    console.log("update");
+    updateMessage(message);
+  };
+
   useEffect(() => {
-    onMessage((message: any) => {
-      if (typeof message.id == "undefined") {
-        return;
-      }
+    // logic when change chat
+    setIsBottom(false);
 
-      updateMessage(message);
-    });
-    // maybe its need to fix
-  }, [messages]);
+    onMessage(messageHandler);
 
-  const sentMessage: KeyboardEventHandler = (e) => {
-    if (e.key !== "Enter" || !sendMessageRef.current) {
+    return () => {
+      onMessage(() => {});
+    };
+  }, [chatId]);
+
+  const sentMessage = () => {
+    if (!sendMessageRef.current) {
       return;
     }
 
     //check lenght message
     const message = sendMessageRef.current.value;
     if (message.length > 2000) {
-      alert("Сообщение не должно быть больше 2000 символов");
+      showToast(
+        "error",
+        "Ошибка",
+        "Сообщение не должно быть больше 2000 символов"
+      );
+      return;
     } else if (message.length == 0) {
       return;
     }
@@ -119,6 +135,14 @@ export const Talk = ({ className }: TalkProps) => {
     });
 
     sendMessageRef.current.value = "";
+  };
+
+  const onEnterSendMessage: KeyboardEventHandler = (e) => {
+    if (e.key !== "Enter" || !sendMessageRef.current) {
+      return;
+    }
+
+    sentMessage();
   };
 
   if (messages) {
@@ -138,9 +162,12 @@ export const Talk = ({ className }: TalkProps) => {
                 />
               ))}
           </div>
-          <div className={styles.sending_messagesList}>
-            <Sending ref={sendMessageRef} onKeyDown={sentMessage} />
-          </div>
+          <Sending
+            className={styles.sending}
+            ref={sendMessageRef}
+            onKeyDown={onEnterSendMessage}
+            onClick={sentMessage}
+          />
         </div>
       </div>
     );

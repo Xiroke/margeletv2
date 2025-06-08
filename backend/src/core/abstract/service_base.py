@@ -51,8 +51,8 @@ class DaoService(
     async def create(self, obj: CreateSchemaType) -> ReadSchemaType:
         return await self.dao.create(obj)
 
-    async def update(self, obj: UpdateSchemaType) -> ReadSchemaType:
-        return await self.dao.update(obj)
+    async def update_by_id(self, id: UUID, obj: UpdateSchemaType) -> ReadSchemaType:
+        return await self.dao.update_by_id(id, obj)
 
     async def delete(self, obj: Any) -> bool:
         return await self.dao.delete(obj)

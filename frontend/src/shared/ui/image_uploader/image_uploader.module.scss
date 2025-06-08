@@ -18,7 +18,7 @@
 .formContainer {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 20px;
 }
 
 .dropzone {
@@ -70,31 +70,6 @@
   color: #6b7280;
 }
 
-.previewContainer {
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 1rem;
-}
-
-.previewHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.previewTitle {
-  font-weight: 500;
-}
-
-.clearButton {
-  font-size: 0.875rem;
-  text-decoration: underline;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
 .imageContainer {
   display: flex;
   justify-content: center;
@@ -108,9 +83,11 @@
 
 .actionContainer {
   padding-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.uploadButton {
+.button {
   width: 100% !important;
-  cursor: pointer;
 }

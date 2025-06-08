@@ -1,2 +1,2 @@
-export { useIsAuth } from './hooks';
-export { useRedirectAuth } from './hooks';
+export { useIsAuth } from "./is_auth";
+export { useRedirectAuth } from "./redirect_auth";

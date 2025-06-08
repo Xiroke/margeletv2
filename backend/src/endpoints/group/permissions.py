@@ -6,7 +6,7 @@ from fastapi import Depends
 from src.core.abstract.permission_base import PermissionService
 from src.endpoints.group.depends import group_service_factory
 from src.endpoints.group.service import GroupService
-from src.utils.exeptions import PermissionGroupDeniedError
+from src.utils.exceptions import PermissionGroupDeniedException
 
 
 class GroupPermission(PermissionService):
@@ -17,7 +17,7 @@ class GroupPermission(PermissionService):
         status = await self.service.is_user_in_group(user_id, group_id)
 
         if not status:
-            raise PermissionGroupDeniedError()
+            raise PermissionGroupDeniedException()
 
 
 def get_group_permission(group_service: group_service_factory):

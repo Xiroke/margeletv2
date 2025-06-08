@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from fastapi import UploadFile
+from sqlalchemy.exc import IntegrityError
 
 from src.core.abstract.service_base import DaoService
 from src.core.abstract.storage_base import StorageBase
@@ -10,6 +11,8 @@ from src.endpoints.group.schemas import (
     ReadGroupSchema,
     UpdateGroupSchema,
 )
+from src.utils.exceptions import UniqueViolationException
+from src.utils.utils import get_field_unique_error
 
 from .dao import GroupDaoProtocol
 
@@ -26,7 +29,15 @@ class GroupService(
         self.dao = dao
 
     async def create(self, obj: CreateGroupSchema, user_id: UUID) -> ReadGroupSchema:
-        return await self.dao.create(obj, user_id)
+        try:
+            return await self.dao.create(obj, user_id)
+        except IntegrityError as e:
+            field = get_field_unique_error(e)
+            if field == "title":
+                raise UniqueViolationException(
+                    message="Group with this title already exists"
+                )
+            raise
 
     async def load_avatar(self, key: str) -> bytes:
         return await self.storage_service.get(key)
@@ -45,11 +56,14 @@ class GroupService(
     async def is_user_in_group(self, user_id: UUID, group_id: UUID) -> bool:
         return await self.dao.is_user_in_group(group_id, user_id)
 
-    async def add_user_to_group(self, id: UUID, user_id: UUID) -> bool:
-        return await self.dao.add_user_to_group(id, user_id)
+    async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None:
+        return await self.dao.add_user_to_group(group_id, user_id)
+
+    async def leave_group(self, group_id: UUID, user_id: UUID) -> None:
+        await self.dao.remove_user_from_group(group_id, user_id)
 
     async def get_groups_by_user(self, user_id: UUID) -> list[ReadGroupSchema]:
         return await self.dao.get_groups_by_user(user_id)
 
-    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> bool:
-        return await self.dao.add_role_to_user(user_id, role_id)
+    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> None:
+        await self.dao.add_role_to_user(user_id, role_id)

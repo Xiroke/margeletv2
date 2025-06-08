@@ -493,11 +493,6 @@ export const $RolePermissionsEnum = {
 
 export const $UpdateChatSchema = {
     properties: {
-        id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Id'
-        },
         title: {
             anyOf: [
                 {
@@ -511,24 +506,11 @@ export const $UpdateChatSchema = {
         }
     },
     type: 'object',
-    required: ['id'],
     title: 'UpdateChatSchema'
 } as const;
 
 export const $UpdateGroupSchema = {
     properties: {
-        id: {
-            anyOf: [
-                {
-                    type: 'string',
-                    format: 'uuid'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Id'
-        },
         title: {
             anyOf: [
                 {
@@ -580,11 +562,6 @@ export const $UpdateGroupSchema = {
 
 export const $UpdateRoleSchema = {
     properties: {
-        id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Id'
-        },
         title: {
             anyOf: [
                 {
@@ -612,7 +589,6 @@ export const $UpdateRoleSchema = {
         }
     },
     type: 'object',
-    required: ['id'],
     title: 'UpdateRoleSchema'
 } as const;
 
@@ -725,11 +701,6 @@ export const $UserRead = {
 
 export const $UserUpdate = {
     properties: {
-        id: {
-            type: 'string',
-            format: 'uuid',
-            title: 'Id'
-        },
         name: {
             anyOf: [
                 {
@@ -810,7 +781,6 @@ export const $UserUpdate = {
         }
     },
     type: 'object',
-    required: ['id'],
     title: 'UserUpdate'
 } as const;
 

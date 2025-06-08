@@ -29,6 +29,5 @@ class CreateRoleSchema(BaseModel):
 
 
 class UpdateRoleSchema(BaseModel):
-    id: UUID
     title: str | None = None
     permissions: list[RolePermissionsEnum] | None = None

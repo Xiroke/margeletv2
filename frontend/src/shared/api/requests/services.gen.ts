@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, GetApiAuthMeResponse, GetApiAuthMeAlterntiveResponse, PostApiAuthAccessTokenResponse, GetApiUsersMeResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, GetApiUsersAvatarMeResponse, PostApiUsersAvatarMeData, PostApiUsersAvatarMeResponse, GetApiGroupsUserGroupsMeResponse, GetApiGroupsAvatarByGroupIdData, GetApiGroupsAvatarByGroupIdResponse, PostApiGroupsAvatarByGroupIdData, PostApiGroupsAvatarByGroupIdResponse, GetApiGroupsPanoramaByGroupIdData, GetApiGroupsPanoramaByGroupIdResponse, PostApiGroupsPanoramaByGroupIdData, PostApiGroupsPanoramaByGroupIdResponse, GetApiGroupsInviteByGroupIdData, GetApiGroupsInviteByGroupIdResponse, PostApiGroupsInviteData, PostApiGroupsInviteResponse, GetApiGroupsByGroupIdData, GetApiGroupsByGroupIdResponse, PatchApiGroupsByGroupIdData, PatchApiGroupsByGroupIdResponse, DeleteApiGroupsByGroupIdData, DeleteApiGroupsByGroupIdResponse, PostApiGroupsData, PostApiGroupsResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, PostApiChatsByGroupIdData, PostApiChatsByGroupIdResponse, PatchApiChatsByChatIdData, PatchApiChatsByChatIdResponse, DeleteApiChatsByChatIdData, DeleteApiChatsByChatIdResponse, GetApiRolesGroupByRoleIdData, GetApiRolesGroupByRoleIdResponse, DeleteApiRolesGroupByRoleIdData, DeleteApiRolesGroupByRoleIdResponse, GetApiRolesGroupPermissionsMeByGroupIdData, GetApiRolesGroupPermissionsMeByGroupIdResponse, PostApiRolesGroupByGroupIdData, PostApiRolesGroupByGroupIdResponse, PatchApiRolesGroupByGroupIdByRoleIdData, PatchApiRolesGroupByGroupIdByRoleIdResponse, GetApiMessagesChatByChatIdData, GetApiMessagesChatByChatIdResponse, GetApiResponse } from './types.gen';
+import type { PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, GetApiAuthMeResponse, GetApiAuthMeAlterntiveResponse, PostApiAuthAccessTokenResponse, GetApiUsersMeResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, GetApiUsersAvatarMeResponse, PostApiUsersAvatarMeData, PostApiUsersAvatarMeResponse, GetApiGroupsUserGroupsMeResponse, GetApiGroupsAvatarByGroupIdData, GetApiGroupsAvatarByGroupIdResponse, PostApiGroupsAvatarByGroupIdData, PostApiGroupsAvatarByGroupIdResponse, GetApiGroupsPanoramaByGroupIdData, GetApiGroupsPanoramaByGroupIdResponse, PostApiGroupsPanoramaByGroupIdData, PostApiGroupsPanoramaByGroupIdResponse, GetApiGroupsInviteByGroupIdData, GetApiGroupsInviteByGroupIdResponse, PostApiGroupsInviteData, PostApiGroupsInviteResponse, PostApiGroupsLeaveByGroupIdData, PostApiGroupsLeaveByGroupIdResponse, GetApiGroupsByGroupIdData, GetApiGroupsByGroupIdResponse, PatchApiGroupsByGroupIdData, PatchApiGroupsByGroupIdResponse, DeleteApiGroupsByGroupIdData, DeleteApiGroupsByGroupIdResponse, PostApiGroupsData, PostApiGroupsResponse, PatchApiGroupsTitleByGroupIdData, PatchApiGroupsTitleByGroupIdResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, PostApiChatsByGroupIdData, PostApiChatsByGroupIdResponse, PatchApiChatsByChatIdData, PatchApiChatsByChatIdResponse, DeleteApiChatsByChatIdData, DeleteApiChatsByChatIdResponse, GetApiRolesGroupByRoleIdData, GetApiRolesGroupByRoleIdResponse, DeleteApiRolesGroupByRoleIdData, DeleteApiRolesGroupByRoleIdResponse, GetApiRolesGroupPermissionsMeByGroupIdData, GetApiRolesGroupPermissionsMeByGroupIdResponse, PostApiRolesGroupByGroupIdData, PostApiRolesGroupByGroupIdResponse, PatchApiRolesGroupByGroupIdByRoleIdData, PatchApiRolesGroupByGroupIdByRoleIdResponse, GetApiMessagesChatByChatIdData, GetApiMessagesChatByChatIdResponse, GetApiResponse } from './types.gen';
 
 export class AuthService {
     /**
@@ -462,6 +462,26 @@ export class GroupService {
     }
     
     /**
+     * Leave Group
+     * @param data The data for the request.
+     * @param data.groupId
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static postApiGroupsLeaveByGroupId(data: PostApiGroupsLeaveByGroupIdData): CancelablePromise<PostApiGroupsLeaveByGroupIdResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/groups/leave/{group_id}',
+            path: {
+                group_id: data.groupId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
      * Get Group
      * @param data The data for the request.
      * @param data.groupId
@@ -535,6 +555,29 @@ export class GroupService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/groups/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Group Title
+     * @param data The data for the request.
+     * @param data.groupId
+     * @param data.requestBody
+     * @returns ReadGroupSchema Successful Response
+     * @throws ApiError
+     */
+    public static patchApiGroupsTitleByGroupId(data: PatchApiGroupsTitleByGroupIdData): CancelablePromise<PatchApiGroupsTitleByGroupIdResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/groups/title/{group_id}',
+            path: {
+                group_id: data.groupId
+            },
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {

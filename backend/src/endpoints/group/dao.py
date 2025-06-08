@@ -1,7 +1,7 @@
 from typing import Protocol, override
 from uuid import UUID
 
-from sqlalchemy import and_, insert, select
+from sqlalchemy import and_, delete, insert, select
 
 from src.core.abstract.dao_base import DaoProtocol, SqlDaoImpl
 from src.core.db.models.secondary_models.models import UserToGroupModel
@@ -23,13 +23,15 @@ class GroupDaoProtocol(
         self, obj: CreateGroupSchema, user_id: UUID
     ) -> ReadGroupSchema: ...
 
-    async def is_user_in_group(self, id: UUID, user_id: UUID) -> bool: ...
+    async def is_user_in_group(self, group_id: UUID, user_id: UUID) -> bool: ...
 
-    async def add_user_to_group(self, id: UUID, user_id: UUID) -> bool: ...
+    async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None: ...
+
+    async def remove_user_from_group(self, group_id: UUID, user_id: UUID) -> None: ...
 
     async def get_groups_by_user(self, user_id: UUID) -> list[ReadGroupSchema]: ...
 
-    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> bool: ...
+    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> None: ...
 
 
 class GroupSqlDao(
@@ -47,23 +49,33 @@ class GroupSqlDao(
         await self.session.refresh(obj)
         return self.read_schema_type.model_validate(obj)
 
-    async def is_user_in_group(self, id: UUID, user_id: UUID) -> bool:
+    async def is_user_in_group(self, group_id: UUID, user_id: UUID) -> bool:
         result = await self.session.execute(
             select(UserToGroupModel)
             .filter(UserToGroupModel.c.user_id == user_id)
-            .filter(UserToGroupModel.c.group_id == id)
+            .filter(UserToGroupModel.c.group_id == group_id)
         )
         if result.scalar_one_or_none() is None:
             return False
 
         return True
 
-    async def add_user_to_group(self, id: UUID, user_id: UUID) -> bool:
+    async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None:
         await self.session.execute(
-            insert(UserToGroupModel).values(group_id=id, user_id=user_id)
+            insert(UserToGroupModel).values(group_id=group_id, user_id=user_id)
         )
         await self.session.commit()
-        return True
+
+    async def remove_user_from_group(self, group_id: UUID, user_id: UUID) -> None:
+        await self.session.execute(
+            delete(UserToGroupModel).filter(
+                and_(
+                    UserToGroupModel.c.user_id == user_id,
+                    UserToGroupModel.c.group_id == group_id,
+                )
+            )
+        )
+        await self.session.commit()
 
     async def get_groups_by_user(self, user_id: UUID) -> list[ReadGroupSchema]:
         result = await self.session.execute(
@@ -77,7 +89,8 @@ class GroupSqlDao(
         )
         return [ReadGroupSchema.model_validate(i) for i in result.scalars().all()]
 
-    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> bool:
-        await self.session.execute(insert(UserToRoleModel).values(user_id, role_id))
+    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> None:
+        await self.session.execute(
+            insert(UserToRoleModel).values(user_id=user_id, role_id=role_id)
+        )
         await self.session.commit()
-        return True

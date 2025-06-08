@@ -93,6 +93,11 @@ export const useGroupServicePostApiGroupsInvite = <TData = Common.GroupServicePo
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   requestBody: string;
 }, TContext>({ mutationFn: ({ requestBody }) => GroupService.postApiGroupsInvite({ requestBody }) as unknown as Promise<TData>, ...options });
+export const useGroupServicePostApiGroupsLeaveByGroupId = <TData = Common.GroupServicePostApiGroupsLeaveByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  groupId: string;
+}, TContext>, "mutationFn">) => useMutation<TData, TError, {
+  groupId: string;
+}, TContext>({ mutationFn: ({ groupId }) => GroupService.postApiGroupsLeaveByGroupId({ groupId }) as unknown as Promise<TData>, ...options });
 export const useGroupServicePostApiGroups = <TData = Common.GroupServicePostApiGroupsMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   requestBody: CreateGroupSchema;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
@@ -131,6 +136,13 @@ export const useGroupServicePatchApiGroupsByGroupId = <TData = Common.GroupServi
   groupId: string;
   requestBody: UpdateGroupSchema;
 }, TContext>({ mutationFn: ({ groupId, requestBody }) => GroupService.patchApiGroupsByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
+export const useGroupServicePatchApiGroupsTitleByGroupId = <TData = Common.GroupServicePatchApiGroupsTitleByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
+  groupId: string;
+  requestBody: string;
+}, TContext>, "mutationFn">) => useMutation<TData, TError, {
+  groupId: string;
+  requestBody: string;
+}, TContext>({ mutationFn: ({ groupId, requestBody }) => GroupService.patchApiGroupsTitleByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useChatServicePatchApiChatsByChatId = <TData = Common.ChatServicePatchApiChatsByChatIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   chatId: string;
   requestBody: UpdateChatSchema;

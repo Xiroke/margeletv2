@@ -14,11 +14,11 @@ from src.endpoints.message.id_to_username.depends import id_to_username_dao
 from src.endpoints.message.id_to_username.schemas import CreateIdToUsernameModelSchema
 from src.endpoints.user.depends import user_dao_factory
 from src.endpoints.user.schemas import ReadUserSchema
-from src.utils.exeptions import ModelNotFoundException
+from src.utils.exceptions import ModelNotFoundException
 
 from .depends import message_service_factory
 from .models import MessageModel
-from .schemas import CreateMessageSchema, ReadMessageSchema
+from .schemas import CreateMessageSchema, ReadMessageSchema, SendMessageSchema
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 
@@ -64,7 +64,9 @@ class ConnectionManager:
             UUID, list[UUID]
         ] = {}  # {chat_id: [user_id]}all online users in each chat
 
-    async def connect(self, websocket: WebSocket, user_id: UUID, chats_id: list[UUID]):
+    async def connect(
+        self, websocket: WebSocket, user_id: UUID, chats_id: list[UUID]
+    ) -> None:
         """Connect user"""
         if self.active_connections.get(user_id) is None:
             self.active_connections[user_id] = []
@@ -84,7 +86,7 @@ class ConnectionManager:
         ws: WebSocket,
         user_id: UUID,
         chats_id: list[UUID],
-    ):
+    ) -> None:
         """Disconnect user"""
         if user_id not in self.active_connections.keys():
             return
@@ -109,10 +111,10 @@ class ConnectionManager:
         raw_message: CreateMessageSchema,
         message_service: message_service_factory,
         id_user_dao: id_to_username_dao,
-    ):
+    ) -> None:
         """Send message to all users of current chat (from message)"""
 
-        # --- we get data and add username to it
+        # we get data and add username to it
         message = await message_service.create(raw_message)
 
         username_db = await id_user_dao.get_one_by_id(message.user_id)
@@ -123,10 +125,13 @@ class ConnectionManager:
             )
 
         message.author = username_db.username
-        # sebd message to all users
+
+        data_to_send = SendMessageSchema(data=message, chat_id=message.to_chat_id)
+
+        # send message to all users
         for user_id in self.chats_connections[message.to_chat_id]:
             for connection in self.active_connections[user_id]:
-                await connection.send_text(message.model_dump_json())
+                await connection.send_text(data_to_send.model_dump_json())
 
 
 connection_manager_users = ConnectionManager()
@@ -160,5 +165,4 @@ async def websocket_endpoint(
             )
 
     except WebSocketDisconnect:
-        print("disconnect")
         await connection_manager_users.disconnect(websocket, user.id, chats_id)
