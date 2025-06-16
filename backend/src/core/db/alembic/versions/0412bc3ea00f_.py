@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e0b525ab09b1
+Revision ID: 0412bc3ea00f
 Revises:
-Create Date: 2025-05-29 12:18:43.290443
+Create Date: 2025-06-17 04:28:18.119056
 
 """
 
@@ -14,7 +14,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = "e0b525ab09b1"
+revision: str = "0412bc3ea00f"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -93,9 +93,8 @@ def upgrade() -> None:
             postgresql.ARRAY(
                 postgresql.ENUM(
                     "CAN_ALL",
+                    "CAN_EDIT_GROUP_SETTINGS",
                     "CAN_EDIT_ROLES",
-                    "CAN_SET_AVATAR",
-                    "CAN_SET_PANORAMA",
                     "CAN_CONTROL_CHATS",
                     "CAN_SEND_MESSAGE",
                     "CAN_INVITE",
