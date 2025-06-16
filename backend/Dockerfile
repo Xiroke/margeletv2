@@ -22,4 +22,6 @@ COPY ./backend .
 ENV UV_PROJECT_ENVIRONMENT="/usr/local"
 RUN uv sync --no-cache --frozen
 
+RUN alembic upgrade head
+
 CMD ["uv", "run", "main.py"]

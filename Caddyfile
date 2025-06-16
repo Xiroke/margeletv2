@@ -9,22 +9,30 @@
   }
 }
 
-host.docker.internal {
+margelet.tw1.ru {
   encode gzip
 
-  reverse_proxy / http://frontend:3000 {
-    header_up Host {host}
-    header_up X-Real-IP {remote_host}
-    header_up X-Forwarded-For {remote_host}
+  reverse_proxy /static/*   http://frontend:3000 {
+    header_up Host             {host}
+    header_up X-Real-IP        {remote_host}
+    header_up X-Forwarded-For  {remote_host}
     header_up X-Forwarded-Proto {scheme}
-    transport http {
-      versions 1.1
-      keepalive 2m
-    }
-    flush_interval -1
   }
 
-  reverse_proxy /api http://backend:8000 {
+  reverse_proxy /_next/*     http://frontend:3000 {
+    header_up Host             {host}
+    header_up X-Real-IP        {remote_host}
+    header_up X-Forwarded-For  {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+  reverse_proxy /service-worker.js http://frontend:3000 {
+    header_up Host             {host}
+    header_up X-Real-IP        {remote_host}
+    header_up X-Forwarded-For  {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+
+  reverse_proxy /api* http://backend:8000 {
     header_up Host {host}
     header_up X-Real-IP {remote_host}
     header_up X-Forwarded-For {remote_host}
@@ -49,4 +57,17 @@ host.docker.internal {
     }
     flush_interval 1s
   }
+
+  reverse_proxy /* http://frontend:3000 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+    transport http {
+      versions 1.1
+      keepalive 2m
+    }
+    flush_interval -1
+  }
 }
+
