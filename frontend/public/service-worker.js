@@ -6,6 +6,7 @@ self.ALLOWED_CACHED_PATHS = [];
 
 self.addEventListener("message", (event) => {
   const { type, payload } = event.data;
+  console.log("[SW] message received:", type, payload);
   if (type === "SET_PARAMS") {
     self.BACKEND_URL = payload.BACKEND_URL;
     self.ALLOWED_ORIGINS = payload.ALLOWED_ORIGINS;
@@ -13,10 +14,8 @@ self.addEventListener("message", (event) => {
   }
 });
 
-const accessTokenMiddleware = async (request) => {
-  // request access token from api when we get a 401 code
-  // in other cases we set the access token in the request headers
-  const fetchAccessToken = async () => {
+const fetchAccessToken = async () => {
+  try {
     const response = await fetch(`${self.BACKEND_URL}/api/auth/access_token`, {
       method: "POST",
       credentials: "include",
@@ -24,19 +23,28 @@ const accessTokenMiddleware = async (request) => {
 
     if (!response.ok) {
       console.log("Failed to fetch access token");
-      return;
+      return null;
     }
 
     const data = await response.json();
-    return data.access_token;
-  };
+    return data.access_token ?? null;
+  } catch (err) {
+    console.error("Error fetching access token:", err);
+    return null;
+  }
+};
 
+const accessTokenMiddleware = async (request) => {
   if (request.headers.get("Authorization") !== null) {
     return fetch(request);
   }
 
   if (self.accessToken === null) {
     self.accessToken = await fetchAccessToken();
+  }
+
+  if (!self.accessToken) {
+    return fetch(request);
   }
 
   const modified = new Request(request, {
@@ -46,18 +54,20 @@ const accessTokenMiddleware = async (request) => {
     }),
   });
 
-  const response = await fetch(modified);
+  let response = await fetch(modified);
 
   if (response.status === 401) {
     self.accessToken = await fetchAccessToken();
-    return fetch(
-      new Request(request, {
-        headers: new Headers({
-          ...Object.fromEntries(request.headers.entries()),
-          Authorization: `Bearer ${self.accessToken}`,
-        }),
-      })
-    );
+    if (!self.accessToken) {
+      return response;
+    }
+    const retryRequest = new Request(request, {
+      headers: new Headers({
+        ...Object.fromEntries(request.headers.entries()),
+        Authorization: `Bearer ${self.accessToken}`,
+      }),
+    });
+    response = await fetch(retryRequest);
   }
 
   return response;
@@ -69,16 +79,14 @@ self.addEventListener("fetch", (event) => {
 
   const isAllowed = self.ALLOWED_ORIGINS.some((origin) => {
     const pathname = url.pathname;
-
     for (const path of self.ALLOWED_CACHED_PATHS) {
-      if (pathname.includes(path) && url.href.startsWith(origin)) {
+      if (path && pathname.includes(path) && url.href.startsWith(origin)) {
         return true;
       }
     }
-    return false;
   });
+
   if (isAllowed) {
-    //caching images
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) =>
         cache.match(request).then((cachedResponse) => {
@@ -93,11 +101,13 @@ self.addEventListener("fetch", (event) => {
         })
       )
     );
-  } else if (!isAllowed && request.url.startsWith(self.BACKEND_URL)) {
-    // for all query to backend
-    if (request.pathname.includes("/api/auth/")) {
-      return fetch(request);
+  } else if (request.url.startsWith(self.BACKEND_URL)) {
+    if (url.pathname.includes("/api/auth/")) {
+      event.respondWith(fetch(request));
+    } else {
+      event.respondWith(accessTokenMiddleware(request));
     }
-    event.respondWith(accessTokenMiddleware(request));
+  } else {
+    return;
   }
 });

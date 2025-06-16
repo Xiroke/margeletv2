@@ -22,5 +22,5 @@ COPY ./backend .
 ENV UV_PROJECT_ENVIRONMENT="/usr/local"
 RUN uv sync --no-cache --frozen
 
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /app/backend/scripts/entrypoint.sh
 ENTRYPOINT ["/app/backend/scripts/entrypoint.sh"]

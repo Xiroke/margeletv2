@@ -9,7 +9,7 @@
   }
 }
 
-margelet.tw1.ru {
+https://margelet.tw1.ru {
   encode gzip
 
   reverse_proxy /static/*   http://frontend:3000 {
@@ -32,6 +32,19 @@ margelet.tw1.ru {
     header_up X-Forwarded-Proto {scheme}
   }
 
+  reverse_proxy /api/messages/ws* http://backend:8000 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up Connection "upgrade"
+    header_up Upgrade "websocket"
+    transport http {
+      versions 1.1
+      keepalive 2m
+    }
+    flush_interval 1s
+  }
+
   reverse_proxy /api* http://backend:8000 {
     header_up Host {host}
     header_up X-Real-IP {remote_host}
@@ -42,20 +55,6 @@ margelet.tw1.ru {
       keepalive 2m
     }
     flush_interval -1
-  }
-
-
-  reverse_proxy /api/messages/ws* http://backend:8000 {
-    header_up Host {host}
-    header_up X-Real-IP {remote_host}
-    header_up X-Forwarded-For {remote_host}
-    header_up Connection {>Connection}
-    header_up Upgrade {>Upgrade}
-    transport http {
-      versions 1.1
-      keepalive 2m
-    }
-    flush_interval 1s
   }
 
   reverse_proxy /* http://frontend:3000 {

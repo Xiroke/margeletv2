@@ -22,6 +22,37 @@ from .schemas import CreateMessageSchema, ReadMessagePaginatedSchema, ReadMessag
 router = APIRouter(prefix="/messages", tags=["messages"])
 
 
+@router.websocket("/ws")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    access_token: Annotated[str, Query()],
+    message_service: message_service_factory,
+    chat_service: chat_service_factory,
+    jwt: jwt_manager_access,
+    user_dao: user_dao_factory,
+    id_user_dao: id_to_username_dao,
+):
+    user = await get_current_user_from_access(access_token, jwt, user_dao)
+
+    if user is None:
+        raise WebSocketException(401, "Unauthorized")
+
+    chats = await chat_service.get_chats_by_user(user.id)
+    chats_id = [i.id for i in chats]
+    await connection_manager_users.connect(websocket, user.id, chats_id)
+    try:
+        while True:
+            data_raw = await websocket.receive_json()
+            data = CreateMessageSchema.model_validate(data_raw)
+            data.user_id = user.id
+            await connection_manager_users.broadcast(
+                user, data, message_service, id_user_dao
+            )
+
+    except WebSocketDisconnect:
+        await connection_manager_users.disconnect(websocket, user.id, chats_id)
+
+
 @router.get("/chat/{chat_id}")
 async def get_messages_in_chat(
     chat_id: UUID,
@@ -63,34 +94,3 @@ async def get_messages_in_chat(
         messages.append(message)
 
     return ReadMessagePaginatedSchema(messages=messages, page=page, next_page=page + 1)
-
-
-@router.websocket("/ws")
-async def websocket_endpoint(
-    websocket: WebSocket,
-    access_token: Annotated[str, Query()],
-    message_service: message_service_factory,
-    chat_service: chat_service_factory,
-    jwt: jwt_manager_access,
-    user_dao: user_dao_factory,
-    id_user_dao: id_to_username_dao,
-):
-    user = await get_current_user_from_access(access_token, jwt, user_dao)
-
-    if user is None:
-        raise WebSocketException(401, "Unauthorized")
-
-    chats = await chat_service.get_chats_by_user(user.id)
-    chats_id = [i.id for i in chats]
-    await connection_manager_users.connect(websocket, user.id, chats_id)
-    try:
-        while True:
-            data_raw = await websocket.receive_json()
-            data = CreateMessageSchema.model_validate(data_raw)
-            data.user_id = user.id
-            await connection_manager_users.broadcast(
-                user, data, message_service, id_user_dao
-            )
-
-    except WebSocketDisconnect:
-        await connection_manager_users.disconnect(websocket, user.id, chats_id)
