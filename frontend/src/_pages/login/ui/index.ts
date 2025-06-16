@@ -1,2 +1,1 @@
-export { default } from './login';
-export type { LoginProps } from './login';
+export { default } from "./login";

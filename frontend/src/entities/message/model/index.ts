@@ -1,10 +1,9 @@
-import {
-  useMessagesServiceGetApiMessagesChatByChatId,
-  useMessagesServiceGetApiMessagesChatByChatIdKey,
-} from "@/shared/api/queries";
+import { useMessagesServiceGetApiMessagesChatByChatIdInfinite } from "@/shared/api/queries/infiniteQueries";
+import { useMessagesServiceGetApiMessagesChatByChatIdKey } from "@/shared/api/queries";
 
 export const useApiMessage = {
-  getAllMessageChat: useMessagesServiceGetApiMessagesChatByChatId,
+  getMessagesByChatPaginated:
+    useMessagesServiceGetApiMessagesChatByChatIdInfinite,
   getAllMessageChatKey: useMessagesServiceGetApiMessagesChatByChatIdKey,
 };
 

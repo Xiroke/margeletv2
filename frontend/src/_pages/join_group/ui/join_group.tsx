@@ -6,7 +6,7 @@ import { apiGroup } from "@/entities/group/model";
 import { useRouter } from "next/navigation";
 import Button from "@/shared/ui/button";
 
-export interface JoinGroupProps extends HTMLAttributes<HTMLDivElement> {
+export interface JoinGroupProps {
   params: Promise<{ token: string }>;
 }
 

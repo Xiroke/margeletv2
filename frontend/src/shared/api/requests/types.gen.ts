@@ -97,6 +97,12 @@ export type ReadGroupSchema = {
     roles?: Array<BaseRoleSchema>;
 };
 
+export type ReadMessagePaginatedSchema = {
+    messages: Array<ReadMessageSchema>;
+    page: number;
+    next_page: number;
+};
+
 export type ReadMessageSchema = {
     id: string;
     id_in_chat: number;
@@ -298,6 +304,13 @@ export type PostApiGroupsLeaveByGroupIdData = {
 
 export type PostApiGroupsLeaveByGroupIdResponse = unknown;
 
+export type PatchApiGroupsTitleByGroupIdData = {
+    groupId: string;
+    requestBody: string;
+};
+
+export type PatchApiGroupsTitleByGroupIdResponse = ReadGroupSchema;
+
 export type GetApiGroupsByGroupIdData = {
     groupId: string;
 };
@@ -322,13 +335,6 @@ export type PostApiGroupsData = {
 };
 
 export type PostApiGroupsResponse = ReadGroupSchema;
-
-export type PatchApiGroupsTitleByGroupIdData = {
-    groupId: string;
-    requestBody: string;
-};
-
-export type PatchApiGroupsTitleByGroupIdResponse = ReadGroupSchema;
 
 export type GetApiChatsGroupChatsByGroupIdData = {
     groupId: string;
@@ -390,10 +396,15 @@ export type PatchApiRolesGroupByGroupIdByRoleIdData = {
 export type PatchApiRolesGroupByGroupIdByRoleIdResponse = unknown;
 
 export type GetApiMessagesChatByChatIdData = {
+    amount?: number;
     chatId: string;
+    /**
+     * Page mean how many messages skip it equal amount * (page - 1)
+     */
+    page?: number;
 };
 
-export type GetApiMessagesChatByChatIdResponse = Array<ReadMessageSchema>;
+export type GetApiMessagesChatByChatIdResponse = ReadMessagePaginatedSchema;
 
 export type GetApiResponse = unknown;
 
@@ -806,6 +817,21 @@ export type $OpenApiTs = {
             };
         };
     };
+    '/api/groups/title/{group_id}': {
+        patch: {
+            req: PatchApiGroupsTitleByGroupIdData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: ReadGroupSchema;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
     '/api/groups/{group_id}': {
         get: {
             req: GetApiGroupsByGroupIdData;
@@ -850,21 +876,6 @@ export type $OpenApiTs = {
     '/api/groups/': {
         post: {
             req: PostApiGroupsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ReadGroupSchema;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/groups/title/{group_id}': {
-        patch: {
-            req: PatchApiGroupsTitleByGroupIdData;
             res: {
                 /**
                  * Successful Response
@@ -1015,7 +1026,7 @@ export type $OpenApiTs = {
                 /**
                  * Successful Response
                  */
-                200: Array<ReadMessageSchema>;
+                200: ReadMessagePaginatedSchema;
                 /**
                  * Validation Error
                  */

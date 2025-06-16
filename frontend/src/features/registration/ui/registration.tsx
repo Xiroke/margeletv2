@@ -6,6 +6,7 @@ import InputText from "@/shared/ui/inputs/input_text";
 import Button from "@/shared/ui/button";
 import styles from "./registration.module.scss";
 import Link from "next/link";
+import { useToastStatus } from "@/shared/lib/hooks/use_toast";
 
 export interface RegistrationFormProps
   extends HTMLAttributes<HTMLFormElement> {}
@@ -13,6 +14,7 @@ export interface RegistrationFormProps
 const RegistrationForm = ({}: RegistrationFormProps) => {
   const registerApi = useAuthServicePostApiAuthRegister();
   const router = useRouter();
+  const showToast = useToastStatus();
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -27,7 +29,11 @@ const RegistrationForm = ({}: RegistrationFormProps) => {
         password: formData.get("password") as string,
       },
     });
-    router.push("/");
+    showToast(
+      "success",
+      "Верификация",
+      "Вам на почту отправлена инструкция для верификации"
+    );
   };
 
   return (
@@ -61,11 +67,13 @@ const RegistrationForm = ({}: RegistrationFormProps) => {
         placeholder="*********"
         classNameInput={styles.registration_input}
       />
-      <Button type="submit" className={styles.submit}>
+      <Button type="submit" className={styles.submit} size="full">
         Зарегистрироваться
       </Button>
       <Link href="/">
-        <Button styleType="invert">Войти</Button>
+        <Button styleType="invert" size="full">
+          Войти
+        </Button>
       </Link>
     </form>
   );

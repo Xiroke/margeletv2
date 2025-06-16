@@ -5,7 +5,7 @@ import styles from "./button.module.scss";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   styleType?: "default" | "invert";
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "full";
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

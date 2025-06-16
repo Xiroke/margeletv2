@@ -1,14 +1,11 @@
 "use client";
-import { HTMLAttributes } from "react";
 
 import LoginForm from "@/features/login/ui";
 import FormPage from "@/shared/ui/form_page";
 
-export interface LoginProps extends HTMLAttributes<HTMLDivElement> {}
-
-export const Login = ({}: LoginProps) => {
+export const Login = () => {
   return (
-    <FormPage title="Вход">
+    <FormPage title="Вход" isBackButton={false}>
       <LoginForm />
     </FormPage>
   );

@@ -11,9 +11,14 @@ import { useRouter } from "next/navigation";
 
 export interface FormPageProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
+  isBackButton?: boolean;
 }
 
-export const FormPage = ({ title, children }: FormPageProps) => {
+export const FormPage = ({
+  title,
+  children,
+  isBackButton = true,
+}: FormPageProps) => {
   // use for page being form
   const router = useRouter();
 
@@ -21,12 +26,14 @@ export const FormPage = ({ title, children }: FormPageProps) => {
     <Container className={styles.container}>
       <div className={styles.form_layout}>
         <div className={styles.form_block}>
-          <IconArrowBackUp
-            width={40}
-            height={40}
-            className={styles.back_icon}
-            onClick={router.back}
-          />
+          {isBackButton && (
+            <IconArrowBackUp
+              width={40}
+              height={40}
+              className={styles.back_icon}
+              onClick={router.back}
+            />
+          )}
           <div className={styles.title}>{title}</div>
           {children}
         </div>

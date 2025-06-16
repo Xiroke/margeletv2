@@ -7,12 +7,14 @@ import { apiLogin } from "../model";
 import styles from "./login.module.scss";
 import Button from "@/shared/ui/button";
 import Link from "next/link";
+import { useToastStatus } from "@/shared/lib/hooks/use_toast";
 
 export interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const LoginForm = ({}: LoginFormProps) => {
   const loginApi = apiLogin.login();
   const router = useRouter();
+  const showToast = useToastStatus();
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -31,9 +33,7 @@ export const LoginForm = ({}: LoginFormProps) => {
         router.push("/communication");
       })
       .catch((reason) => {
-        console.log(
-          reason.status == 400 && alert("Вы ввели неверную почту или пароль")
-        );
+        showToast("error", "Неверный данные", "email или пароль неверный");
       });
   };
 
@@ -53,11 +53,13 @@ export const LoginForm = ({}: LoginFormProps) => {
         placeholder="*********"
         classNameInput={styles.login_input}
       />
-      <Button type="submit" className={styles.submit}>
+      <Button type="submit" className={styles.submit} size="full">
         Войти
       </Button>
       <Link href="/registration">
-        <Button styleType="invert">Зарегистрироваться</Button>
+        <Button styleType="invert" size="full">
+          Зарегистрироваться
+        </Button>
       </Link>
     </form>
   );

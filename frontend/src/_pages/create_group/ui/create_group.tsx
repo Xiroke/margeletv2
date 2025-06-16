@@ -13,9 +13,7 @@ import FormPage from "@/shared/ui/form_page";
 import { useToastStatus } from "@/shared/lib/hooks/use_toast";
 import { ApiError } from "@/shared/api/requests";
 
-export interface CreateGroupProps extends HTMLAttributes<HTMLDivElement> {}
-
-export const CreateGroup = ({}: CreateGroupProps) => {
+export const CreateGroup = () => {
   const router = useRouter();
   const showToast = useToastStatus();
 

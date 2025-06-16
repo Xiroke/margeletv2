@@ -20,3 +20,8 @@ frontend:
 backend:
 
 - согласно PEP8
+
+## Прочее
+
+Caddyfile - необходимо указывать домен/ip
+есть 3 env файла в /, /backend, /frontend

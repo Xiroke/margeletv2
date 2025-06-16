@@ -73,9 +73,11 @@ export const UseRoleServiceGetApiRolesGroupPermissionsMeByGroupIdKeyFn = ({ grou
 export type MessagesServiceGetApiMessagesChatByChatIdDefaultResponse = Awaited<ReturnType<typeof MessagesService.getApiMessagesChatByChatId>>;
 export type MessagesServiceGetApiMessagesChatByChatIdQueryResult<TData = MessagesServiceGetApiMessagesChatByChatIdDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useMessagesServiceGetApiMessagesChatByChatIdKey = "MessagesServiceGetApiMessagesChatByChatId";
-export const UseMessagesServiceGetApiMessagesChatByChatIdKeyFn = ({ chatId }: {
+export const UseMessagesServiceGetApiMessagesChatByChatIdKeyFn = ({ amount, chatId, page }: {
+  amount?: number;
   chatId: string;
-}, queryKey?: Array<unknown>) => [useMessagesServiceGetApiMessagesChatByChatIdKey, ...(queryKey ?? [{ chatId }])];
+  page?: number;
+}, queryKey?: Array<unknown>) => [useMessagesServiceGetApiMessagesChatByChatIdKey, ...(queryKey ?? [{ amount, chatId, page }])];
 export type DefaultServiceGetApiDefaultResponse = Awaited<ReturnType<typeof DefaultService.getApi>>;
 export type DefaultServiceGetApiQueryResult<TData = DefaultServiceGetApiDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useDefaultServiceGetApiKey = "DefaultServiceGetApi";
@@ -98,8 +100,8 @@ export type ChatServicePostApiChatsByGroupIdMutationResult = Awaited<ReturnType<
 export type RoleServicePostApiRolesGroupByGroupIdMutationResult = Awaited<ReturnType<typeof RoleService.postApiRolesGroupByGroupId>>;
 export type UsersServicePatchApiUsersMeMutationResult = Awaited<ReturnType<typeof UsersService.patchApiUsersMe>>;
 export type UsersServicePatchApiUsersByIdMutationResult = Awaited<ReturnType<typeof UsersService.patchApiUsersById>>;
-export type GroupServicePatchApiGroupsByGroupIdMutationResult = Awaited<ReturnType<typeof GroupService.patchApiGroupsByGroupId>>;
 export type GroupServicePatchApiGroupsTitleByGroupIdMutationResult = Awaited<ReturnType<typeof GroupService.patchApiGroupsTitleByGroupId>>;
+export type GroupServicePatchApiGroupsByGroupIdMutationResult = Awaited<ReturnType<typeof GroupService.patchApiGroupsByGroupId>>;
 export type ChatServicePatchApiChatsByChatIdMutationResult = Awaited<ReturnType<typeof ChatService.patchApiChatsByChatId>>;
 export type RoleServicePatchApiRolesGroupByGroupIdByRoleIdMutationResult = Awaited<ReturnType<typeof RoleService.patchApiRolesGroupByGroupIdByRoleId>>;
 export type UsersServiceDeleteApiUsersByIdMutationResult = Awaited<ReturnType<typeof UsersService.deleteApiUsersById>>;

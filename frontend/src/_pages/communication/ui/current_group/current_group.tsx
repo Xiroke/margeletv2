@@ -13,12 +13,16 @@ export interface CurrentGroupProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const CurrentGroup = ({ className }: CurrentGroupProps) => {
   const groupId = useAppSelector((state) => state.group.id);
-
+  const chatId = useAppSelector((state) => state.chat.id);
   return (
     <div className={clsx(styles.current_group, className)}>
       {groupId ? (
         <>
-          <Talk className={styles.talk} />
+          {chatId ? (
+            <Talk className={styles.talk} chatId={chatId} />
+          ) : (
+            <div className={styles.talk} />
+          )}
           <VerticalLine className={styles.vertical_line} />
           <GroupPanel className={styles.group_panel} />
         </>

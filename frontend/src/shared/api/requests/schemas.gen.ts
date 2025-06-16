@@ -402,6 +402,29 @@ export const $ReadGroupSchema = {
     title: 'ReadGroupSchema'
 } as const;
 
+export const $ReadMessagePaginatedSchema = {
+    properties: {
+        messages: {
+            items: {
+                '$ref': '#/components/schemas/ReadMessageSchema'
+            },
+            type: 'array',
+            title: 'Messages'
+        },
+        page: {
+            type: 'integer',
+            title: 'Page'
+        },
+        next_page: {
+            type: 'integer',
+            title: 'Next Page'
+        }
+    },
+    type: 'object',
+    required: ['messages', 'page', 'next_page'],
+    title: 'ReadMessagePaginatedSchema'
+} as const;
+
 export const $ReadMessageSchema = {
     properties: {
         id: {

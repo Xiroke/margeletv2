@@ -1,27 +1,42 @@
+import logging
 import uuid
 from typing import Annotated, AsyncGenerator, Optional
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
 from fastapi_users.authentication import AuthenticationBackend, CookieTransport
-from fastapi_users.db import SQLAlchemyUserDatabase
+from fastapi_users.db import BaseUserDatabase, SQLAlchemyUserDatabase
+from fastapi_users.password import PasswordHelperProtocol
 
-from config import settings
+from config import global_setttigns, settings
 from src.endpoints.auth.refresh_token.dao import get_database_strategy
 from src.endpoints.user.depends import get_user_db
 from src.endpoints.user.models import UserModel
+from src.infrastructure.smtp.smtp import SMTPEmail, smtp_email
 
 SECRET = "SECRET"
+
+log = logging.getLogger(__name__)
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
     reset_password_token_secret = SECRET
     verification_token_secret = SECRET
 
+    def __init__(
+        self,
+        smtp: SMTPEmail,
+        user_db: BaseUserDatabase[UserModel, uuid.UUID],
+        password_helper: PasswordHelperProtocol | None = None,
+    ):
+        self.smtp = smtp
+        super().__init__(user_db, password_helper)
+
     async def on_after_register(
         self, user: UserModel, request: Optional[Request] = None
     ):
-        print(f"User {user.id} has registered.")
+        log.debug("User %s has registered", user.id)
+        await self.request_verify(user, request)
 
     async def on_after_forgot_password(
         self, user: UserModel, token: str, request: Optional[Request] = None
@@ -34,13 +49,19 @@ class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
     async def on_after_request_verify(
         self, user: UserModel, token: str, request: Optional[Request] = None
     ):
-        print(f"Verification requested for user {user.id}. Verification token: {token}")
+        log.debug("User %s request verify their email.", user.id)
+        frontend_url_verify: str = f"{global_setttigns.FRONTEND_URL}/verify/{token}"
+        await self.smtp.send(
+            user.email,
+            "Верификация email",
+            f"Перейдите по ссылке для верификации {frontend_url_verify}",
+        )
 
 
 async def get_user_manager(
-    user_db: Annotated[SQLAlchemyUserDatabase, Depends(get_user_db)],
+    user_db: Annotated[SQLAlchemyUserDatabase, Depends(get_user_db)], smtp: smtp_email
 ) -> AsyncGenerator[UserManager, None]:
-    yield UserManager(user_db)
+    yield UserManager(smtp, user_db)
 
 
 cookie_transport = CookieTransport(

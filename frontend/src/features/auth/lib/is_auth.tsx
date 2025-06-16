@@ -1,22 +1,29 @@
 "use client";
 import { useEffect, useState } from "react";
-import { apiAuth } from "../../model";
+import { apiAuth } from "../model";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToastStatus } from "@/shared/lib/hooks/use_toast";
 
-export const useIsAuth = (isGetAccessToken?: boolean) => {
+export const useIsAuth = () => {
   //no work
-  const { data, isSuccess } = apiAuth.getAccessToken();
-  const [result, setResult] = useState<boolean | typeof data>(false);
+  const { mutateAsync } = apiAuth.postAccessToken();
+  const [result, setResult] = useState<boolean>(false);
+
+  // const showToast = useToastStatus();
+
+  const getToken = async () => {
+    try {
+      const data = await mutateAsync();
+      setResult(true);
+    } catch (error) {
+      console.error("Error authorization");
+      // showToast("error", "Ошибка", "При попытке аунтификации произошла ошибка");
+    }
+  };
 
   useEffect(() => {
-    if (isSuccess && data) {
-      if (isGetAccessToken) {
-        setResult(data);
-      } else {
-        setResult(true);
-      }
-    }
-  }, [isSuccess, data, isGetAccessToken]);
+    getToken();
+  }, []);
 
   return result;
 };

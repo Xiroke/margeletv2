@@ -10,34 +10,42 @@ from src.endpoints.auth.depends import (
 )
 from src.endpoints.chat.depends import chat_service_factory
 from src.endpoints.group.permissions import group_permission
+from src.endpoints.message.connection_manager import connection_manager_users
 from src.endpoints.message.id_to_username.depends import id_to_username_dao
 from src.endpoints.message.id_to_username.schemas import CreateIdToUsernameModelSchema
 from src.endpoints.user.depends import user_dao_factory
-from src.endpoints.user.schemas import ReadUserSchema
 from src.utils.exceptions import ModelNotFoundException
 
 from .depends import message_service_factory
-from .models import MessageModel
-from .schemas import CreateMessageSchema, ReadMessageSchema, SendMessageSchema
+from .schemas import CreateMessageSchema, ReadMessagePaginatedSchema, ReadMessageSchema
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 
 
 @router.get("/chat/{chat_id}")
-async def get_all_messages_chat(
-    user: current_user,
+async def get_messages_in_chat(
     chat_id: UUID,
+    user: current_user,
     message_service: message_service_factory,
     chat_service: chat_service_factory,
     id_user_dao: id_to_username_dao,
     group_perm: group_permission,
-) -> list[ReadMessageSchema]:
+    amount: Annotated[int, Query(ge=1, lt=100)] = 15,
+    page: Annotated[
+        int,
+        Query(
+            ge=1,
+            description="Page mean how many messages skip it equal amount * (page - 1)",
+        ),
+    ] = 1,
+    skip: Annotated[int, Query(ge=0)] = 0,
+) -> ReadMessagePaginatedSchema:
     chat_db = await chat_service.get_one_by_id(chat_id)
 
     await group_perm.check_user_in_group(user.id, chat_db.group_id)
 
-    raw_messages = await message_service.get_many_by_field(
-        MessageModel.to_chat_id == chat_id
+    raw_messages = await message_service.get_messages_by_id_chat(
+        chat_id, amount, page, skip
     )
 
     messages: list[ReadMessageSchema] = []
@@ -54,90 +62,10 @@ async def get_all_messages_chat(
         message.author = username_db.username
         messages.append(message)
 
-    return messages
+    return ReadMessagePaginatedSchema(messages=messages, page=page, next_page=page + 1)
 
 
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: dict[UUID, list[WebSocket]] = {}  # {user_id: ws}
-        self.chats_connections: dict[
-            UUID, list[UUID]
-        ] = {}  # {chat_id: [user_id]}all online users in each chat
-
-    async def connect(
-        self, websocket: WebSocket, user_id: UUID, chats_id: list[UUID]
-    ) -> None:
-        """Connect user"""
-        if self.active_connections.get(user_id) is None:
-            self.active_connections[user_id] = []
-
-        await websocket.accept()
-        self.active_connections[user_id].append(websocket)
-
-        for chat_id in chats_id:
-            if self.chats_connections.get(chat_id) is None:
-                self.chats_connections[chat_id] = []
-
-            if user_id not in self.chats_connections[chat_id]:
-                self.chats_connections[chat_id].append(user_id)
-
-    async def disconnect(
-        self,
-        ws: WebSocket,
-        user_id: UUID,
-        chats_id: list[UUID],
-    ) -> None:
-        """Disconnect user"""
-        if user_id not in self.active_connections.keys():
-            return
-
-        try:
-            # raise exception if user is already disconnected
-            await ws.close()
-        except RuntimeError:
-            pass
-
-        del self.active_connections[user_id]
-        for chat_id in chats_id:
-            try:
-                self.chats_connections[chat_id].remove(user_id)
-            # TODO FIX IT
-            except Exception:
-                pass
-
-    async def broadcast(
-        self,
-        user: ReadUserSchema,
-        raw_message: CreateMessageSchema,
-        message_service: message_service_factory,
-        id_user_dao: id_to_username_dao,
-    ) -> None:
-        """Send message to all users of current chat (from message)"""
-
-        # we get data and add username to it
-        message = await message_service.create(raw_message)
-
-        username_db = await id_user_dao.get_one_by_id(message.user_id)
-
-        if not username_db:
-            username_db = await id_user_dao.create(
-                CreateIdToUsernameModelSchema(id=message.user_id, username=user.name)
-            )
-
-        message.author = username_db.username
-
-        data_to_send = SendMessageSchema(data=message, chat_id=message.to_chat_id)
-
-        # send message to all users
-        for user_id in self.chats_connections[message.to_chat_id]:
-            for connection in self.active_connections[user_id]:
-                await connection.send_text(data_to_send.model_dump_json())
-
-
-connection_manager_users = ConnectionManager()
-
-
-@router.websocket("/")
+@router.websocket("/ws")
 async def websocket_endpoint(
     websocket: WebSocket,
     access_token: Annotated[str, Query()],

@@ -32,7 +32,9 @@ export const ensureUseRoleServiceGetApiRolesGroupByRoleIdData = (queryClient: Qu
 export const ensureUseRoleServiceGetApiRolesGroupPermissionsMeByGroupIdData = (queryClient: QueryClient, { groupId }: {
   groupId: string;
 }) => queryClient.ensureQueryData({ queryKey: Common.UseRoleServiceGetApiRolesGroupPermissionsMeByGroupIdKeyFn({ groupId }), queryFn: () => RoleService.getApiRolesGroupPermissionsMeByGroupId({ groupId }) });
-export const ensureUseMessagesServiceGetApiMessagesChatByChatIdData = (queryClient: QueryClient, { chatId }: {
+export const ensureUseMessagesServiceGetApiMessagesChatByChatIdData = (queryClient: QueryClient, { amount, chatId, page }: {
+  amount?: number;
   chatId: string;
-}) => queryClient.ensureQueryData({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) });
+  page?: number;
+}) => queryClient.ensureQueryData({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ amount, chatId, page }), queryFn: () => MessagesService.getApiMessagesChatByChatId({ amount, chatId, page }) });
 export const ensureUseDefaultServiceGetApiData = (queryClient: QueryClient) => queryClient.ensureQueryData({ queryKey: Common.UseDefaultServiceGetApiKeyFn(), queryFn: () => DefaultService.getApi() });

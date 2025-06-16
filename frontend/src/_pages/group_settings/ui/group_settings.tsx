@@ -15,9 +15,7 @@ import uploadPanorama from "@/features/upload_panorama_group/model";
 import Button from "@/shared/ui/button";
 import clsx from "clsx";
 
-export interface GroupSettingsProps extends HTMLAttributes<HTMLDivElement> {}
-
-export const GroupSettings = ({}: GroupSettingsProps) => {
+export const GroupSettings = () => {
   const groupId = useAppSelector((state) => state.group.id);
   const groupTitle = useAppSelector((state) => state.group.title);
 

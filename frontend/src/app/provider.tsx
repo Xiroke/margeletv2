@@ -35,6 +35,10 @@ export function Providers({ children }: { children: ReactNode }) {
         .catch((err) => console.error("Service Worker registration failed"));
 
       navigator.serviceWorker.ready.then((registration) => {
+        if (!registration.active) {
+          return;
+        }
+
         registration.active.postMessage({
           type: "SET_PARAMS",
           payload: {
@@ -59,6 +63,7 @@ export function Providers({ children }: { children: ReactNode }) {
               children
             )}
           </ToastProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </Provider>
     </StrictMode>

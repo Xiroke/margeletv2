@@ -19,6 +19,7 @@ from src.endpoints.user.router import router as user_router
 setup_logging()
 logging.getLogger("pymongo").setLevel(logging.INFO)
 logging.getLogger("multipart").setLevel(logging.INFO)
+logging.getLogger("asyncio").setLevel(logging.DEBUG)
 
 
 @asynccontextmanager
@@ -64,9 +65,4 @@ if __name__ == "__main__":
     assert not settings.TEST_MODE
     import uvicorn
 
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-    )
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, workers=4)

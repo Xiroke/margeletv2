@@ -32,7 +32,9 @@ export const useRoleServiceGetApiRolesGroupByRoleIdSuspense = <TData = Common.Ro
 export const useRoleServiceGetApiRolesGroupPermissionsMeByGroupIdSuspense = <TData = Common.RoleServiceGetApiRolesGroupPermissionsMeByGroupIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ groupId }: {
   groupId: string;
 }, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseRoleServiceGetApiRolesGroupPermissionsMeByGroupIdKeyFn({ groupId }, queryKey), queryFn: () => RoleService.getApiRolesGroupPermissionsMeByGroupId({ groupId }) as TData, ...options });
-export const useMessagesServiceGetApiMessagesChatByChatIdSuspense = <TData = Common.MessagesServiceGetApiMessagesChatByChatIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ chatId }: {
+export const useMessagesServiceGetApiMessagesChatByChatIdSuspense = <TData = Common.MessagesServiceGetApiMessagesChatByChatIdDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>({ amount, chatId, page }: {
+  amount?: number;
   chatId: string;
-}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ chatId }, queryKey), queryFn: () => MessagesService.getApiMessagesChatByChatId({ chatId }) as TData, ...options });
+  page?: number;
+}, queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseMessagesServiceGetApiMessagesChatByChatIdKeyFn({ amount, chatId, page }, queryKey), queryFn: () => MessagesService.getApiMessagesChatByChatId({ amount, chatId, page }) as TData, ...options });
 export const useDefaultServiceGetApiSuspense = <TData = Common.DefaultServiceGetApiDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useSuspenseQuery<TData, TError>({ queryKey: Common.UseDefaultServiceGetApiKeyFn(queryKey), queryFn: () => DefaultService.getApi() as TData, ...options });

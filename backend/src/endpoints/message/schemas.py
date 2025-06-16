@@ -30,6 +30,12 @@ class ReadMessageSchema(BaseMessageSchema):
     pass
 
 
+class ReadMessagePaginatedSchema(BaseModel):
+    messages: list[ReadMessageSchema]
+    page: int
+    next_page: int  # not delete, this using for generate api in frontend
+
+
 class CreateMessageSchema(BaseModel):
     message: str = Field(
         max_length=2000, description="Message must be less than 2000 characters"

@@ -19,9 +19,7 @@ import { setGroupData } from "@/entities/group/model/slice";
 import clsx from "clsx";
 import NavigationMobile from "@/widgets/mobile_navigation/ui";
 
-export interface CommunicationProps extends HTMLAttributes<HTMLDivElement> {}
-
-export const Communication = ({}: CommunicationProps) => {
+export const Communication = () => {
   const isTablet = useMediaQuery("(min-width: 768px)", {
     initializeWithValue: false,
   });

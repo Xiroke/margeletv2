@@ -95,6 +95,9 @@ self.addEventListener("fetch", (event) => {
     );
   } else if (!isAllowed && request.url.startsWith(self.BACKEND_URL)) {
     // for all query to backend
+    if (request.pathname.includes("/api/auth/")) {
+      return fetch(request);
+    }
     event.respondWith(accessTokenMiddleware(request));
   }
 });

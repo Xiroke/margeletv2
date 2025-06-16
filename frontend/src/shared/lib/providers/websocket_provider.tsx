@@ -39,7 +39,7 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     const data = await mutateAsync();
     const { access_token } = data as { access_token: string };
     const ws = new WebSocket(
-      `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/?access_token=${access_token}`
+      `${config.NEXT_PUBLIC_API_WS_URL}/api/messages/ws/?access_token=${access_token}`
     );
 
     ws.onopen = () => {

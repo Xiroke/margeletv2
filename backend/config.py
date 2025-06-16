@@ -18,6 +18,9 @@ class GlobalSettings(BaseSettings):
     S3_PASSWORD: str
     S3_PORT: str
 
+    REDIS_HOST: str
+    REDIS_PORT: int
+
     BACKEND_URL: str
     FRONTEND_URL: str
 
@@ -46,6 +49,11 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_SECRET_KEY: str
     JWT_ALGORITHM: str
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int
+
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASSWORD: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

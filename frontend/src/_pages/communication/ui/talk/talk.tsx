@@ -16,32 +16,41 @@ import Sending from "../sending";
 import Message from "@/entities/message/ui";
 import { useApiMessage, ReadMessageSchema } from "@/entities/message/model";
 import { useWS } from "@/shared/lib/providers";
-import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import useMediaQuery from "@/shared/lib/hooks/use_media_query";
 import { useToastStatus } from "@/shared/lib/hooks/use_toast";
+import { ReadMessagePaginatedSchema } from "@/shared/api/requests";
+import { useIntersectionObserver } from "@/shared/lib/hooks/use_intersection_observer";
 
-export interface TalkProps extends HTMLAttributes<HTMLDivElement> {}
+export interface TalkProps extends HTMLAttributes<HTMLDivElement> {
+  chatId: string;
+}
 
-export const Talk = ({ className }: TalkProps) => {
+export const Talk = ({ className, chatId }: TalkProps) => {
+  const amount = 10;
   const queryClient = useQueryClient();
-  const chatId = useAppSelector((state) => state.chat.id);
   const { send, onMessage } = useWS();
   const isLaptop = useMediaQuery("(min-width: 1024px)");
   const [isBottom, setIsBottom] = useState(false);
   const sendMessageRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
   const showToast = useToastStatus();
+  const { isIntersecting: isIntersectingOldMessage, ref: refOldMessage } =
+    useIntersectionObserver({
+      threshold: 0.5,
+    });
 
-  const { data: messages }: { data: ReadMessageSchema[] | undefined } =
-    useApiMessage.getAllMessageChat(
-      {
-        chatId: chatId!,
-      },
-      [{ chatId }],
-      {
-        enabled: !!chatId,
-      }
-    );
+  const { data, fetchNextPage } = useApiMessage.getMessagesByChatPaginated({
+    chatId: chatId,
+    amount: amount,
+  });
+
+  const messages = data?.pages.flatMap((page) => page.messages) || [];
+
+  // crutch for not duplicate messages
+  const unique = Array.from(
+    messages.reduce((m, msg) => m.set(msg.id, msg), new Map()).values()
+  );
 
   const handleNewMessageScroll = () => {
     // event when get new message we scroll to the end messages
@@ -50,7 +59,6 @@ export const Talk = ({ className }: TalkProps) => {
 
     const { scrollTop, scrollHeight, clientHeight } = messages;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    console.log(scrollTop, scrollHeight, clientHeight, distanceFromBottom);
 
     // dont scroll if user read old message
     if (distanceFromBottom >= 500) {
@@ -62,6 +70,12 @@ export const Talk = ({ className }: TalkProps) => {
       behavior: "smooth",
     });
   };
+
+  useEffect(() => {
+    if (isIntersectingOldMessage) {
+      fetchNextPage();
+    }
+  }, [isIntersectingOldMessage]);
 
   useEffect(() => {
     const HTMLmessages = messagesRef.current;
@@ -83,9 +97,34 @@ export const Talk = ({ className }: TalkProps) => {
   const updateMessage = (newMessage: ReadMessageSchema) => {
     // add new message to messages
     queryClient.setQueryData(
-      [useApiMessage.getAllMessageChatKey, { chatId }],
-      (oldData: ReadMessageSchema[] | undefined) => {
-        return oldData ? [...oldData, newMessage] : [newMessage];
+      [useApiMessage.getAllMessageChatKey, { amount, chatId }],
+      (
+        oldData: InfiniteData<ReadMessagePaginatedSchema, unknown> | undefined
+      ) => {
+        console.log(oldData);
+        if (!oldData) return oldData;
+        const [firstPage, ...rest] = oldData.pages;
+
+        if (firstPage.page == 0) {
+          const newPage = {
+            messages: [newMessage],
+            page: 0,
+            next_page: 1,
+          };
+          return {
+            ...oldData,
+            pages: [newPage, firstPage, ...rest],
+          };
+        } else {
+          const updatedFirst = {
+            ...firstPage,
+            messages: [newMessage, ...firstPage.messages],
+          };
+          return {
+            ...oldData,
+            pages: [updatedFirst, ...rest],
+          };
+        }
       }
     );
   };
@@ -145,14 +184,14 @@ export const Talk = ({ className }: TalkProps) => {
     sentMessage();
   };
 
-  if (messages) {
+  if (unique) {
     return (
       <div className={clsx(styles.talk, className)}>
         <div className={styles.talk_content}>
           <div className={styles.top_gradient} />
           <div ref={messagesRef} className={clsx(styles.message_list)}>
-            {messages.length != 0 &&
-              messages.map((item) => (
+            {unique.length != 0 &&
+              unique.map((item) => (
                 <Message
                   className={styles.message_item}
                   text={item.message}
@@ -161,6 +200,9 @@ export const Talk = ({ className }: TalkProps) => {
                   key={item.id}
                 />
               ))}
+            <div ref={refOldMessage} className={styles.message_item}>
+              Загрузка
+            </div>
           </div>
           <Sending
             className={styles.sending}

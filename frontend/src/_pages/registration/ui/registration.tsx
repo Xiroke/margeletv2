@@ -4,11 +4,9 @@ import styles from "./registration.module.scss";
 import RegistrationForm from "@/features/registration/ui";
 import FormPage from "@/shared/ui/form_page";
 
-export interface RegistrationProps extends HTMLAttributes<HTMLDivElement> {}
-
-export const Registration = ({}: RegistrationProps) => {
+export const Registration = () => {
   return (
-    <FormPage title="Регистрация">
+    <FormPage title="Регистрация" isBackButton={false}>
       <RegistrationForm />
     </FormPage>
   );
