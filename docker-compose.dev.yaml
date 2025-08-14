@@ -2,7 +2,6 @@ services:
   mongo:
     image: mongo
     container_name: mongo
-    restart: always
     ports:
       - "27017:27017"
     environment:
@@ -10,13 +9,23 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${NOSQLDB_PASSWORD}
     volumes:
       - mongo_data:/data/db
-    networks:
-      - web
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${NOSQLDB_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${NOSQLDB_PASSWORD}
+      ME_CONFIG_MONGODB_URL: mongodb://${NOSQLDB_USERNAME}:${NOSQLDB_PASSWORD}@mongo:27017/
+      ME_CONFIG_BASICAUTH: ${NOSQLDB_ME_CONFIG_BASICAUTH}
+    depends_on:
+      - mongo
 
   postgres:
     image: postgres
     container_name: postgres
-    restart: always
     environment:
       POSTGRES_USER: ${SQLDB_USER}
       POSTGRES_PASSWORD: ${SQLDB_PASSWORD}
@@ -26,81 +35,28 @@ services:
       - "${SQLDB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - web
 
   minio:
     image: minio/minio:latest
     container_name: minio
-    restart: always
     ports:
       - "${S3_PORT}:9000"
+      - "9001:9001" # web ui
     environment:
       MINIO_ROOT_USER: ${S3_USER}
       MINIO_ROOT_PASSWORD: ${S3_PASSWORD}
+    command: server /data --console-address ":9001"
     volumes:
       - minio_data1:/data1
       - minio_data2:/data2
-    networks:
-      - web
 
   redis:
     image: redis
     container_name: redis
-    restart: always
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - web
-
-  caddy:
-    image: caddy:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - web
-
-  backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    container_name: backend
-    restart: always
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
-      - mongo
-      - redis
-      - minio
-    networks:
-      - web
-
-  frontend:
-    build:
-      context: ./frontend
-    container_name: frontend
-    restart: always
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - web
-
-networks:
-  web:
-    driver: bridge
 
 volumes:
   postgres_data:
@@ -108,5 +64,3 @@ volumes:
   minio_data1:
   minio_data2:
   redis_data:
-  caddy_data:
-  caddy_config:

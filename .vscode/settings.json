@@ -2,5 +2,18 @@
   "python.analysis.autoImportCompletions": true,
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.extraPaths": ["backend"],
-  "python.autoComplete.extraPaths": ["backend"]
+  "python.autoComplete.extraPaths": ["backend"],
+
+  "files.exclude": {
+    "**/node_modules/": true,
+    "**/__pycache__": true,
+    "**/.venv": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.import_linter_cache": true,
+    "**/.next": true
+  },
+  "search.exclude": {
+    "**/node_modules/": true
+  }
 }

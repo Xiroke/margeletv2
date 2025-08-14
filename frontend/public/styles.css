@@ -1,0 +1,53 @@
+:root {
+  /* Breakpoints min-width */
+  --bp-sm: 576px;
+  --bp-md: 768px;
+  --bp-lg: 992px;
+  --bp-xl: 1200px;
+  --bp-xxl: 1400px;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  transition-property:
+    background-color, color, --primary, --text, --text-inverse, --text-second,
+    --accent-nocolor-primary, --accent-nocolor-second;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+.light-theme {
+  --primary: #5637fb;
+  --text: #343434;
+  --text-inverse: white;
+  --text-second: #717182;
+  --accent-nocolor-primary: #eceef24d;
+  --accent-nocolor-second: #eceef2;
+}
+
+.dark-theme {
+  --primary: #5637fb;
+  --text: white;
+  --text-inverse: #343434;
+  --text-second: #a1a1a1;
+  --accent-nocolor-primary: #2626264d;
+  --accent-nocolor-second: #262626;
+  background: black;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+  font-weight: 600;
+}
+
+h2 {
+  font-weight: 400;
+}
