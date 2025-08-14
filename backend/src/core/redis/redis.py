@@ -1,9 +1,7 @@
 import redis.asyncio as redis
 
-from config import global_setttigns
+from config import settings
 
-redis_client = redis.Redis(
-    host=global_setttigns.REDIS_HOST, port=global_setttigns.REDIS_PORT, db=0
-)
+redis_client = redis.Redis(host=settings.redis.HOST, port=settings.redis.PORT, db=0)
 
 __all__ = ["redis_client"]

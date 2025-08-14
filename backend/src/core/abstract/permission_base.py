@@ -1,59 +1,73 @@
-from typing import Any
-from uuid import UUID
+import inspect
+from abc import ABC, abstractmethod
+from functools import wraps
+from typing import Any, Callable
 
-from src.utils.exceptions import (
-    NotFoundModelException,
-    PermissionNotHasAttributeException,
-)
+from fastapi import Depends
+
+from src.utils.exceptions import HTTPPermissionDeniedException
+
+PermissionFuncType = Callable[[], bool]
 
 
-class Permission:
+class Permission(ABC):
     """
-    Class for check a conditions in router,
-    raise exeptions, which handled in exception handler
-    """
+    Base class for permissions
 
-    def is_has_value(self, obj: Any, field: str) -> None:
-        """Is required field in object has any data"""
-        assert hasattr(self, obj)
+    Example usage:
 
-        result = getattr(self, field)
+    class AuthPermission(Permission):
+        @staticmethod
+        def is_auth() -> bool:
+            return True
 
-        if result is not None:
-            raise PermissionNotHasAttributeException()
-
-        return result
-
-
-class PermissionService(Permission):
-    """
-    Abstract class for check permission
-    Using class for service layer
+        @staticmethod
+        def permissions():
+            return {"is_auth": AuthPermission.is_auth}
     """
 
-    def __init__(self, service):
-        self.service = service
+    @staticmethod
+    @abstractmethod
+    def permissions() -> dict[str, PermissionFuncType]:
+        """Return a dictionary of permissions"""
 
-    async def check_exist_by_id(self, id: UUID, model: Any) -> None:
-        """use for check is exist object, return object for optimization"""
-        assert hasattr(model, "id")
 
-        result = await self.service.get_one_by_id(id)
+class PermissionManager:
+    _permissions: dict[str, PermissionFuncType] = {"forbidden": lambda: False}
 
-        if result is None:
-            raise NotFoundModelException()
+    @classmethod
+    def register(cls, permsission_class: type[Permission]):
+        cls._permissions.update(permsission_class.permissions())
 
-        return result
+    @classmethod
+    def register_raw(cls, permsission: dict[str, PermissionFuncType]):
+        cls._permissions.update(permsission)
 
-    async def is_has_value_model(self, id: Any, field: str) -> None:
-        """checks if the model instance contains a field"""
-        db_result = await self.service.get_one_by_id(id)
+    @classmethod
+    def _create_checked_wrapper(
+        cls, permission: PermissionFuncType
+    ) -> Callable[[], Any]:
+        """Creates a wrapper that automatically triggers a check with its dependencies"""
 
-        assert hasattr(db_result, field)
+        @wraps(permission)
+        async def wrapped_permission(**deps):
+            # deps pass because is run Depends
+            result = permission(**deps)
+            # for async functions
+            if inspect.isawaitable(result):
+                result = await result  # type: ignore
+            if not result:
+                raise HTTPPermissionDeniedException()
+            return True
 
-        result = getattr(db_result, field)
+        return wrapped_permission
 
-        if result is None:
-            raise PermissionNotHasAttributeException()
+    @classmethod
+    def create_dependency(cls, rule: str):
+        """Creates a dependency for the given rule"""
+        permission = cls._create_checked_wrapper(cls._permissions[rule])
+        return Depends(permission)
 
-        return result
+
+def permissions_dep(rules: list[str]):
+    return [PermissionManager.create_dependency(rule) for rule in rules]

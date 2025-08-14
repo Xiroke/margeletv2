@@ -1,19 +1,21 @@
 from typing import Protocol
 from uuid import UUID
 
-from src.core.abstract.dao_base import DaoProtocol, MongoDaoImpl
-from src.endpoints.message.schemas import (
-    CreateMessageSchema,
-    ReadMessageSchema,
-    UpdateMessageSchema,
-)
+from beanie import PydanticObjectId
+
+from src.core.abstract.dao import DaoProtocol, MongoDaoImpl
 
 from .models import MessageModel
+from .schemas import CreateMessageSchema, ReadMessageSchema, UpdateMessageSchema
 
 
 class MessageDaoProtocol(
     DaoProtocol[
-        MessageModel, ReadMessageSchema, CreateMessageSchema, UpdateMessageSchema
+        PydanticObjectId,
+        MessageModel,
+        ReadMessageSchema,
+        CreateMessageSchema,
+        UpdateMessageSchema,
     ],
     Protocol,
 ):
@@ -24,7 +26,11 @@ class MessageDaoProtocol(
 
 class MessageMongoDao(
     MongoDaoImpl[
-        MessageModel, ReadMessageSchema, CreateMessageSchema, UpdateMessageSchema
+        PydanticObjectId,
+        MessageModel,
+        ReadMessageSchema,
+        CreateMessageSchema,
+        UpdateMessageSchema,
     ]
 ):
     async def get_messages_by_id_chat(

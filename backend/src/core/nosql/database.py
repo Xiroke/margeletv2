@@ -1,12 +1,12 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from config import global_setttigns
+from config import settings
 
 from .models import IdToUsernameModel, MessageModel
 
 client = AsyncIOMotorClient(
-    f"mongodb://{global_setttigns.MONGO_INITDB_ROOT_USERNAME}:{global_setttigns.MONGO_INITDB_ROOT_PASSWORD}@{global_setttigns.MONGO_INITDB_HOST}:27017/",
+    f"mongodb://{settings.nosqldb.USERNAME}:{settings.nosqldb.PASSWORD}@{settings.nosqldb.HOST}:27017/",
     tz_aware=True,
 )
 

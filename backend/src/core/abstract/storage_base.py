@@ -6,12 +6,12 @@ from fastapi import UploadFile
 
 class StorageBase(ABC):
     @abstractmethod
-    async def get(self, key: str) -> Any:
+    async def get(self, key: str) -> bytes:
         """return not null file"""
         pass
 
     @abstractmethod
-    async def save(self, key: str, value: Any) -> Any:
+    async def save(self, key: str, value: Any) -> None:
         """save file to storage"""
         pass
 

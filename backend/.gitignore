@@ -1,6 +1,8 @@
 # Python-generated files
 __pycache__/
 *.pytest_cache
+*.import_linter_cache
+*.ruff_cache
 *.py[oc]
 build/
 dist/
@@ -9,6 +11,4 @@ wheels/
 .env
 TODO.txt
 *.log
-# Virtual environments
 .venv
-*.log

@@ -1,3 +1,6 @@
+from fastapi import HTTPException
+
+
 class ServiceNotFoundException(Exception):
     message = "File not found"
 
@@ -20,22 +23,20 @@ class NotFoundModelException(Exception):
     message = "Model not found"
 
 
-class PermissionNotHasAttributeException(Exception):
-    """raise when the required field is not found in the model"""
+class HTTPPermissionDeniedException(HTTPException):
+    def __init__(self, status_code=403, detail="Permission denied", headers=None):
+        super().__init__(status_code, detail, headers)
 
-    message = "Permission no has data"
 
-
-class PermissionGroupDeniedException(Exception):
-    """raise when user does not have permission setted in group"""
-
-    message = "Permission group denied"
+class HTTPAuthenticationException(HTTPException):
+    def __init__(self, status_code=401, detail="Authentication error", headers=None):
+        super().__init__(status_code, detail, headers)
 
 
 class ModelNotFoundException(Exception):
     message = "Model not found"
 
 
-class UniqueViolationException(Exception):
+class UniqueViolationError(Exception):
     def __init__(self, message: str):
         self.message = message

@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from src.core.abstract.service_base import DaoService
+from src.core.abstract.service import DaoService
 from src.endpoints.role.models import RoleModel, RolePermissionsEnum
 from src.endpoints.role.schemas import (
     CreateRoleSchema,
@@ -13,7 +13,7 @@ from .dao import RoleDaoProtocol
 
 
 class RoleService(
-    DaoService[RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
+    DaoService[int, RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
 ):
     def __init__(
         self,

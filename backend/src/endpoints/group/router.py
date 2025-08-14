@@ -6,6 +6,7 @@ from fastapi import APIRouter, Body, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 from src.endpoints.auth.depends import current_user
+from src.endpoints.auth.user.depends import user_service_factory
 from src.endpoints.group.permissions import group_permission
 from src.endpoints.role.depends import role_service_factory
 from src.endpoints.role.models import (
@@ -16,7 +17,6 @@ from src.endpoints.role.models import (
 )
 from src.endpoints.role.permissions import role_permission
 from src.endpoints.role.schemas import CreateRoleSchema
-from src.endpoints.user.depends import user_service_factory
 
 from .depends import group_service_factory, jwt_manager_invitation
 from .models import GroupModel
@@ -148,7 +148,7 @@ async def join_group(
     )
 
     await group_service.add_user_to_group(group_payload_id, user.id)
-    newbie_role = await role_service.get_one_by_field(
+    newbie_role = await role_service.src.core.abstract.dao(
         RoleModel.title == "newbie", RoleModel.group_id == group_payload_id
     )
     await group_service.add_role_to_user(user.id, newbie_role.id)
@@ -238,10 +238,10 @@ async def update_group(
     role_perm: role_permission,
 ) -> ReadGroupSchema:
     await role_perm.check_user_has_permission(
-        RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group.id
+        RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group_id
     )
-    return await group_service.update(
-        UpdateGroupSchema(id=group_id, **group.model_dump())
+    return await group_service.update_by_id(
+        group_id, UpdateGroupSchema(**group.model_dump())
     )
 
 

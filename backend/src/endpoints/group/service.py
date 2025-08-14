@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import UploadFile
 from sqlalchemy.exc import IntegrityError
 
-from src.core.abstract.service_base import DaoService
+from src.core.abstract.service import DaoService
 from src.core.abstract.storage_base import StorageBase
 from src.endpoints.group.models import GroupModel
 from src.endpoints.group.schemas import (
@@ -11,14 +11,14 @@ from src.endpoints.group.schemas import (
     ReadGroupSchema,
     UpdateGroupSchema,
 )
-from src.utils.exceptions import UniqueViolationException
+from src.utils.exceptions import UniqueViolationError
 from src.utils.utils import get_field_unique_error
 
 from .dao import GroupDaoProtocol
 
 
 class GroupService(
-    DaoService[GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema]
+    DaoService[UUID, GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema]
 ):
     def __init__(
         self,
@@ -34,7 +34,7 @@ class GroupService(
         except IntegrityError as e:
             field = get_field_unique_error(e)
             if field == "title":
-                raise UniqueViolationException(
+                raise UniqueViolationError(
                     message="Group with this title already exists"
                 )
             raise

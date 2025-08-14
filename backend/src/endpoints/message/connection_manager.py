@@ -7,11 +7,11 @@ from fastapi import WebSocket
 
 from src.core.redis.enums import ChannelsEnum
 from src.core.redis.redis import redis_client
+from src.endpoints.auth.user.schemas import ReadUserSchema
 from src.endpoints.message.depends import message_service_factory
 from src.endpoints.message.id_to_username.depends import id_to_username_dao
 from src.endpoints.message.id_to_username.schemas import CreateIdToUsernameModelSchema
 from src.endpoints.message.schemas import CreateMessageSchema, SendMessageSchema
-from src.endpoints.user.schemas import ReadUserSchema
 
 log = logging.getLogger(__name__)
 

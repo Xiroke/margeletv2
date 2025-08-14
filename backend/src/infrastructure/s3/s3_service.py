@@ -21,13 +21,11 @@ class S3BucketService(StorageBase):
         self.access_key = access_key
         self.secret_key = secret_key
 
-    async def _create_s3_client(self):
-        """
-        Create S3 client context
-        """
         session = aioboto3.Session()
+
         # return context manager
-        return lambda: session.client(
+
+        self.client = session.client(
             "s3",
             endpoint_url=self.endpoint,
             aws_access_key_id=self.access_key,
@@ -44,7 +42,6 @@ class S3BucketService(StorageBase):
         key - path to file
         value - file
         """
-        client_context = await self._create_s3_client()
         destination_file_name = key
 
         if isinstance(value, bytes):
@@ -52,18 +49,18 @@ class S3BucketService(StorageBase):
         else:
             buffer = BytesIO(value.encode("utf-8"))
 
-        async with client_context() as client:
-            await client.upload_fileobj(buffer, self.bucket_name, destination_file_name)
+        await self.client.upload_fileobj(
+            buffer, self.bucket_name, destination_file_name
+        )
 
     async def list_objects(self, key: str) -> list[str]:
         """
         List objects in the bucket
         key - path to file
         """
-        client_context = await self._create_s3_client()
-
-        async with client_context() as client:
-            response = await client.list_objects_v2(Bucket=self.bucket_name, Prefix=key)
+        response = await self.client.list_objects_v2(
+            Bucket=self.bucket_name, Prefix=key
+        )
 
         storage_content: list[str] = []
 
@@ -83,21 +80,21 @@ class S3BucketService(StorageBase):
         key - path to file
         """
 
-        client_context = await self._create_s3_client()
-        async with client_context() as client:
-            try:
-                file_obj = await client.get_object(Bucket=self.bucket_name, Key=key)
+        try:
+            file_obj = await self.client.get_object(
+                Bucket=self.bucket_name, Key=key, chunk_size=chunk_size
+            )
 
-                file_data = await file_obj["Body"].read()
+            file_data = await file_obj["Body"].read()
 
-            except ClientError as e:
-                if e.response["Error"]["Code"] == "NoSuchKey":
-                    raise HTTPException(  # noqa: B904
-                        status_code=404,
-                        detail="File not found",
-                    )
-                logger.error(str(e))
-                raise HTTPException(500, "Unknown error")
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "NoSuchKey":
+                raise HTTPException(  # noqa: B904
+                    status_code=404,
+                    detail="File not found",
+                )
+            logger.error(str(e))
+            raise HTTPException(500, "Unknown error")
 
         if file_data is None:
             raise ServiceNotFoundException()
@@ -109,18 +106,14 @@ class S3BucketService(StorageBase):
         Delete file object from S3
         key - path to file
         """
-
-        client_context = await self._create_s3_client()
-        async with client_context() as client:
-            client.delete_object(Bucket=self.bucket_name, Key=key)
+        self.client.delete_object(Bucket=self.bucket_name, Key=key)
 
     async def save_image(self, key: str, value: UploadFile):
-        """Upload file to S3
+        """
+        Upload file to S3
         key - path to file
-        value - image"""
-        if key[len(key) - 4 :] != ".jpg":
-            raise ServerException()
-
+        value - image
+        """
         try:
             # convert image to .jpg and save
             with Image.open(BytesIO(await value.read())) as img:

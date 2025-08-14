@@ -3,19 +3,18 @@ from uuid import UUID
 
 from sqlalchemy import and_, delete, insert, select
 
-from src.core.abstract.dao_base import DaoProtocol, SqlDaoImpl
+from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 from src.core.db.models.secondary_models.models import UserToGroupModel
-from src.endpoints.group.models import GroupModel
-from src.endpoints.group.schemas import (
-    CreateGroupSchema,
-    ReadGroupSchema,
-    UpdateGroupSchema,
-)
 from src.endpoints.role.user_role.models import UserToRoleModel
+
+from .models import GroupModel
+from .schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
 
 
 class GroupDaoProtocol(
-    DaoProtocol[GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema],
+    DaoProtocol[
+        UUID, GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema
+    ],
     Protocol,
 ):
     @override
@@ -35,7 +34,7 @@ class GroupDaoProtocol(
 
 
 class GroupSqlDao(
-    SqlDaoImpl[GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema],
+    SqlDaoImpl[UUID, GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema],
 ):
     @override
     async def create(self, obj: CreateGroupSchema, user_id: UUID) -> ReadGroupSchema:
@@ -45,7 +44,7 @@ class GroupSqlDao(
         await self.session.execute(
             insert(UserToGroupModel).values(group_id=obj.id, user_id=user_id)
         )
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(obj)
         return self.read_schema_type.model_validate(obj)
 
@@ -55,16 +54,13 @@ class GroupSqlDao(
             .filter(UserToGroupModel.c.user_id == user_id)
             .filter(UserToGroupModel.c.group_id == group_id)
         )
-        if result.scalar_one_or_none() is None:
-            return False
-
-        return True
+        return result.scalar_one_or_none() is not None
 
     async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None:
         await self.session.execute(
             insert(UserToGroupModel).values(group_id=group_id, user_id=user_id)
         )
-        await self.session.commit()
+        await self.session.flush()
 
     async def remove_user_from_group(self, group_id: UUID, user_id: UUID) -> None:
         await self.session.execute(
@@ -75,7 +71,7 @@ class GroupSqlDao(
                 )
             )
         )
-        await self.session.commit()
+        await self.session.flush()
 
     async def get_groups_by_user(self, user_id: UUID) -> list[ReadGroupSchema]:
         result = await self.session.execute(
@@ -93,4 +89,4 @@ class GroupSqlDao(
         await self.session.execute(
             insert(UserToRoleModel).values(user_id=user_id, role_id=role_id)
         )
-        await self.session.commit()
+        await self.session.flush()

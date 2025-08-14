@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from src.core.abstract.service_base import DaoService
+from src.core.abstract.service import DaoService
 from src.core.abstract.storage_base import StorageBase
 from src.endpoints.chat.models import ChatModel
 from src.endpoints.chat.schemas import (
@@ -14,7 +14,7 @@ from .dao import ChatDaoProtocol
 
 
 class ChatService(
-    DaoService[ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema]
+    DaoService[UUID, ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema]
 ):
     def __init__(
         self,

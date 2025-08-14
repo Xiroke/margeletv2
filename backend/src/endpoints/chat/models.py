@@ -1,9 +1,8 @@
-import uuid
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
+from uuid import UUID, uuid4
 
 from sqlalchemy import DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.db.database import Base
@@ -15,9 +14,7 @@ if TYPE_CHECKING:
 class ChatModel(Base):
     __tablename__ = "chat"
 
-    id: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     title: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)

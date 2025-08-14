@@ -4,7 +4,7 @@ from fastapi import Depends
 
 from src.infrastructure.s3 import s3_service_factory
 
-from .dao import MessageMongoDao
+from .dao import MessageDaoProtocol, MessageMongoDao
 from .service import MessageService
 
 
@@ -12,7 +12,7 @@ def get_message_dao():
     return MessageMongoDao()
 
 
-message_dao_factory = Annotated[MessageMongoDao, Depends(get_message_dao)]
+message_dao_factory = Annotated[MessageDaoProtocol, Depends(get_message_dao)]
 
 
 def get_message_service(

@@ -26,13 +26,13 @@ async def setup_database():
     async with engine.connect() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
-        await conn.commit()
+        await conn.flush()
 
     yield
 
     async with engine.connect() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-        await conn.commit()
+        await conn.flush()
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -45,7 +45,7 @@ async def session(setup_database):
 async def authorization(session: AsyncSession):
     group = GroupModel(title="Test group")
     session.add(group)
-    await session.commit()
+    await session.flush()
     await session.refresh(group)
 
     yield group
@@ -55,7 +55,7 @@ async def authorization(session: AsyncSession):
 async def group(session: AsyncSession):
     group = GroupModel(title="Test group")
     session.add(group)
-    await session.commit()
+    await session.flush()
     await session.refresh(group)
 
     yield group
@@ -71,7 +71,7 @@ async def group(session: AsyncSession):
 # async def chat(session: AsyncSession, group: GroupModel):
 #     chat = ChatModel(title="Test chat", group_id=group.id)
 #     session.add(chat)
-#     await session.commit()
+#     await session.flush()
 #     await session.refresh(chat)
 #     yield chat
 
@@ -80,7 +80,7 @@ async def group(session: AsyncSession):
 # async def personal_chat(session: AsyncSession):
 #     personal_chat = PersonalChatModel(title="Test personal chat")
 #     session.add(personal_chat)
-#     await session.commit()
+#     await session.flush()
 #     await session.refresh(personal_chat)
 #     yield personal_chat
 
@@ -89,6 +89,6 @@ async def group(session: AsyncSession):
 # async def role_group(session: AsyncSession, group: GroupModel):
 #     role_group = RoleModel(title="Test role group", group_id=group.id)
 #     session.add(role_group)
-#     await session.commit()
+#     await session.flush()
 #     await session.refresh(role_group)
 #     yield role_group

@@ -17,8 +17,8 @@ router = APIRouter(prefix="/roles_group", tags=["role"])
 @router.get(
     "/{role_id}",
 )
-async def get_role(role_id: UUID, role_service: role_service_factory) -> ReadRoleSchema:
-    return ReadRoleSchema.model_validate(await role_service.get_one_by_field(role_id))
+async def get_role(role_id: int, role_service: role_service_factory) -> ReadRoleSchema:
+    return ReadRoleSchema.model_validate(await role_service.get_one_by_id(role_id))
 
 
 @router.get("/permissions/me/{group_id}")
@@ -48,7 +48,7 @@ async def create_role(
 
 @router.patch("/{group_id}/{role_id}")
 async def update_role(
-    role_id: UUID,
+    role_id: int,
     group_id: UUID,
     user: current_user,
     role: Annotated[UpdateRoleSchema, Body()],
@@ -59,11 +59,11 @@ async def update_role(
         RolePermissionsEnum.CAN_EDIT_ROLES, user.id, group_id
     )
 
-    await role_service.update(
+    await role_service.update_by_id(
+        role_id,
         UpdateRoleSchema(
-            id=role_id,
             **role.model_dump(exclude_none=True),
-        )
+        ),
     )
 
     return JSONResponse(status_code=200, content={"message": "Group updated"})
@@ -71,7 +71,7 @@ async def update_role(
 
 @router.delete("/{role_id}")
 async def delete_role(
-    role_id: UUID,
+    role_id: int,
     role_service: role_service_factory,
     permission: role_permission,
 ):
@@ -79,6 +79,6 @@ async def delete_role(
         RolePermissionsEnum.CAN_EDIT_ROLES, user.id, group_id
     )
 
-    await role_service.delete(role_id)
+    await role_service.delete_by_id(role_id)
 
     return JSONResponse(status_code=200, content={"message": "Group deleted"})

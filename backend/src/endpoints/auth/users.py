@@ -8,20 +8,18 @@ from fastapi_users.authentication import AuthenticationBackend, CookieTransport
 from fastapi_users.db import BaseUserDatabase, SQLAlchemyUserDatabase
 from fastapi_users.password import PasswordHelperProtocol
 
-from config import global_setttigns, settings
+from config import settings
 from src.endpoints.auth.refresh_token.dao import get_database_strategy
-from src.endpoints.user.depends import get_user_db
-from src.endpoints.user.models import UserModel
-from src.infrastructure.smtp.smtp import SMTPEmail, smtp_email
-
-SECRET = "SECRET"
+from src.endpoints.auth.user.depends import get_user_db
+from src.endpoints.auth.user.models import UserModel
+from src.infrastructure.smtp.depends import SMTPEmail, smtp_dep
 
 log = logging.getLogger(__name__)
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
-    reset_password_token_secret = SECRET
-    verification_token_secret = SECRET
+    reset_password_token_secret = settings.secrets.RESET_PASSWORD_TOKEN
+    verification_token_secret = settings.secrets.VERIFICATION_TOKEN
 
     def __init__(
         self,
@@ -44,13 +42,13 @@ class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 
     async def on_after_login(self, user, request, response):
-        pass
+        log.debug("User %s has logined", user.id)
 
     async def on_after_request_verify(
         self, user: UserModel, token: str, request: Optional[Request] = None
     ):
         log.debug("User %s request verify their email.", user.id)
-        frontend_url_verify: str = f"{global_setttigns.FRONTEND_URL}/verify/{token}"
+        frontend_url_verify: str = f"{settings.FRONTEND_URL}/verify/{token}"
         await self.smtp.send(
             user.email,
             "Верификация email",
@@ -59,7 +57,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[UserModel, uuid.UUID]):
 
 
 async def get_user_manager(
-    user_db: Annotated[SQLAlchemyUserDatabase, Depends(get_user_db)], smtp: smtp_email
+    user_db: Annotated[SQLAlchemyUserDatabase, Depends(get_user_db)], smtp: smtp_dep
 ) -> AsyncGenerator[UserManager, None]:
     yield UserManager(smtp, user_db)
 

@@ -3,7 +3,7 @@ from uuid import UUID
 
 from sqlalchemy import select
 
-from src.core.abstract.dao_base import DaoProtocol, SqlDaoImpl
+from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 from src.core.db.models.secondary_models.models import UserToGroupModel
 from src.endpoints.role.models import RoleModel
 from src.endpoints.role.schemas import (
@@ -14,7 +14,7 @@ from src.endpoints.role.schemas import (
 
 
 class RoleDaoProtocol(
-    DaoProtocol[RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema],
+    DaoProtocol[int, RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema],
     Protocol,
 ):
     async def get_user_roles_in_group(
@@ -23,7 +23,7 @@ class RoleDaoProtocol(
 
 
 class RoleSqlDao(
-    SqlDaoImpl[RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
+    SqlDaoImpl[int, RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
 ):
     async def get_user_roles_in_group(
         self, user_id: UUID, group_id: UUID

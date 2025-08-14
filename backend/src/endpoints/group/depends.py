@@ -7,15 +7,15 @@ from config import settings
 from src.core.db.database import get_async_session
 from src.endpoints.group.schemas import InvitationTokenSchema
 from src.infrastructure.s3 import s3_service_factory
-from src.utils.jwt import JWTManager
+from src.security.jwt import JWTManager
 
-from .dao import GroupSqlDao
+from .dao import GroupDaoProtocol, GroupSqlDao
 from .service import GroupService
 
 
 def get_jwt_manager_invitation() -> JWTManager[InvitationTokenSchema]:
     return JWTManager(
-        settings.INVITE_TOKEN_JWT, InvitationTokenSchema, "HS256", 60 * 24
+        settings.secrets.INVITE_TOKEN, InvitationTokenSchema, "HS256", 60 * 24
     )
 
 
@@ -30,7 +30,7 @@ def get_group_dao(
     return GroupSqlDao(session)
 
 
-group_dao_factory = Annotated[GroupSqlDao, Depends(get_group_dao)]
+group_dao_factory = Annotated[GroupDaoProtocol, Depends(get_group_dao)]
 
 
 def get_group_service(

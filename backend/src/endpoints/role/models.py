@@ -1,17 +1,17 @@
 from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING
-from uuid import uuid4
+from uuid import UUID
 
 from sqlalchemy import DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import ARRAY, ENUM, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.db.database import Base
 
 if TYPE_CHECKING:
+    from src.endpoints.auth.user.models import UserModel
     from src.endpoints.group.models import GroupModel
-    from src.endpoints.user.models import UserModel
 
 
 class RolePermissionsEnum(Enum):
@@ -26,9 +26,7 @@ class RolePermissionsEnum(Enum):
 class RoleModel(Base):
     __tablename__ = "role"
 
-    id: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column()
     permissions: Mapped[list[str]] = mapped_column(
         ARRAY(ENUM(RolePermissionsEnum, name="role_permissions")),

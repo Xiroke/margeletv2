@@ -2,17 +2,17 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from config import global_setttigns, settings
+from config import settings
 
 from .s3_service import S3BucketService
 
 
 def s3_bucket_service_factory() -> S3BucketService:
     return S3BucketService(
-        settings.S3_BUCKET_NAME,
-        settings.S3_PATH + ":" + global_setttigns.S3_PORT,
-        global_setttigns.S3_USER,
-        global_setttigns.S3_PASSWORD,
+        settings.s3.BUCKET_NAME,
+        settings.s3.PATH + ":" + settings.s3.PORT,
+        settings.s3.USER,
+        settings.s3.PASSWORD,
     )
 
 

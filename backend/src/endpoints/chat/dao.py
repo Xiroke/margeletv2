@@ -3,7 +3,7 @@ from uuid import UUID
 
 from sqlalchemy import select
 
-from src.core.abstract.dao_base import DaoProtocol, SqlDaoImpl
+from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 from src.core.db.models.secondary_models.models import UserToGroupModel
 from src.endpoints.chat.models import ChatModel
 from src.endpoints.chat.schemas import (
@@ -15,7 +15,7 @@ from src.endpoints.group.models import GroupModel
 
 
 class ChatDaoProtocol(
-    DaoProtocol[ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema],
+    DaoProtocol[UUID, ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema],
     Protocol,
 ):
     async def get_chats_by_user(self, user_id: UUID) -> list[ReadChatSchema]: ...
@@ -24,7 +24,7 @@ class ChatDaoProtocol(
 
 
 class ChatSqlDao(
-    SqlDaoImpl[ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema],
+    SqlDaoImpl[UUID, ChatModel, ReadChatSchema, CreateChatSchema, UpdateChatSchema],
 ):
     async def get_chats_by_user(self, user_id: UUID) -> list[ReadChatSchema]:
         result = await self.session.execute(

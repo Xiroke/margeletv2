@@ -3,7 +3,7 @@ import uuid
 from fastapi_users import schemas
 from pydantic import BaseModel
 
-from src.endpoints.user.schemas import (
+from src.endpoints.auth.user.schemas import (
     CreateUserSchema,
     ReadUserSchema,
     UpdateUserSchema,

@@ -34,3 +34,10 @@ def setup_logging():
 
     logger.addHandler(stream_handler)
     logger.addHandler(file_handler)
+
+
+def register_logging():
+    setup_logging()
+    logging.getLogger("pymongo").setLevel(logging.INFO)
+    logging.getLogger("multipart").setLevel(logging.INFO)
+    logging.getLogger("asyncio").setLevel(logging.INFO)

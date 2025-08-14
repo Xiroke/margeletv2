@@ -8,12 +8,12 @@ from src.endpoints.auth.depends import (
     get_current_user_from_access,
     jwt_manager_access,
 )
+from src.endpoints.auth.user.depends import user_dao_factory
 from src.endpoints.chat.depends import chat_service_factory
 from src.endpoints.group.permissions import group_permission
 from src.endpoints.message.connection_manager import connection_manager_users
 from src.endpoints.message.id_to_username.depends import id_to_username_dao
 from src.endpoints.message.id_to_username.schemas import CreateIdToUsernameModelSchema
-from src.endpoints.user.depends import user_dao_factory
 from src.utils.exceptions import ModelNotFoundException
 
 from .depends import message_service_factory
