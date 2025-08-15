@@ -8,9 +8,6 @@ from config import settings
 
 
 class Base(DeclarativeBase):
-    # if TYPE_CHECKING:
-    #     id: Mapped[int | UUID]
-
     pass
 
 

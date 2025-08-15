@@ -2,7 +2,6 @@ from typing import Protocol
 
 from src.core.abstract.dao import DaoProtocol
 from src.core.types import (
-    BaseSchemaType,
     CreateSchemaType,
     IDType,
     ModelType,
@@ -17,7 +16,6 @@ class DaoServiceProtocol(
     DaoProtocol[
         ModelType,
         IDType,
-        BaseSchemaType,
         ReadSchemaType,
         CreateSchemaType,
         UpdateSchemaType,

@@ -5,7 +5,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.endpoints.chat.schemas import BaseChatSchema
 from src.endpoints.role.schemas import BaseRoleSchema
 
 
@@ -21,9 +20,6 @@ class BaseGroupSchema(BaseModel):
 
 
 class ReadGroupSchema(BaseGroupSchema):
-    # users shouldn't be included
-    # users: list["ReadUserSchema"] = []
-    chats: list["BaseChatSchema"] = []
     roles: list["BaseRoleSchema"] = []
 
 

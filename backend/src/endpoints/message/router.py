@@ -4,19 +4,18 @@ from uuid import UUID
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect, WebSocketException
 
 from src.endpoints.auth.depends import (
-    current_user,
+    CurrentUserDep,
+    JwtManagerAccess,
     get_current_user_from_access,
-    jwt_manager_access,
 )
-from src.endpoints.auth.user.depends import user_dao_factory
-from src.endpoints.chat.depends import chat_service_factory
+from src.endpoints.auth.user.depends import UserDaoDep
 from src.endpoints.group.permissions import group_permission
 from src.endpoints.message.connection_manager import connection_manager_users
-from src.endpoints.message.id_to_username.depends import id_to_username_dao
+from src.endpoints.message.id_to_username.depends import IdToUsernameDaoDep
 from src.endpoints.message.id_to_username.schemas import CreateIdToUsernameModelSchema
 from src.utils.exceptions import ModelNotFoundException
 
-from .depends import message_service_factory
+from .depends import MessageServiceDep
 from .schemas import CreateMessageSchema, ReadMessagePaginatedSchema, ReadMessageSchema
 
 router = APIRouter(prefix="/messages", tags=["messages"])
@@ -26,11 +25,11 @@ router = APIRouter(prefix="/messages", tags=["messages"])
 async def websocket_endpoint(
     websocket: WebSocket,
     access_token: Annotated[str, Query()],
-    message_service: message_service_factory,
+    message_service: MessageServiceDep,
     chat_service: chat_service_factory,
-    jwt: jwt_manager_access,
-    user_dao: user_dao_factory,
-    id_user_dao: id_to_username_dao,
+    jwt: JwtManagerAccess,
+    user_dao: UserDaoDep,
+    id_user_dao: IdToUsernameDaoDep,
 ):
     user = await get_current_user_from_access(access_token, jwt, user_dao)
 
@@ -56,10 +55,10 @@ async def websocket_endpoint(
 @router.get("/chat/{chat_id}")
 async def get_messages_in_chat(
     chat_id: UUID,
-    user: current_user,
-    message_service: message_service_factory,
+    user: CurrentUserDep,
+    message_service: MessageServiceDep,
     chat_service: chat_service_factory,
-    id_user_dao: id_to_username_dao,
+    id_user_dao: IdToUsernameDaoDep,
     group_perm: group_permission,
     amount: Annotated[int, Query(ge=1, lt=100)] = 15,
     page: Annotated[
@@ -71,7 +70,7 @@ async def get_messages_in_chat(
     ] = 1,
     skip: Annotated[int, Query(ge=0)] = 0,
 ) -> ReadMessagePaginatedSchema:
-    chat_db = await chat_service.get_one_by_id(chat_id)
+    chat_db = await chat_service.get(chat_id)
 
     await group_perm.check_user_in_group(user.id, chat_db.group_id)
 
@@ -84,7 +83,7 @@ async def get_messages_in_chat(
         message = ReadMessageSchema.model_validate(message)
 
         try:
-            username_db = await id_user_dao.get_one_by_id(message.user_id)
+            username_db = await id_user_dao.get(message.user_id)
         except ModelNotFoundException:
             username_db = await id_user_dao.create(
                 CreateIdToUsernameModelSchema(id=message.user_id, username=user.name)

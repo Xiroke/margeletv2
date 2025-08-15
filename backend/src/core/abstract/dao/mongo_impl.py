@@ -1,7 +1,6 @@
 from beanie import Document
 
 from src.core.types import (
-    BaseSchemaType,
     CreateSchemaType,
     IDType,
     ModelType,
@@ -17,7 +16,6 @@ class MongoDaoImpl(
     Dao[
         ModelType,
         IDType,
-        BaseSchemaType,
         ReadSchemaType,
         CreateSchemaType,
         UpdateSchemaType,
@@ -27,7 +25,7 @@ class MongoDaoImpl(
 
     model_type: type[Document]
 
-    async def get_one_by_id(self, id: IDType) -> ReadSchemaType:
+    async def get(self, id: IDType) -> ReadSchemaType:
         result = await self.model_type.get(id, fetch_links=True)
 
         if result is None:
@@ -35,12 +33,10 @@ class MongoDaoImpl(
 
         return self.read_schema_type.model_validate(result)
 
-    async def get_many_by_field(self, *filter) -> list[ReadSchemaType]:
-        result = await self.model_type.find(*filter, fetch_links=True).to_list()
-        return [self.read_schema_type.model_validate(i) for i in result]
-
-    async def get_all(self) -> list[ReadSchemaType]:
-        result = await self.model_type.find(fetch_links=True).to_list()
+    async def get_many(self, ids: list[IDType]) -> list[ReadSchemaType]:
+        result = await self.model_type.find(
+            {"_id": {"$in": ids}}, fetch_links=True
+        ).to_list()
         return [self.read_schema_type.model_validate(i) for i in result]
 
     async def create(self, obj: CreateSchemaType) -> ReadSchemaType:
@@ -48,7 +44,7 @@ class MongoDaoImpl(
         result = await obj_model.insert()
         return self.read_schema_type.model_validate(result)
 
-    async def update_by_id(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
+    async def update(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
         obj_model = await self.model_type.find_one(self.model_type.id == id)
 
         if obj_model is None:
@@ -58,7 +54,7 @@ class MongoDaoImpl(
 
         return self.read_schema_type.model_validate(result)
 
-    async def delete_by_id(self, id: IDType) -> bool:
+    async def delete(self, id: IDType) -> bool:
         result = await self.model_type.get(id)
 
         if result is None:

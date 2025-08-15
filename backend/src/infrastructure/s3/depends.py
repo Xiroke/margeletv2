@@ -16,4 +16,4 @@ def s3_bucket_service_factory() -> S3BucketService:
     )
 
 
-s3_service_factory = Annotated[S3BucketService, Depends(s3_bucket_service_factory)]
+S3ServiceDep = Annotated[S3BucketService, Depends(s3_bucket_service_factory)]

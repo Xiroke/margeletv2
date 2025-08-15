@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 
-class BaseTokenSchema(BaseModel):
+class BaseRefreshTokenSchema(BaseModel):
     id: UUID
     value: str
     user_id: UUID
@@ -15,5 +15,10 @@ class BaseTokenSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ReadTokenSchema(BaseTokenSchema):
+class ReadRefreshTokenSchema(BaseRefreshTokenSchema):
     pass
+
+
+class CreateRefreshTokenSchema(BaseModel):
+    value: str
+    user_id: str

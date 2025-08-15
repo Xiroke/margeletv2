@@ -1,25 +1,14 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from beanie import PydanticObjectId
-
 from src.core.abstract.service import DaoService
 from src.core.abstract.storage_base import StorageBase
 
 from .dao import MessageDaoProtocol
-from .models import MessageModel
-from .schemas import CreateMessageSchema, ReadMessageSchema, UpdateMessageSchema
+from .schemas import ReadMessageSchema
 
 
-class MessageService(
-    DaoService[
-        PydanticObjectId,
-        MessageModel,
-        ReadMessageSchema,
-        CreateMessageSchema,
-        UpdateMessageSchema,
-    ]
-):
+class MessageService(DaoService):
     def __init__(
         self,
         dao: MessageDaoProtocol,

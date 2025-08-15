@@ -16,6 +16,6 @@ def SMTP_factory():
     )
 
 
-smtp_dep = Annotated[SMTPEmail, Depends(SMTP_factory)]
+SmtpDep = Annotated[SMTPEmail, Depends(SMTP_factory)]
 
-__all__ = ["smtp_dep"]
+__all__ = ["SmtpDep"]

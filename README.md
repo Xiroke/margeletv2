@@ -6,7 +6,14 @@ react (vite)
 storybook (Работа с компонентами)
 lucide (Иконки)
 
-# Как устроена система
+## Бэкэнд
+
+fastapi
+fastapi-users (планируется перейти на свою реализацию)
+sqlalchemy
+beanie (mongodb)
+
+# Про токены
 
 Токены:
 
@@ -27,9 +34,10 @@ frontend:
 
 backend:
 
-- согласно PEP8
+- в основном согласно PEP8
+- переменный созданные с помощью Depends - "SomeValueDep"
 
 ## Прочее
 
 Caddyfile - необходимо указывать домен/ip
-есть 3 env файла в /, /backend, /frontend
+есть 2 env файла в /, /frontend

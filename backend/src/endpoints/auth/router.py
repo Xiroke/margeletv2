@@ -1,58 +1,64 @@
+from fastapi import Response
 from fastapi.routing import APIRouter
 
-from src.endpoints.auth.depends import current_user, current_user_from_refresh
-from src.endpoints.auth.schemas import AccessTokenJWTSchema
-
-from .depends import jwt_manager_access
-from .schemas import UserCreate, UserRead, UserUpdate
-from .users import auth_backend, fastapi_users
-
-router = APIRouter(prefix="")
-
-router.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
+from config import settings
+from src.endpoints.auth.depends import (
+    AccessTokenDep,
+    AuthServiceDep,
+    CurrentUserDep,
+    RefreshTokenDep,
 )
-router.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
-router.include_router(
-    fastapi_users.get_reset_password_router(),
-    prefix="/auth",
-    tags=["auth"],
-)
-router.include_router(
-    fastapi_users.get_verify_router(UserRead),
-    prefix="/auth",
-    tags=["auth"],
-)
-router.include_router(
-    fastapi_users.get_users_router(UserRead, UserUpdate),
-    prefix="/users",
-    tags=["users"],
-)
+from src.endpoints.auth.user.depends import UserDaoDep
+from src.endpoints.auth.user.schemas import LoginUserSchema
+
+from .schemas import UserCreate
+
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.get("/auth/me", tags=["auth"])
-async def authenticated_route(user: current_user_from_refresh):
-    return {"message": f"Hello {user.email}!"}
+@router.post("/login")
+async def login(
+    data: LoginUserSchema,
+    auth: AuthServiceDep,
+    response: Response,
+) -> None:
+    refresh_token = await auth.login(data)
+    response.set_cookie(
+        "refresh_token",
+        refresh_token.value,
+        max_age=60 * 60 * 24 * 30,
+        httponly=settings.COOKIE_HTTPONLY,
+        samesite=settings.COOKIE_SAMESITE,
+        secure=settings.COOKIE_SECURE,
+        path="/api/auth",
+    )
 
 
-@router.get("/auth/me_alterntive", tags=["auth"])
-async def authenticated_route_alterntive(user: current_user):
-    return {"message": f"Hello {user.email}!"}
+@router.post("/register")
+async def register(data: UserCreate, auth: AuthServiceDep):
+    await auth.register(data)
+    return None, 201
 
 
-@router.post("/auth/access_token", tags=["auth"])
-async def get_access_token(
-    jwt: jwt_manager_access,
-    user: current_user_from_refresh,
-):
-    """
-    Get and set in cookie access token using refresh token
-    """
-    token_data = AccessTokenJWTSchema(user_id=str(user.id))
+@router.post("/token")
+async def get_access_token(refresh_token: RefreshTokenDep, auth: AuthServiceDep):
+    return auth.get_access_from_refresh(refresh_token)
 
-    access_token = jwt.encode(token_data)
-    return {"access_token": access_token}
+
+@router.get("/is_authificated")
+async def check_is_authificated(token: AccessTokenDep):
+    """Проверка на то что передается access token"""
+    return True
+
+
+@router.get("/is_refresh_valid")
+async def check_refresh_token(user_dao: UserDaoDep, refresh_token: RefreshTokenDep):
+    """Проверка принадлежит ли этот токен пользователю"""
+    await user_dao.get_user_by_token(refresh_token)
+    return True
+
+
+@router.get("/me")
+async def get_me(user: CurrentUserDep):
+    """Получение информации о текущем пользователе"""
+    return user

@@ -13,7 +13,7 @@ from .schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
 
 class GroupDaoProtocol(
     DaoProtocol[
-        UUID, GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema
+        GroupModel, UUID, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema
     ],
     Protocol,
 ):
@@ -21,20 +21,15 @@ class GroupDaoProtocol(
     async def create(
         self, obj: CreateGroupSchema, user_id: UUID
     ) -> ReadGroupSchema: ...
-
     async def is_user_in_group(self, group_id: UUID, user_id: UUID) -> bool: ...
-
     async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None: ...
-
     async def remove_user_from_group(self, group_id: UUID, user_id: UUID) -> None: ...
-
     async def get_groups_by_user(self, user_id: UUID) -> list[ReadGroupSchema]: ...
-
     async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> None: ...
 
 
 class GroupSqlDao(
-    SqlDaoImpl[UUID, GroupModel, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema],
+    SqlDaoImpl[GroupModel, UUID, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema],
 ):
     @override
     async def create(self, obj: CreateGroupSchema, user_id: UUID) -> ReadGroupSchema:

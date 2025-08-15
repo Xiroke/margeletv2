@@ -1,40 +1,58 @@
-from datetime import datetime, timezone
 from typing import TYPE_CHECKING
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.db.database import Base
+from src.core.db.mixins import CreatedAtMixin, UUIDIdMixin
 
 if TYPE_CHECKING:
     from src.endpoints.auth.user.models import UserModel
-    from src.endpoints.chat.models import ChatModel
     from src.endpoints.role.models import RoleModel
 
 
-class GroupModel(Base):
+class GroupModel(UUIDIdMixin, CreatedAtMixin, Base):
     __tablename__ = "group"
+    # GroupModel has no relationship with messages, because they located in nosql
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     title: Mapped[str] = mapped_column(String(length=20), unique=True, nullable=False)
+    type: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column(nullable=False)
     avatar_path: Mapped[str] = mapped_column(nullable=True)
-    panorama_path: Mapped[str] = mapped_column(nullable=True)
-    is_group_one_chat: Mapped[bool] = mapped_column(default=True)
-    is_personal_group: Mapped[bool] = mapped_column(default=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
-    )
 
     users: Mapped[list["UserModel"]] = relationship(
         secondary="user_to_group", back_populates="groups"
     )
 
-    chats: Mapped[list["ChatModel"]] = relationship(
-        back_populates="group", lazy="selectin"
-    )
-
     roles: Mapped[list["RoleModel"]] = relationship(
         back_populates="group", lazy="selectin"
     )
+
+    __mapper_args__ = {
+        "polymorphic_identity": "group",
+        "polymorphic_on": "type",
+    }
+
+
+class SimpleGroupModel(GroupModel):
+    __tablename__ = "simple_group"
+
+    id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
+
+
+class SubChatModel(GroupModel):
+    __tablename__ = "sub_chat_group"
+
+    id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
+
+    multi_group_id: Mapped[UUID] = mapped_column(ForeignKey("multi_group.id"))
+    multi_group: Mapped["MultiGroupModel"] = relationship(back_populates="chats")
+
+
+class MultiGroupModel(GroupModel):
+    __tablename__ = "multi_group"
+
+    id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
+
+    chats: Mapped[list["SubChatModel"]] = relationship(back_populates="multi_group")

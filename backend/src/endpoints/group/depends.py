@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from config import settings
 from src.core.db.database import get_async_session
 from src.endpoints.group.schemas import InvitationTokenSchema
-from src.infrastructure.s3 import s3_service_factory
+from src.infrastructure.s3 import S3ServiceDep
 from src.security.jwt import JWTManager
 
 from .dao import GroupDaoProtocol, GroupSqlDao
@@ -19,7 +19,7 @@ def get_jwt_manager_invitation() -> JWTManager[InvitationTokenSchema]:
     )
 
 
-jwt_manager_invitation = Annotated[
+JwtManagerInvitationDep = Annotated[
     JWTManager[InvitationTokenSchema], Depends(get_jwt_manager_invitation)
 ]
 
@@ -30,16 +30,16 @@ def get_group_dao(
     return GroupSqlDao(session)
 
 
-group_dao_factory = Annotated[GroupDaoProtocol, Depends(get_group_dao)]
+GroupDaoDep = Annotated[GroupDaoProtocol, Depends(get_group_dao)]
 
 
 def get_group_service(
-    dao: group_dao_factory,
-    storage: s3_service_factory,
+    dao: GroupDaoDep,
+    storage: S3ServiceDep,
 ) -> GroupService:
     return GroupService(dao, storage)
 
 
-group_service_factory = Annotated[GroupService, Depends(get_group_service)]
+GroupServiceDep = Annotated[GroupService, Depends(get_group_service)]
 
-__all__ = ["group_dao_factory", "group_service_factory", "jwt_manager_invitation"]
+__all__ = ["GroupDaoDep", "GroupServiceDep", "JwtManagerInvitationDep"]

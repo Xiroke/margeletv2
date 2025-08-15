@@ -6,7 +6,10 @@ from pydantic import BaseModel
 from src.core.db.database import Base
 
 ModelType = TypeVar("ModelType", bound=Base | Document, covariant=True)
-IDType = TypeVar("IDType", contravariant=True)
+
+IDType = TypeVar(
+    "IDType",
+)
 
 BaseSchemaType = TypeVar("BaseSchemaType", bound=BaseModel, covariant=True)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)

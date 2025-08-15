@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.database import Base
 from src.core.types import (
-    BaseSchemaType,
     CreateSchemaType,
     IDType,
     ModelType,
@@ -19,7 +18,6 @@ class SqlDaoImpl(
     Dao[
         ModelType,
         IDType,
-        BaseSchemaType,
         ReadSchemaType,
         CreateSchemaType,
         UpdateSchemaType,
@@ -32,7 +30,7 @@ class SqlDaoImpl(
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_one_by_id(self, id: IDType) -> ReadSchemaType:
+    async def get(self, id: IDType) -> ReadSchemaType:
         result = await self.session.execute(select(self.model_type).filter_by(id=id))
 
         record = result.scalar_one_or_none()
@@ -42,12 +40,10 @@ class SqlDaoImpl(
 
         return self.read_schema_type.model_validate(record)
 
-    async def get_many_by_field(self, *filter) -> list[ReadSchemaType]:
-        result = await self.session.execute(select(self.model_type).filter(*filter))
-        return [self.read_schema_type.model_validate(i) for i in result.scalars().all()]
-
-    async def get_all(self) -> list[ReadSchemaType]:
-        result = await self.session.execute(select(self.model_type))
+    async def get_many(self, ids) -> list[ReadSchemaType]:
+        result = await self.session.execute(
+            select(self.model_type).filter(self.model_type.id.in_(ids))
+        )
         return [self.read_schema_type.model_validate(i) for i in result.scalars().all()]
 
     async def create(self, obj: CreateSchemaType) -> ReadSchemaType:
@@ -57,7 +53,7 @@ class SqlDaoImpl(
         await self.session.refresh(obj_model)
         return self.read_schema_type.model_validate(obj_model)
 
-    async def update_by_id(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
+    async def update(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
         result = await self.session.execute(
             update(self.model_type)
             .filter_by(id=id)

@@ -2,19 +2,12 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 from src.core.abstract.service import DaoService
-from src.endpoints.role.models import RoleModel, RolePermissionsEnum
-from src.endpoints.role.schemas import (
-    CreateRoleSchema,
-    ReadRoleSchema,
-    UpdateRoleSchema,
-)
+from src.endpoints.role.models import RolePermissionsEnum
 
 from .dao import RoleDaoProtocol
 
 
-class RoleService(
-    DaoService[int, RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
-):
+class RoleService(DaoService):
     def __init__(
         self,
         dao: RoleDaoProtocol,
@@ -23,11 +16,6 @@ class RoleService(
             self.dao = dao
 
         super().__init__(dao)
-
-    async def get_user_roles_in_group(
-        self, user_id: UUID, group_id: UUID
-    ) -> list[ReadRoleSchema]:
-        return await self.dao.get_user_roles_in_group(user_id, group_id)
 
     async def get_user_permissions_in_group(
         self, user_id: UUID, group_id: UUID

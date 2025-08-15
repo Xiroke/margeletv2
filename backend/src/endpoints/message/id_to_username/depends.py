@@ -9,8 +9,8 @@ def get_id_to_username_dao():
     return IdToUsernameModelDao()
 
 
-id_to_username_dao = Annotated[
+IdToUsernameDaoDep = Annotated[
     IdToUsernameModelProtocol, Depends(get_id_to_username_dao)
 ]
 
-__all__ = ["id_to_username_dao"]
+__all__ = ["IdToUsernameDaoDep"]

@@ -8,8 +8,8 @@ from fastapi import WebSocket
 from src.core.redis.enums import ChannelsEnum
 from src.core.redis.redis import redis_client
 from src.endpoints.auth.user.schemas import ReadUserSchema
-from src.endpoints.message.depends import message_service_factory
-from src.endpoints.message.id_to_username.depends import id_to_username_dao
+from src.endpoints.message.depends import MessageServiceDep
+from src.endpoints.message.id_to_username.depends import IdToUsernameDaoDep
 from src.endpoints.message.id_to_username.schemas import CreateIdToUsernameModelSchema
 from src.endpoints.message.schemas import CreateMessageSchema, SendMessageSchema
 
@@ -76,15 +76,15 @@ class ConnectionManager:
         self,
         user: ReadUserSchema,
         raw_message: CreateMessageSchema,
-        message_service: message_service_factory,
-        id_user_dao: id_to_username_dao,
+        message_service: MessageServiceDep,
+        id_user_dao: IdToUsernameDaoDep,
     ) -> None:
         """Send message to redis, it will be send to all users in chat"""
 
         # we get data and add username to it
         message = await message_service.create(raw_message)
 
-        username_db = await id_user_dao.get_one_by_id(message.user_id)
+        username_db = await id_user_dao.get(message.user_id)
 
         if not username_db:
             username_db = await id_user_dao.create(

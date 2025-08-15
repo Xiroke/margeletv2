@@ -1,13 +1,13 @@
-from datetime import datetime, timezone
 from enum import Enum
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import DateTime, ForeignKey
+from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.db.database import Base
+from src.core.db.mixins import CreatedAtMixin, IntIdMixin
 
 if TYPE_CHECKING:
     from src.endpoints.auth.user.models import UserModel
@@ -23,23 +23,22 @@ class RolePermissionsEnum(Enum):
     CAN_INVITE = "can_invite"
 
 
-class RoleModel(Base):
+class RoleModel(IntIdMixin, CreatedAtMixin, Base):
     __tablename__ = "role"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    title: Mapped[str] = mapped_column()
+    title: Mapped[str] = mapped_column(nullable=False)
+
     permissions: Mapped[list[str]] = mapped_column(
         ARRAY(ENUM(RolePermissionsEnum, name="role_permissions")),
         default=lambda: [],
     )
+
     users: Mapped[list["UserModel"]] = relationship(
         secondary="user_to_role", back_populates="roles"
     )
+
     group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))
     group: Mapped["GroupModel"] = relationship(back_populates="roles")
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
-    )
 
 
 creator_permissions = [

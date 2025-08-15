@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import Depends
 
 from src.core.abstract.permission_base import PermissionService
-from src.endpoints.role.depends import role_service_factory
+from src.endpoints.role.depends import RoleServiceDep
 from src.endpoints.role.models import RolePermissionsEnum
 from src.endpoints.role.service import RoleService
 from src.utils.exceptions import ModelNotFoundException, PermissionGroupDeniedException
@@ -40,9 +40,7 @@ class RolePermission(PermissionService):
             raise PermissionGroupDeniedException()
 
 
-def get_role_permission(
-    service: role_service_factory, role_service: role_service_factory
-):
+def get_role_permission(service: RoleServiceDep, role_service: RoleServiceDep):
     return RolePermission(service, role_service)
 
 

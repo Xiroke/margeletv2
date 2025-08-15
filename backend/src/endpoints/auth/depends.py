@@ -1,17 +1,16 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
 
 from config import settings
+from src.endpoints.auth.refresh_token.depends import RefreshTokenDaoDep
 from src.endpoints.auth.schemas import AccessTokenJWTSchema
-from src.endpoints.auth.service import get_user_from_access
-from src.endpoints.auth.user.depends import user_dao_factory
+from src.endpoints.auth.service import AuthService
+from src.endpoints.auth.user.depends import UserDaoDep
 from src.endpoints.auth.user.models import UserModel
-from src.endpoints.auth.users import fastapi_users_current_user
 from src.security.jwt import JWTManager
-from src.utils.depends import oauth2_scheme
-
-access_token = Annotated[str, Depends(oauth2_scheme)]
+from src.security.password_helper import PasswordHelperDep
+from src.utils.depends import Oauth2SchemeDep
 
 
 def get_jwt_manager_access() -> JWTManager[AccessTokenJWTSchema]:
@@ -23,25 +22,46 @@ def get_jwt_manager_access() -> JWTManager[AccessTokenJWTSchema]:
     )
 
 
-jwt_manager_access = Annotated[
+JwtManagerAccess = Annotated[
     JWTManager[AccessTokenJWTSchema], Depends(get_jwt_manager_access)
 ]
 
 
+def get_auth_service(
+    jwt_manager_access: JwtManagerAccess,
+    user_dao: UserDaoDep,
+    refresh_token_dao: RefreshTokenDaoDep,
+    hasher: PasswordHelperDep,
+) -> AuthService:
+    return AuthService(jwt_manager_access, user_dao, refresh_token_dao, hasher)
+
+
+AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
+
+
+def get_refresh_token(request: Request) -> str:
+    return request.cookies["refresh_token"]
+
+
+RefreshTokenDep = Annotated[str, Depends(get_refresh_token)]
+
+AccessTokenDep = Annotated[str, Depends(Oauth2SchemeDep)]
+
+
 async def get_current_user_from_access(
-    access_token: access_token, jwt: jwt_manager_access, dao: user_dao_factory
+    access_token: AccessTokenDep, auth: AuthServiceDep
 ):
-    return await get_user_from_access(access_token, jwt, dao)
+    return await auth.get_user_from_access(access_token)
 
 
-current_user = Annotated[UserModel, Depends(get_current_user_from_access)]
+CurrentUserDep = Annotated[UserModel, Depends(get_current_user_from_access)]
 
-current_user_from_refresh = Annotated[UserModel, Depends(fastapi_users_current_user)]
+CurrentUserRefresh = Annotated[UserModel, Depends()]
 
 
 __all__ = [
-    "current_user_from_refresh",
-    "current_user",
+    "CurrentUserRefresh",
+    "CurrentUserDep",
     "get_current_user_from_access",
-    "jwt_manager_access",
+    "JwtManagerAccess",
 ]

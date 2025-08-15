@@ -9,7 +9,7 @@
   }
 }
 
-https://margelet.tw1.ru {
+http://localhost {
   encode gzip
 
   reverse_proxy /static/*   http://frontend:3000 {

@@ -5,10 +5,9 @@ from uuid import UUID
 from fastapi import APIRouter, Body, UploadFile
 from fastapi.responses import JSONResponse, Response
 
-from src.endpoints.auth.depends import current_user
-from src.endpoints.auth.user.depends import user_service_factory
-from src.endpoints.group.permissions import group_permission
-from src.endpoints.role.depends import role_service_factory
+from src.endpoints.auth.depends import CurrentUserDep
+from src.endpoints.auth.user.depends import UserServiceDep
+from src.endpoints.role.depends import RoleServiceDep
 from src.endpoints.role.models import (
     RoleModel,
     RolePermissionsEnum,
@@ -18,7 +17,7 @@ from src.endpoints.role.models import (
 from src.endpoints.role.permissions import role_permission
 from src.endpoints.role.schemas import CreateRoleSchema
 
-from .depends import group_service_factory, jwt_manager_invitation
+from .depends import GroupServiceDep, JwtManagerInvitationDep
 from .models import GroupModel
 from .schemas import (
     CreateGroupSchema,
@@ -34,8 +33,8 @@ router = APIRouter(prefix="/groups", tags=["group"])
 
 @router.get("/user_groups/me")
 async def get_groups_by_user(
-    user: current_user,
-    group_service: group_service_factory,
+    user: CurrentUserDep,
+    group_service: GroupServiceDep,
 ) -> list[ReadGroupSchema]:
     return await group_service.get_groups_by_user(user.id)
 
@@ -44,7 +43,7 @@ async def get_groups_by_user(
 async def load_avatar(
     group_id: UUID,
     permission: group_permission,
-    group_service: group_service_factory,
+    group_service: GroupServiceDep,
 ) -> Response:
     await permission.is_has_value_model(group_id, "avatar_path")
 
@@ -58,9 +57,9 @@ async def upload_avatar(
     group_id: UUID,
     image: UploadFile,
     permission: group_permission,
-    group_service: group_service_factory,
+    group_service: GroupServiceDep,
     role_perm: role_permission,
-    user: current_user,
+    user: CurrentUserDep,
 ):
     await role_perm.check_user_has_permission(
         RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group_id
@@ -70,7 +69,7 @@ async def upload_avatar(
 
     path = f"groups/{str(group_id)}_avatar.jpg"
     await group_service.upload_avatar(path, image)
-    await group_service.update_by_id(group_id, UpdateGroupSchema(avatar_path=path))
+    await group_service.update(group_id, UpdateGroupSchema(avatar_path=path))
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
@@ -78,7 +77,7 @@ async def upload_avatar(
 async def load_panorama(
     group_id: UUID,
     permission: group_permission,
-    group_service: group_service_factory,
+    group_service: GroupServiceDep,
 ) -> Response:
     await permission.is_has_value_model(group_id, "avatar_path")
 
@@ -90,9 +89,9 @@ async def load_panorama(
 async def upload_panorama(
     group_id: UUID,
     image: UploadFile,
-    group_service: group_service_factory,
+    group_service: GroupServiceDep,
     role_perm: role_permission,
-    user: current_user,
+    user: CurrentUserDep,
 ):
     await role_perm.check_user_has_permission(
         RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group_id
@@ -100,16 +99,16 @@ async def upload_panorama(
 
     path = f"groups/{str(group_id)}_panorama.jpg"
     await group_service.upload_panorama(path, image)
-    await group_service.update_by_id(group_id, UpdateGroupSchema(panorama_path=path))
+    await group_service.update(group_id, UpdateGroupSchema(panorama_path=path))
     return JSONResponse(status_code=200, content={"message": "Panorama uploaded"})
 
 
 @router.get("/invite/{group_id}")
 async def get_invite_token(
     group_id: UUID,
-    user: current_user,
+    user: CurrentUserDep,
     group_perm: group_permission,
-    jwt: jwt_manager_invitation,
+    jwt: JwtManagerInvitationDep,
     role_perm: role_permission,
 ):
     await role_perm.check_user_has_permission(
@@ -129,11 +128,11 @@ async def get_invite_token(
 @router.post("/invite")
 async def join_group(
     token: Annotated[str, Body()],
-    user: current_user,
-    user_service: user_service_factory,
-    group_service: group_service_factory,
-    role_service: role_service_factory,
-    jwt: jwt_manager_invitation,
+    user: CurrentUserDep,
+    user_service: UserServiceDep,
+    group_service: GroupServiceDep,
+    role_service: RoleServiceDep,
+    jwt: JwtManagerInvitationDep,
     role_perm: role_permission,
 ):
     payload = jwt.decode(token)
@@ -141,7 +140,7 @@ async def join_group(
     user_payload_id = UUID(payload.user_id)
     # group where user will join
     group_payload_id = UUID(payload.group_id)
-    user_creator_token = await user_service.get_one_by_id(user_payload_id)
+    user_creator_token = await user_service.get(user_payload_id)
 
     await role_perm.check_user_has_permission(
         RolePermissionsEnum.CAN_INVITE, user_creator_token.id, group_payload_id
@@ -158,9 +157,9 @@ async def join_group(
 
 @router.post("/leave/{group_id}")
 async def leave_group(
-    user: current_user,
+    user: CurrentUserDep,
     group_id: UUID,
-    group_service: group_service_factory,
+    group_service: GroupServiceDep,
 ):
     await group_service.leave_group(group_id, user.id)
 
@@ -169,7 +168,7 @@ async def leave_group(
 
 @router.get("/user_groups/me")
 async def get_my_groups(
-    user: current_user, group_service: group_service_factory
+    user: CurrentUserDep, group_service: GroupServiceDep
 ) -> list[ReadGroupSchema]:
     return await group_service.get_groups_by_user(user.id)
 
@@ -178,16 +177,14 @@ async def get_my_groups(
 async def update_group_title(
     group_id: UUID,
     group_title: Annotated[str, Body()],
-    group_service: group_service_factory,
-    user: current_user,
+    group_service: GroupServiceDep,
+    user: CurrentUserDep,
     role_perm: role_permission,
 ) -> ReadGroupSchema:
     await role_perm.check_user_has_permission(
         RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group_id
     )
-    return await group_service.update_by_id(
-        group_id, UpdateGroupSchema(title=group_title)
-    )
+    return await group_service.update(group_id, UpdateGroupSchema(title=group_title))
 
 
 @router.get(
@@ -195,17 +192,17 @@ async def update_group_title(
 )
 async def get_group(
     group_id: UUID,
-    group_service: group_service_factory,
+    group_service: GroupServiceDep,
 ) -> ReadGroupSchema:
-    return await group_service.get_one_by_id(group_id)
+    return await group_service.get(group_id)
 
 
 @router.post("/")
 async def create_group(
     group: Annotated[CreateGroupSchema, Body()],
-    user: current_user,
-    group_service: group_service_factory,
-    role_service: role_service_factory,
+    user: CurrentUserDep,
+    group_service: GroupServiceDep,
+    role_service: RoleServiceDep,
 ) -> ReadGroupSchema:
     result = await group_service.create(group, user.id)
     # Create base user roles
@@ -233,23 +230,21 @@ async def create_group(
 async def update_group(
     group_id: UUID,
     group: Annotated[UpdateGroupSchema, Body()],
-    group_service: group_service_factory,
-    user: current_user,
+    group_service: GroupServiceDep,
+    user: CurrentUserDep,
     role_perm: role_permission,
 ) -> ReadGroupSchema:
     await role_perm.check_user_has_permission(
         RolePermissionsEnum.CAN_EDIT_GROUP_SETTINGS, user.id, group_id
     )
-    return await group_service.update_by_id(
-        group_id, UpdateGroupSchema(**group.model_dump())
-    )
+    return await group_service.update(group_id, UpdateGroupSchema(**group.model_dump()))
 
 
 @router.delete("/{group_id}")
 async def delete_group(
     group_id: UUID,
-    group_service: group_service_factory,
-    user: current_user,
+    group_service: GroupServiceDep,
+    user: CurrentUserDep,
     role_perm: role_permission,
 ):
     await role_perm.check_user_has_permission(

@@ -1,11 +1,11 @@
 from src.core.abstract.permission_base import Permission
 
-from .depends import current_user
+from .depends import CurrentUserDep
 
 
 class AuthPermission(Permission):
     @staticmethod
-    def is_auth(user: current_user) -> bool:
+    def is_auth(user: CurrentUserDep) -> bool:
         return user is not None
 
     @staticmethod

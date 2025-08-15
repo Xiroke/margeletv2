@@ -3,14 +3,14 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.core.abstract.permission_base import PermissionService
-from src.endpoints.message.depends import message_dao_factory
+from src.endpoints.message.depends import MessageDaoDep
 
 
 class MessagePermission(PermissionService):
     pass
 
 
-def get_message_permission(dao: message_dao_factory):
+def get_message_permission(dao: MessageDaoDep):
     return MessagePermission(dao)
 
 

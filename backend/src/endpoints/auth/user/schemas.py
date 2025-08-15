@@ -23,8 +23,14 @@ class CreateUserSchema(BaseModel):
     name: str
     account_name: str
     email: str
+    password: str
 
 
 class UpdateUserSchema(BaseModel):
     name: str | None = None
     avatar_path: str | None = None
+
+
+class LoginUserSchema(BaseModel):
+    email: str
+    password: str

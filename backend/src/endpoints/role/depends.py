@@ -13,15 +13,15 @@ def get_role_dao(session: Annotated[AsyncSession, Depends(get_async_session)]):
     return RoleSqlDao(session)
 
 
-role_dao_factory = Annotated[RoleSqlDao, Depends(get_role_dao)]
+RoleDaoDep = Annotated[RoleSqlDao, Depends(get_role_dao)]
 
 
 def get_role_service(
-    dao: role_dao_factory,
+    dao: RoleDaoDep,
 ) -> RoleService:
     return RoleService(dao)
 
 
-role_service_factory = Annotated[RoleService, Depends(get_role_service)]
+RoleServiceDep = Annotated[RoleService, Depends(get_role_service)]
 
-__all__ = ["role_dao_factory", "role_service_factory"]
+__all__ = ["RoleDaoDep", "RoleServiceDep"]
