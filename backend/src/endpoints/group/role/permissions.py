@@ -4,10 +4,11 @@ from uuid import UUID
 from fastapi import Depends
 
 from src.core.abstract.permission_base import PermissionService
-from src.endpoints.role.depends import RoleServiceDep
-from src.endpoints.role.models import RolePermissionsEnum
-from src.endpoints.role.service import RoleService
 from src.utils.exceptions import ModelNotFoundException, PermissionGroupDeniedException
+
+from .depends import RoleServiceDep
+from .models import RolePermissionsEnum
+from .service import RoleService
 
 
 class RolePermission(PermissionService):

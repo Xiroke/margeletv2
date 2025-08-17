@@ -28,9 +28,9 @@ register_fastapi(app)
 register_routes(app)
 
 
-@app.get("/api")
+@app.get("/api/healthcheck")
 def ping():
-    return "pong"
+    return "ok"
 
 
 if __name__ == "__main__":

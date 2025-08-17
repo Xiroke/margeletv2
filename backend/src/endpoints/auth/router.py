@@ -2,16 +2,8 @@ from fastapi import Response
 from fastapi.routing import APIRouter
 
 from config import settings
-from src.endpoints.auth.depends import (
-    AccessTokenDep,
-    AuthServiceDep,
-    CurrentUserDep,
-    RefreshTokenDep,
-)
-from src.endpoints.auth.user.depends import UserDaoDep
-from src.endpoints.auth.user.schemas import LoginUserSchema
-
-from .schemas import UserCreate
+from src.endpoints.auth.depends import AuthServiceDep, CurrentUserDep, RefreshTokenDep
+from src.endpoints.auth.user.schemas import CreateUserSchema, LoginUserSchema
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -35,30 +27,17 @@ async def login(
 
 
 @router.post("/register")
-async def register(data: UserCreate, auth: AuthServiceDep):
+async def register(data: CreateUserSchema, auth: AuthServiceDep):
     await auth.register(data)
     return None, 201
 
 
 @router.post("/token")
 async def get_access_token(refresh_token: RefreshTokenDep, auth: AuthServiceDep):
-    return auth.get_access_from_refresh(refresh_token)
-
-
-@router.get("/is_authificated")
-async def check_is_authificated(token: AccessTokenDep):
-    """Проверка на то что передается access token"""
-    return True
-
-
-@router.get("/is_refresh_valid")
-async def check_refresh_token(user_dao: UserDaoDep, refresh_token: RefreshTokenDep):
-    """Проверка принадлежит ли этот токен пользователю"""
-    await user_dao.get_user_by_token(refresh_token)
-    return True
+    return await auth.get_access_from_refresh(refresh_token)
 
 
 @router.get("/me")
 async def get_me(user: CurrentUserDep):
-    """Получение информации о текущем пользователе"""
+    """Get current user information"""
     return user

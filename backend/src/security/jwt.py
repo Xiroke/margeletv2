@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Generic, TypeVar
 
 import jwt
@@ -26,7 +26,7 @@ class JWTManager(Generic[DataSchema]):
 
     def encode(self, payload: DataSchema) -> str:
         data = payload.model_dump()
-        data["exp"] = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+        data["exp"] = datetime.now(timezone.utc) + timedelta(
             minutes=self.expiration_minutes
         )
         token = jwt.encode(data, self.secret_key, algorithm=self.algorithm)

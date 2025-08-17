@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from src.core.abstract.service.service_base import Service
@@ -40,30 +41,37 @@ class AuthService(Service):
 
     async def get_access_from_refresh(self, refresh_token: str):
         user = await self.user_dao.get_user_by_token(refresh_token)
+
         payload = AccessTokenJWTSchema(user_id=str(user.id))
+
         token = self.jwt_manager_access.encode(payload)
         return {"access_token": token, "token_type": "bearer"}
 
     async def register(self, data: CreateUserSchema):
         """Create new user"""
         hashed_password = self.hasher.hash(data.password)
+
         # model_copy for replace the raw password to hashed
         await self.user_dao.create(
             data.model_copy(update={"password": hashed_password})
         )
 
     async def login(self, data: LoginUserSchema):
+        """Create refresh token for user"""
         user = await self.user_dao.get_user_for_check_password(data.email)
 
         if not user:
             raise HTTPAuthenticationException
 
-        self.hasher.verify(data.password, user.hashed_password)
+        self.hasher.verify(data.password, user.password)
 
         generated_key = generate_random_key()
+        expired_at = datetime.now(timezone.utc) + timedelta(
+            minutes=self.jwt_manager_access.expiration_minutes
+        )
 
         refresh_token_validated = CreateRefreshTokenSchema(
-            value=generated_key, user_id=str(user.id)
+            value=generated_key, user_id=str(user.id), expired_at=expired_at
         )
         refresh_token = await self.refresh_token_dao.create(refresh_token_validated)
 

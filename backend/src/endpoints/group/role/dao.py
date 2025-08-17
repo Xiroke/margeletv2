@@ -5,16 +5,13 @@ from sqlalchemy import select
 
 from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 from src.core.db.models.secondary_models.models import UserToGroupModel
-from src.endpoints.role.models import RoleModel
-from src.endpoints.role.schemas import (
-    CreateRoleSchema,
-    ReadRoleSchema,
-    UpdateRoleSchema,
-)
+
+from .models import RoleModel
+from .schemas import CreateRoleSchema, ReadRoleSchema, UpdateRoleSchema
 
 
 class RoleDaoProtocol(
-    DaoProtocol[int, RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema],
+    DaoProtocol[RoleModel, int, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema],
     Protocol,
 ):
     async def get_user_roles_in_group(
@@ -23,7 +20,7 @@ class RoleDaoProtocol(
 
 
 class RoleSqlDao(
-    SqlDaoImpl[int, RoleModel, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
+    SqlDaoImpl[RoleModel, int, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
 ):
     async def get_user_roles_in_group(
         self, user_id: UUID, group_id: UUID

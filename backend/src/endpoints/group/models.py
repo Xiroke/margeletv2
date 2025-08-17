@@ -5,11 +5,12 @@ from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.db.database import Base
-from src.core.db.mixins import CreatedAtMixin, UUIDIdMixin
+from src.core.db.mixins import CreatedAtMixin, IntIdMixin, UUIDIdMixin
 
 if TYPE_CHECKING:
     from src.endpoints.auth.user.models import UserModel
-    from src.endpoints.role.models import RoleModel
+
+    from .role.models import RoleModel
 
 
 class GroupModel(UUIDIdMixin, CreatedAtMixin, Base):
@@ -25,20 +26,29 @@ class GroupModel(UUIDIdMixin, CreatedAtMixin, Base):
         secondary="user_to_group", back_populates="groups"
     )
 
-    roles: Mapped[list["RoleModel"]] = relationship(
-        back_populates="group", lazy="selectin"
-    )
-
     __mapper_args__ = {
         "polymorphic_identity": "group",
         "polymorphic_on": "type",
     }
 
 
+class UserToGroupModel(IntIdMixin, CreatedAtMixin, Base):
+    __tablename__ = "user_to_group"
+
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id"))
+    group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))
+
+    roles: Mapped[list["RoleModel"]] = relationship(back_populates="user_group")
+
+
 class SimpleGroupModel(GroupModel):
     __tablename__ = "simple_group"
 
     id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
+
+    __mapper_args__ = {
+        "polymorphic_identity": "simple_group",
+    }
 
 
 class SubChatModel(GroupModel):
@@ -47,7 +57,13 @@ class SubChatModel(GroupModel):
     id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
 
     multi_group_id: Mapped[UUID] = mapped_column(ForeignKey("multi_group.id"))
-    multi_group: Mapped["MultiGroupModel"] = relationship(back_populates="chats")
+    multi_group: Mapped["MultiGroupModel"] = relationship(
+        back_populates="chats", foreign_keys=[multi_group_id]
+    )
+
+    __mapper_args__ = {
+        "polymorphic_identity": "sub_chat_group",
+    }
 
 
 class MultiGroupModel(GroupModel):
@@ -55,4 +71,10 @@ class MultiGroupModel(GroupModel):
 
     id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
 
-    chats: Mapped[list["SubChatModel"]] = relationship(back_populates="multi_group")
+    chats: Mapped[list["SubChatModel"]] = relationship(
+        back_populates="multi_group", foreign_keys="[SubChatModel.multi_group_id]"
+    )
+
+    __mapper_args__ = {
+        "polymorphic_identity": "multi_group",
+    }
