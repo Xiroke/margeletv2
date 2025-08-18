@@ -49,6 +49,7 @@ class RedisSettings(ConfigBase):
 
 
 class SMTPSettings(ConfigBase):
+    TYPE: Literal["log", "email"]
     HOST: str
     PORT: int
     USER: str

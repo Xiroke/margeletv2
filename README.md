@@ -9,8 +9,7 @@ lucide (Иконки)
 ## Бэкэнд
 
 fastapi
-fastapi-users (планируется перейти на свою реализацию)
-sqlalchemy
+sqlalchemy (postgres)
 beanie (mongodb)
 
 # Про токены

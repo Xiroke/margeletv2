@@ -1,8 +1,8 @@
 # import routers must be after
 from fastapi import FastAPI
 
-from src.endpoints.auth.router import router as auth_router
-from src.endpoints.auth.user.router import router as user_router
+from src.entries.auth.router import router as auth_router
+from src.entries.auth.user.router import router as user_router
 
 # from src.endpoints.group.router import router as group_router
 # from src.endpoints.message.router import router as message_router
