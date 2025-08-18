@@ -8,7 +8,11 @@ from src.infrastructure.smtp import SMTP
 from src.security.jwt import JWTManager
 from src.security.key_gen import generate_random_key
 from src.security.password_helper import PasswordHelperDep
-from src.utils.exceptions import HTTPAuthenticationException
+from src.utils.exceptions import (
+    HTTPAuthenticationBannedException,
+    HTTPAuthenticationException,
+    HTTPAuthenticationNotVerifiedException,
+)
 
 from .schemas import AccessTokenJWTSchema, VerificationTokenJWTSchema
 from .user.dao import UserDaoProtocol
@@ -45,9 +49,17 @@ class AuthService(Service):
             token_data = AccessTokenJWTSchema.model_validate(
                 self.jwt_manager_access.decode(access_token)
             )
-            return await self.user_dao.get(UUID(token_data.user_id))
+            user = await self.user_dao.get(UUID(token_data.user_id))
         except Exception:
-            raise HTTPAuthenticationException()
+            raise HTTPAuthenticationException
+
+        if not user.is_active:
+            raise HTTPAuthenticationBannedException
+
+        elif not user.is_verified:
+            raise HTTPAuthenticationNotVerifiedException
+
+        return user
 
     async def get_access_from_refresh(self, refresh_token: str):
         user = await self.user_dao.get_user_by_token(refresh_token)

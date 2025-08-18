@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from src.core.abstract.permission_base import Permission
+from src.core.abstract.permission import Permission
 from src.entries.group.service import GroupService
 
 

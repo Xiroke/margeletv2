@@ -1,5 +1,5 @@
 # register permissions
-from src.core.abstract.permission_base import PermissionManager
+from src.core.abstract.permission import PermissionManager
 from src.entries.auth.permissions import AuthPermission
 
 

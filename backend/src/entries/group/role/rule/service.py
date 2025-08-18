@@ -2,13 +2,13 @@ from typing import TYPE_CHECKING
 
 from src.core.abstract.service import DaoService
 
-from .dao import RoleDaoProtocol
+from .dao import RuleDaoProtocol
 
 
-class RoleService(DaoService):
+class RuleService(DaoService):
     def __init__(
         self,
-        dao: RoleDaoProtocol,
+        dao: RuleDaoProtocol,
     ):
         if TYPE_CHECKING:
             self.dao = dao

@@ -7,7 +7,7 @@ from fastapi import Depends
 
 from src.utils.exceptions import HTTPPermissionDeniedException
 
-PermissionFuncType = Callable[[], bool]
+PermissionFuncType = Callable[..., bool]
 
 
 class Permission(ABC):
@@ -24,6 +24,9 @@ class Permission(ABC):
         @staticmethod
         def permissions():
             return {"is_auth": AuthPermission.is_auth}
+
+    Example dynamic args name:
+
     """
 
     @staticmethod
@@ -33,7 +36,10 @@ class Permission(ABC):
 
 
 class PermissionManager:
-    _permissions: dict[str, PermissionFuncType] = {"forbidden": lambda: False}
+    _permissions: dict[str, PermissionFuncType] = {
+        "forbidden": lambda: False,
+        "bool": lambda value: value == "True",
+    }
 
     @classmethod
     def register(cls, permsission_class: type[Permission]):
@@ -45,9 +51,11 @@ class PermissionManager:
 
     @classmethod
     def _create_checked_wrapper(
-        cls, permission: PermissionFuncType
+        cls, permission: PermissionFuncType, **func_kwargs
     ) -> Callable[[], Any]:
-        """Creates a wrapper that automatically triggers a check with its dependencies"""
+        """
+        Creates a wrapper that automatically triggers a check with its dependencies
+        """
 
         @wraps(permission)
         async def wrapped_permission(**deps):
@@ -58,16 +66,33 @@ class PermissionManager:
                 result = await result  # type: ignore
             if not result:
                 raise HTTPPermissionDeniedException()
-            return True
+            return result
 
         return wrapped_permission
 
     @classmethod
-    def create_dependency(cls, rule: str):
+    def create_dependency(cls, rule: str, **func_kwargs):
         """Creates a dependency for the given rule"""
-        permission = cls._create_checked_wrapper(cls._permissions[rule])
+        permission = cls._create_checked_wrapper(cls._permissions[rule], **func_kwargs)
+
         return Depends(permission)
 
 
-def permissions_dep(rules: list[str]):
-    return [PermissionManager.create_dependency(rule) for rule in rules]
+# I think the current method of dynamic attributes is bad
+def perms(rules: list[str | dict[str, str | dict[str, str]]]):
+    depends = []
+
+    for rule in rules:
+        if isinstance(rule, str):
+            dep = PermissionManager.create_dependency(rule)
+            depends.append(dep)
+        else:
+            key = rule["key"]
+            data = rule["data"]
+
+            if isinstance(key, str) and isinstance(data, dict):
+                dep = PermissionManager.create_dependency(key, **data)
+                depends.append(dep)
+            else:
+                raise Exception("PermissionManager: Invalid rules")
+    return depends

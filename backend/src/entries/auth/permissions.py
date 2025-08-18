@@ -1,4 +1,4 @@
-from src.core.abstract.permission_base import Permission
+from src.core.abstract.permission import Permission
 
 from .depends import CurrentUserDep
 

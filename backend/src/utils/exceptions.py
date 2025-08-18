@@ -33,6 +33,16 @@ class HTTPAuthenticationException(HTTPException):
         super().__init__(status_code, detail, headers)
 
 
+class HTTPAuthenticationBannedException(HTTPException):
+    def __init__(self, status_code=401, detail="Account blocked", headers=None):
+        super().__init__(status_code, detail, headers)
+
+
+class HTTPAuthenticationNotVerifiedException(HTTPException):
+    def __init__(self, status_code=401, detail="Account not verified", headers=None):
+        super().__init__(status_code, detail, headers)
+
+
 class ModelNotFoundException(Exception):
     message = "Model not found"
 

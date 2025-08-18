@@ -17,7 +17,6 @@ class GroupDaoProtocol(
     ],
     Protocol,
 ):
-    @override
     async def create(
         self, obj: CreateGroupSchema, user_id: UUID
     ) -> ReadGroupSchema: ...

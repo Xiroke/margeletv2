@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.core.abstract.permission_base import PermissionService
+from src.core.abstract.permission import PermissionService
 from src.entries.message.depends import MessageDaoDep
 
 
