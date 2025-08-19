@@ -35,13 +35,6 @@ class GroupService(DaoService, GroupDaoProtocol):
     async def load_avatar(self, key: str) -> bytes:
         return await self.storage_service.get(key)
 
-    async def load_panorama(self, key: str) -> bytes:
-        return await self.storage_service.get(key)
-
     async def upload_avatar(self, key: str, value: UploadFile) -> None:
         value_bytes = await value.read()
         return await self.storage_service.save(key, value_bytes)
-
-    async def upload_panorama(self, key: str, value: UploadFile) -> None:
-        value_bytes = await value.read()
-        await self.storage_service.save(key, value_bytes)

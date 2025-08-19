@@ -11,6 +11,7 @@ class BaseUserSchema(BaseModel):
     name: str
     account_name: str
     email: str
+    avatar_path: str
     is_active: bool
     is_verified: bool
     created_at: datetime
@@ -32,8 +33,6 @@ class CreateUserSchema(BaseModel):
 class UpdateUserSchema(BaseModel):
     name: str | None = None
     avatar_path: str | None = None
-    is_active: bool | None = None
-    is_verified: bool | None = None
 
 
 class LoginUserSchema(BaseModel):

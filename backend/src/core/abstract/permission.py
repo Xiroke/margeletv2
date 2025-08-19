@@ -24,9 +24,6 @@ class Permission(ABC):
         @staticmethod
         def permissions():
             return {"is_auth": AuthPermission.is_auth}
-
-    Example dynamic args name:
-
     """
 
     @staticmethod
@@ -78,21 +75,5 @@ class PermissionManager:
         return Depends(permission)
 
 
-# I think the current method of dynamic attributes is bad
-def perms(rules: list[str | dict[str, str | dict[str, str]]]):
-    depends = []
-
-    for rule in rules:
-        if isinstance(rule, str):
-            dep = PermissionManager.create_dependency(rule)
-            depends.append(dep)
-        else:
-            key = rule["key"]
-            data = rule["data"]
-
-            if isinstance(key, str) and isinstance(data, dict):
-                dep = PermissionManager.create_dependency(key, **data)
-                depends.append(dep)
-            else:
-                raise Exception("PermissionManager: Invalid rules")
-    return depends
+def perms(rules: list[str]):
+    return [PermissionManager.create_dependency(rule) for rule in rules]

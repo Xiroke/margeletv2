@@ -11,8 +11,8 @@ from .schemas import CreateMessageSchema, ReadMessageSchema, UpdateMessageSchema
 
 class MessageDaoProtocol(
     DaoProtocol[
-        PydanticObjectId,
         MessageModel,
+        PydanticObjectId,
         ReadMessageSchema,
         CreateMessageSchema,
         UpdateMessageSchema,
@@ -26,8 +26,8 @@ class MessageDaoProtocol(
 
 class MessageMongoDao(
     MongoDaoImpl[
-        PydanticObjectId,
         MessageModel,
+        PydanticObjectId,
         ReadMessageSchema,
         CreateMessageSchema,
         UpdateMessageSchema,
