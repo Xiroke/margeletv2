@@ -31,7 +31,8 @@ class SqlDaoImpl(
         self.session = session
 
     async def get(self, id: IDType) -> ReadSchemaType:
-        result = await self.session.execute(select(self.model_type).filter_by(id=id))
+        stmt = select(self.model_type).filter_by(id=id)
+        result = await self.session.execute(stmt)
 
         record = result.scalar_one_or_none()
 
@@ -41,9 +42,8 @@ class SqlDaoImpl(
         return self.read_schema_type.model_validate(record)
 
     async def get_many(self, ids) -> list[ReadSchemaType]:
-        result = await self.session.execute(
-            select(self.model_type).filter(self.model_type.id.in_(ids))
-        )
+        stmt = select(self.model_type).filter(self.model_type.id.in_(ids))
+        result = await self.session.execute(stmt)
         return [self.read_schema_type.model_validate(i) for i in result.scalars().all()]
 
     async def create(self, obj: CreateSchemaType) -> ReadSchemaType:
@@ -54,12 +54,13 @@ class SqlDaoImpl(
         return self.read_schema_type.model_validate(obj_model)
 
     async def update(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
-        result = await self.session.execute(
+        smtp = (
             update(self.model_type)
             .filter_by(id=id)
             .values(obj.model_dump(exclude_unset=True))
-            .returning(self.model_type),
+            .returning(self.model_type)
         )
+        result = await self.session.execute(smtp)
         await self.session.flush()
         return self.read_schema_type.model_validate(result.scalar_one())
 

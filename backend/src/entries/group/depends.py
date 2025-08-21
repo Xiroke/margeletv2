@@ -9,7 +9,7 @@ from src.entries.group.schemas import InvitationTokenSchema
 from src.infrastructure.s3 import S3ServiceDep
 from src.security.jwt import JWTManager
 
-from .dao import GroupDaoProtocol, GroupSqlDao
+from .dao import GroupDaoProtocol, GroupSqlDao, PersonalGroupDao, SimpleGroupDao
 from .service import GroupService
 
 
@@ -25,9 +25,14 @@ JwtManagerInvitationDep = Annotated[
 
 
 def get_group_dao(
-    session: Annotated[AsyncSession, Depends(get_async_session)],
-) -> GroupSqlDao:
-    return GroupSqlDao(session)
+    session: Annotated[AsyncSession, Depends(get_async_session)], group_type: str
+) -> SimpleGroupDao | PersonalGroupDao | GroupSqlDao:
+    if group_type == "simple_group":
+        return SimpleGroupDao(session)
+    elif group_type == "personal_group":
+        return PersonalGroupDao(session)
+    else:
+        return GroupSqlDao(session)
 
 
 GroupDaoDep = Annotated[GroupDaoProtocol, Depends(get_group_dao)]

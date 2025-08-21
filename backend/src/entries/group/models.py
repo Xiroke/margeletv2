@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.db.database import Base
 from src.core.db.mixins import CreatedAtMixin, IntIdMixin, UUIDIdMixin
+from src.entries.group.schemas import GroupTypeEnum
 
 if TYPE_CHECKING:
     from src.entries.auth.user.models import UserModel
@@ -19,7 +20,7 @@ class GroupModel(UUIDIdMixin, CreatedAtMixin, Base):
 
     title: Mapped[str] = mapped_column(String(length=20), unique=True, nullable=False)
     type: Mapped[str] = mapped_column(nullable=False)
-    description: Mapped[str] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(nullable=True)
     avatar_path: Mapped[str] = mapped_column(nullable=True)
 
     users: Mapped[list["UserModel"]] = relationship(
@@ -38,43 +39,56 @@ class UserToGroupModel(IntIdMixin, CreatedAtMixin, Base):
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id"))
     group_id: Mapped[UUID] = mapped_column(ForeignKey("group.id"))
 
-    roles: Mapped[list["RoleModel"]] = relationship(back_populates="user_group")
+    roles: Mapped[list["RoleModel"]] = relationship(
+        back_populates="user_group", secondary="role_to_usergroup"
+    )
 
 
 class SimpleGroupModel(GroupModel):
-    __tablename__ = "simple_group"
+    __tablename__ = GroupTypeEnum.SIMPLE_GROUP
 
     id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
 
     __mapper_args__ = {
-        "polymorphic_identity": "simple_group",
+        "polymorphic_identity": GroupTypeEnum.SIMPLE_GROUP,
     }
 
 
-class SubChatModel(GroupModel):
-    __tablename__ = "sub_chat_group"
+class PersonalGroupModel(GroupModel):
+    __tablename__ = GroupTypeEnum.PERSONAL_GROUP
 
     id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
 
-    multi_group_id: Mapped[UUID] = mapped_column(ForeignKey("multi_group.id"))
-    multi_group: Mapped["MultiGroupModel"] = relationship(
-        back_populates="chats", foreign_keys=[multi_group_id]
-    )
-
     __mapper_args__ = {
-        "polymorphic_identity": "sub_chat_group",
+        "polymorphic_identity": GroupTypeEnum.PERSONAL_GROUP,
     }
 
 
-class MultiGroupModel(GroupModel):
-    __tablename__ = "multi_group"
+# in future
+# class SubChatModel(GroupModel):
+#     __tablename__ = "sub_chat_group"
 
-    id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
+#     id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
 
-    chats: Mapped[list["SubChatModel"]] = relationship(
-        back_populates="multi_group", foreign_keys="[SubChatModel.multi_group_id]"
-    )
+#     multi_group_id: Mapped[UUID] = mapped_column(ForeignKey("multi_group.id"))
+#     multi_group: Mapped["MultiGroupModel"] = relationship(
+#         back_populates="chats", foreign_keys=[multi_group_id]
+#     )
 
-    __mapper_args__ = {
-        "polymorphic_identity": "multi_group",
-    }
+#     __mapper_args__ = {
+#         "polymorphic_identity": "sub_chat_group",
+#     }
+
+
+# class MultiGroupModel(GroupModel):
+#     __tablename__ = "multi_group"
+
+#     id: Mapped[UUID] = mapped_column(ForeignKey("group.id"), primary_key=True)
+
+#     chats: Mapped[list["SubChatModel"]] = relationship(
+#         back_populates="multi_group", foreign_keys="[SubChatModel.multi_group_id]"
+#     )
+
+#     __mapper_args__ = {
+#         "polymorphic_identity": "multi_group",
+#     }

@@ -24,7 +24,7 @@ class RuleDaoProtocol(
 
 class RuleSqlDao(SqlDaoImpl[RuleModel, int, ReadRuleSchema, CreateRuleSchema, Any]):
     async def get_user_rules_in_group(self, user_id: UUID, group_id: UUID) -> list[str]:
-        result = await self.session.execute(
+        smtp = (
             select(RuleModel.value)
             .distinct()
             .join(RoleToRuleModel, RoleToRuleModel.rule_id == RuleModel.id)
@@ -38,4 +38,6 @@ class RuleSqlDao(SqlDaoImpl[RuleModel, int, ReadRuleSchema, CreateRuleSchema, An
                 UserToGroupModel.group_id == group_id,
             )
         )
+        result = await self.session.execute(smtp)
+
         return list(result.scalars().all())

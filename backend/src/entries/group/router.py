@@ -115,6 +115,9 @@ async def update_group_title(
 ) -> ReadGroupSchema:
     return await group_service.update(group_id, UpdateGroupSchema(title=group_title))
 
+@router.post("/simple")
+async def create_simple_group():
+
 
 @router.get(
     "/",

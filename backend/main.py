@@ -8,7 +8,6 @@ from bootstrap.logging import register_logging
 from bootstrap.permissions import register_permission
 from bootstrap.routes import register_routes
 from config import settings
-from src.core.abstract.permission import perms
 from src.core.nosql.database import init_mongo_db
 
 register_logging()
@@ -31,7 +30,6 @@ register_routes(app)
 
 @app.get(
     "/api/healthcheck",
-    dependencies=perms([{"key": "bool", "data": {"value": "False"}}]),
 )
 def ping():
     return "ok"

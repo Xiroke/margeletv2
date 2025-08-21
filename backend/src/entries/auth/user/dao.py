@@ -39,9 +39,9 @@ class UserSqlDao(
     ]
 ):
     async def get_user_by_email(self, email: str) -> ReadUserSchema:
-        result = await self.session.execute(
-            select(self.model_type).filter_by(email=email)
-        )
+        smtp = select(self.model_type).filter_by(email=email)
+
+        result = await self.session.execute(smtp)
 
         record = result.scalar_one_or_none()
 
@@ -51,9 +51,9 @@ class UserSqlDao(
         return self.read_schema_type.model_validate(record)
 
     async def get_user_for_check_password(self, email: str) -> UserModel:
-        result = await self.session.execute(
-            select(self.model_type).filter_by(email=email)
-        )
+        smtp = select(self.model_type).filter_by(email=email)
+
+        result = await self.session.execute(smtp)
 
         record = result.scalar_one_or_none()
 
@@ -63,11 +63,13 @@ class UserSqlDao(
         return cast(UserModel, record)
 
     async def get_user_by_token(self, token: str) -> ReadUserSchema:
-        result = await self.session.execute(
+        smtp = (
             select(self.model_type)
             .join(RefreshTokenModel, RefreshTokenModel.user_id == self.model_type.id)
             .filter(RefreshTokenModel.value == token)
         )
+
+        result = await self.session.execute(smtp)
 
         record = result.scalar_one_or_none()
 

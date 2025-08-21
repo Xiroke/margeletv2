@@ -1,15 +1,24 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
+class GroupTypeEnum(str):
+    SIMPLE_GROUP = "simple_group"
+    PERSONAL_GROUP = "personal_group"
+
+
+GroupTypes = Literal["simple_group", "personal_group"]
+
+
 class BaseGroupSchema(BaseModel):
     id: UUID
     title: str = Field(max_length=20)
-    type: str
+    type: GroupTypes
     description: str
     avatar_path: str | None = None
     created_at: datetime
@@ -24,12 +33,40 @@ class ReadGroupSchema(BaseGroupSchema):
 class CreateGroupSchema(BaseModel):
     title: str
     description: str
+    type: GroupTypes
 
 
 class UpdateGroupSchema(BaseModel):
     title: str | None = None
     description: str | None = None
     avatar_path: str | None = None
+
+
+class SimpleGroupSchemaMixin(BaseModel):
+    pass
+
+
+class PersonalGroupSchemaMixin(BaseModel):
+    pass
+
+
+class SimpleGroupSchema(ReadGroupSchema, SimpleGroupSchemaMixin):
+    pass
+
+
+class PersonalGroupSchema(ReadGroupSchema, PersonalGroupSchemaMixin):
+    pass
+
+
+# class SubChatGroupSchema(BaseModel):
+#     multi_group_id: UUID
+
+
+# class MultiGroupSchema(BaseModel):
+#     chats: list[SubChatGroupSchema] = []
+
+
+GroupModelMixins = SimpleGroupSchemaMixin | PersonalGroupSchemaMixin
 
 
 class InvitationTokenSchema(BaseModel):
