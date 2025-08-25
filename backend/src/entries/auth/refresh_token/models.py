@@ -18,5 +18,7 @@ class RefreshTokenModel(UUIDIdMixin, CreatedAtMixin, Base):
     value: Mapped[str] = mapped_column()
     expired_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
-    user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("user.id", ondelete="cascade"), nullable=False
+    )
     user: Mapped["UserModel"] = relationship(back_populates="tokens")

@@ -1,22 +1,14 @@
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.db.database import get_async_session
 from src.infrastructure.s3 import S3ServiceDep
+from src.utils.depends import get_sql_dao_dep
 
-from .dao import UserDaoProtocol, UserSqlDao
+from .dao import UserSqlDao
 from .service import UserService
 
-
-def get_user_dao(
-    session: Annotated[AsyncSession, Depends(get_async_session)],
-) -> UserDaoProtocol:
-    return UserSqlDao(session)
-
-
-UserDaoDep = Annotated[UserDaoProtocol, Depends(get_user_dao)]
+UserDaoDep = get_sql_dao_dep(UserSqlDao)
 
 
 def get_user_service(

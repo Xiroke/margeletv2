@@ -1,19 +1,7 @@
-from typing import Annotated
+from src.utils.depends import get_sql_dao_dep
 
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from .dao import RefreshTokenSqlDao
 
-from src.core.db.database import get_async_session
-
-from .dao import RefreshTokenDaoProtocol, RefreshTokenSqlDao
-
-
-def get_user_dao(
-    session: Annotated[AsyncSession, Depends(get_async_session)],
-) -> RefreshTokenDaoProtocol:
-    return RefreshTokenSqlDao(session)
-
-
-RefreshTokenDaoDep = Annotated[RefreshTokenDaoProtocol, Depends(get_user_dao)]
+RefreshTokenDaoDep = get_sql_dao_dep(RefreshTokenSqlDao)
 
 __all__ = ["RefreshTokenDaoDep"]

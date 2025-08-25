@@ -1,3 +1,5 @@
+from abc import ABC
+
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,6 +24,7 @@ class SqlDaoImpl(
         CreateSchemaType,
         UpdateSchemaType,
     ],
+    ABC,
 ):
     """Sql implementation of Dao with default crud methods"""
 

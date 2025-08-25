@@ -32,41 +32,11 @@ class ReadGroupSchema(BaseGroupSchema):
 
 class CreateGroupSchema(BaseModel):
     title: str
-    description: str
     type: GroupTypes
 
 
 class UpdateGroupSchema(BaseModel):
     title: str | None = None
-    description: str | None = None
-    avatar_path: str | None = None
-
-
-class SimpleGroupSchemaMixin(BaseModel):
-    pass
-
-
-class PersonalGroupSchemaMixin(BaseModel):
-    pass
-
-
-class SimpleGroupSchema(ReadGroupSchema, SimpleGroupSchemaMixin):
-    pass
-
-
-class PersonalGroupSchema(ReadGroupSchema, PersonalGroupSchemaMixin):
-    pass
-
-
-# class SubChatGroupSchema(BaseModel):
-#     multi_group_id: UUID
-
-
-# class MultiGroupSchema(BaseModel):
-#     chats: list[SubChatGroupSchema] = []
-
-
-GroupModelMixins = SimpleGroupSchemaMixin | PersonalGroupSchemaMixin
 
 
 class InvitationTokenSchema(BaseModel):

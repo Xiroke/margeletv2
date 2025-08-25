@@ -14,5 +14,9 @@ interface LoginProps {
 export const Login: FC<LoginProps> = memo((props: LoginProps) => {
   const { className } = props
 
-  return <div className={clsx(cls.Login, className)}></div>
+  return (
+    <div className={clsx(cls.Login, className)}>
+      <form></form>
+    </div>
+  )
 })

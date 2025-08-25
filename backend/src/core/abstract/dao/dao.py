@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Any, Generic, Protocol, cast, get_args
 
 from src.core.types import (
@@ -42,7 +43,8 @@ class Dao(
         ReadSchemaType,
         CreateSchemaType,
         UpdateSchemaType,
-    ]
+    ],
+    ABC,
 ):
     """Use for dao logic, also used for dao service"""
 

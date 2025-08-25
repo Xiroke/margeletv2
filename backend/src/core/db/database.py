@@ -39,4 +39,10 @@ async def create_db_and_tables():
         await conn.run_sync(Base.metadata.create_all)
 
 
-__all__ = ["get_async_session", "async_session", "create_db_and_tables", "Base"]
+__all__ = [
+    "async_session_maker",
+    "get_async_session",
+    "async_session",
+    "create_db_and_tables",
+    "Base",
+]
