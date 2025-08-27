@@ -9,12 +9,13 @@ from src.entries.group.role.rule.enums import RuleEnum
 
 class RulePermission(Permission):
     @staticmethod
-    async def is_have_rule(
+    async def is_have_group_rule(
         rule: RuleEnum,
         user: CurrentUserDep,
         group_id: UUID,
         rule_service: RuleServiceDep,
     ):
+        """Сhecks if the user has rule in the group"""
         return rule in await rule_service.get_user_rules_in_group(user.id, group_id)
 
     @staticmethod
@@ -24,9 +25,9 @@ class RulePermission(Permission):
         then rules must also be implemented statically
         """
 
-        @wraps(RulePermission.is_have_rule)
+        @wraps(RulePermission.is_have_group_rule)
         async def wrapper(*args, **kwargs):
-            await RulePermission.is_have_rule(*args, **kwargs)
+            await RulePermission.is_have_group_rule(*args, **kwargs)
 
         return wrapper
 

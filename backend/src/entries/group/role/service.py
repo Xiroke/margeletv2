@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING
-
 from src.core.abstract.service import DaoService
 
 from .dao import RoleDaoProtocol
@@ -10,7 +8,4 @@ class RoleService(DaoService):
         self,
         dao: RoleDaoProtocol,
     ):
-        if TYPE_CHECKING:
-            self.dao = dao
-
-        super().__init__(dao)
+        self.dao = dao

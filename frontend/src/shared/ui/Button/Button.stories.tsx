@@ -1,15 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
-
-import { Button } from './Button'
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Button } from './Button';
 
 const meta: Meta<typeof Button> = {
   title: 'Button',
   component: Button,
   globals: { theme: 'light' },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Button>
+export default meta;
+type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
   args: {
@@ -17,7 +16,7 @@ export const Default: Story = {
     size: 'sm',
     children: 'Button',
   },
-}
+};
 
 export const Inverse: Story = {
   args: {
@@ -25,7 +24,7 @@ export const Inverse: Story = {
     size: 'sm',
     children: 'Button',
   },
-}
+};
 
 export const Text: Story = {
   args: {
@@ -33,7 +32,7 @@ export const Text: Story = {
     size: 'sm',
     children: 'Button',
   },
-}
+};
 
 export const TextDark: Story = {
   args: {
@@ -44,7 +43,7 @@ export const TextDark: Story = {
   globals: {
     theme: 'dark',
   },
-}
+};
 
 export const Outline: Story = {
   args: {
@@ -52,7 +51,7 @@ export const Outline: Story = {
     size: 'sm',
     children: 'Button',
   },
-}
+};
 
 export const OutlineDark: Story = {
   args: {
@@ -63,4 +62,4 @@ export const OutlineDark: Story = {
   globals: {
     theme: 'dark',
   },
-}
+};

@@ -1,10 +1,29 @@
-from typing import override
+from typing import Protocol, override
 from uuid import UUID
+
+from src.core.abstract.dao.dao import DaoProtocol
 
 from ..dao import GroupSqlDao
 from ..schemas import CreateGroupSchema, UpdateGroupSchema
 from .models import SimpleGroupModel
-from .schemas import ReadSimpleGroupSchema
+from .schemas import (
+    CreateSimpleGroupSchema,
+    ReadSimpleGroupSchema,
+    UpdateSimpleGroupSchema,
+)
+
+
+class SimpleGroupDaoProtocol(
+    DaoProtocol[
+        SimpleGroupModel,
+        UUID,
+        ReadSimpleGroupSchema,
+        CreateSimpleGroupSchema,
+        UpdateSimpleGroupSchema,
+    ],
+    Protocol,
+):
+    pass
 
 
 class SimpleGroupSqlDao(

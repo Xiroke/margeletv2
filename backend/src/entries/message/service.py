@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from src.core.abstract.service import DaoService
@@ -15,11 +14,7 @@ class MessageService(DaoService):
         storage_service: StorageBase,
     ):
         self.storage_service = storage_service
-
-        if TYPE_CHECKING:
-            self.dao = dao
-
-        super().__init__(dao)
+        self.dao = dao
 
     async def get_messages_by_id_chat(
         self, chat_id: UUID, amount: int, page=1, skip: int = 0

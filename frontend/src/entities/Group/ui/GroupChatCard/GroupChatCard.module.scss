@@ -1,0 +1,42 @@
+.group_card {
+  display: flex;
+  width: 360px;
+  height: 80px;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 9999px 24px 24px 9999px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--accent-second);
+  }
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  margin-right: 16px;
+  background-color: var(--accent-primary);
+  border-radius: 9999px;
+}
+
+.main,
+.addition {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.addition {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.title {
+  font-weight: 500;
+}
+
+.last_message {
+  color: var(--text-second);
+}

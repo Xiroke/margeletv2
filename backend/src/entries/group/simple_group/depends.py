@@ -4,4 +4,6 @@ from .dao import SimpleGroupSqlDao
 
 SimpleGroupDaoDep = get_sql_dao_dep(SimpleGroupSqlDao)
 
-SimpleGroupDaoService = SimpleGroupDaoDep
+SimpleGroupServiceDep = SimpleGroupDaoDep
+
+__all__ = ["SimpleGroupServiceDep", "SimpleGroupServiceDep"]

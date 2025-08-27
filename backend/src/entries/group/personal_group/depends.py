@@ -3,4 +3,6 @@ from src.utils.depends import get_sql_dao_dep
 
 PersonalGroupDaoDep = get_sql_dao_dep(PersonalGroupSqlDao)
 
-PersonalGroupDaoService = PersonalGroupDaoDep
+PersonalGroupServiceDep = PersonalGroupDaoDep
+
+__all__ = ["PersonalGroupServiceDep", "PersonalGroupServiceDep"]

@@ -10,28 +10,28 @@
     background-color 0.3s ease,
     color 0.3s ease;
   transition-property:
-    background-color, color, --primary, --text, --text-inverse, --text-second,
-    --accent-nocolor-primary, --accent-nocolor-second;
+    background-color, color, border-color, --primary, --text, --text-inverse,
+    --text-second, --accent-nocolor-primary, --accent-nocolor-primary;
   transition-duration: 0.3s;
   transition-timing-function: ease;
 }
 
 .light-theme {
-  --primary: #5637fb;
+  --primary: #2e70b6;
   --text: #343434;
   --text-inverse: white;
-  --text-second: #717182;
-  --accent-nocolor-primary: #eceef24d;
-  --accent-nocolor-second: #eceef2;
+  --text-second: #787880;
+  --accent-primary: #edeff3;
+  --accent-second: #f6f7f9;
 }
 
 .dark-theme {
-  --primary: #5637fb;
+  --primary: #2e70b6;
   --text: white;
   --text-inverse: #343434;
   --text-second: #a1a1a1;
-  --accent-nocolor-primary: #2626264d;
-  --accent-nocolor-second: #262626;
+  --accent-primary: #2626264d;
+  --accent-second: #262626;
   background: black;
 }
 
@@ -45,9 +45,25 @@
 }
 
 h1 {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 h2 {
-  font-weight: 400;
+  font-weight: 500;
+  font-weight: 36px;
+}
+
+h3 {
+  font-weight: 500;
+  font-weight: 28px;
+}
+
+a {
+  cursor: pointer;
+  color: var(--primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

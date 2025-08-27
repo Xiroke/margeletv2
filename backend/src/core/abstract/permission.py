@@ -48,7 +48,7 @@ class PermissionManager:
 
     @classmethod
     def _create_checked_wrapper(
-        cls, permission: PermissionFuncType, **func_kwargs
+        cls, permission: PermissionFuncType
     ) -> Callable[[], Any]:
         """
         Creates a wrapper that automatically triggers a check with its dependencies
@@ -68,9 +68,9 @@ class PermissionManager:
         return wrapped_permission
 
     @classmethod
-    def create_dependency(cls, rule: str, **func_kwargs):
+    def create_dependency(cls, rule: str):
         """Creates a dependency for the given rule"""
-        permission = cls._create_checked_wrapper(cls._permissions[rule], **func_kwargs)
+        permission = cls._create_checked_wrapper(cls._permissions[rule])
 
         return Depends(permission)
 

@@ -10,7 +10,7 @@ from src.entries.auth.depends import CurrentUserDep
 from .depends import RoleServiceDep
 from .schemas import CreateRoleSchema, ReadRoleSchema, UpdateRoleSchema
 
-router = APIRouter(prefix="/roles_group", tags=["role"])
+router = APIRouter(prefix="/roles", tags=["role"])
 
 
 @router.get(

@@ -6,12 +6,10 @@ from bootstrap.exceptions_fastapi import register_exception_handler
 from bootstrap.fastapi import register_fastapi
 from bootstrap.logging import register_logging
 from bootstrap.permissions import register_permission
-from bootstrap.routes import register_routes
 from config import settings
 from src.core.nosql.database import init_mongo_db
 
 register_logging()
-register_permission()
 
 
 @asynccontextmanager
@@ -22,9 +20,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json", lifespan=lifespan)
 
-
+register_permission()
 register_exception_handler(app)
 register_fastapi(app)
+
+# Importing routes should be later than initializing permissions.
+from bootstrap.routes import register_routes  # noqa: E402
+
 register_routes(app)
 
 

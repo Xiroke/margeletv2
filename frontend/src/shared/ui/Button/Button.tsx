@@ -1,28 +1,28 @@
-import { memo } from 'react'
-import type { FC, HTMLAttributes, ReactNode } from 'react'
+import { memo } from 'react';
 
-import { clsx } from 'clsx'
+import { clsx } from 'clsx';
 
-import cls from './Button.module.scss'
+import type { ButtonHTMLAttributes, FC, ReactNode } from 'react';
+import cls from './Button.module.scss';
 
-interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
-  className?: string
-  styleType?: 'none' | 'default' | 'text' | 'outline' | 'inverse'
-  size?: 'nosize' | 'sm' | 'md'
-  isFull?: boolean
-  children?: ReactNode
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string;
+  styleType?: 'none' | 'default' | 'text' | 'outline' | 'inverse';
+  size: 'nosize' | 'sm' | 'md';
+  isFull?: boolean;
+  children?: ReactNode;
 }
 
 /** Докстринг */
 export const Button: FC<ButtonProps> = memo((props: ButtonProps) => {
   const {
     className,
+    size,
     styleType = 'text',
-    size = 'sm',
     isFull = false,
     children = '',
     ...rest
-  } = props
+  } = props;
 
   return (
     <button
@@ -37,5 +37,5 @@ export const Button: FC<ButtonProps> = memo((props: ButtonProps) => {
     >
       {children}
     </button>
-  )
-})
+  );
+});

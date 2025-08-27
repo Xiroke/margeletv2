@@ -1,15 +1,6 @@
 import logging
-from typing import Annotated
-from uuid import UUID
 
-from fastapi import APIRouter, Body
-from fastapi.responses import JSONResponse
-
-from src.core.abstract.permission import perms
-from src.entries.auth.depends import CurrentUserDep
-
-from .depends import GroupServiceDep
-from .schemas import ReadGroupSchema, UpdateGroupSchema
+from fastapi import APIRouter
 
 logger = logging.getLogger(__name__)
 
@@ -81,28 +72,28 @@ router = APIRouter(prefix="/groups", tags=["group"])
 #     return JSONResponse(status_code=200, content={"message": "Group joined"})
 
 
-@router.post("/leave/{group_id}")
-async def leave_group(
-    user: CurrentUserDep,
-    group_id: UUID,
-    group_service: GroupServiceDep,
-):
-    await group_service.leave_group(group_id, user.id)
+# @router.post("/leave/{group_id}")
+# async def leave_group(
+#     user: CurrentUserDep,
+#     group_id: UUID,
+#     group_service: GroupServiceDep,
+# ):
+#     await group_service.leave_group(group_id, user.id)
 
-    return JSONResponse(status_code=200, content={"message": "Group left"})
-
-
-@router.get("/user_groups/me")
-async def get_my_groups(
-    user: CurrentUserDep, group_service: GroupServiceDep
-) -> list[ReadGroupSchema]:
-    return await group_service.get_groups_by_user(user.id)
+#     return JSONResponse(status_code=200, content={"message": "Group left"})
 
 
-@router.patch("/title", dependencies=perms(["r:can_edit_group_settings"]))
-async def update_group_title(
-    group_id: UUID,
-    group_title: Annotated[str, Body()],
-    group_service: GroupServiceDep,
-) -> ReadGroupSchema:
-    return await group_service.update(group_id, UpdateGroupSchema(title=group_title))
+# @router.get("/user_groups/me")
+# async def get_my_groups(
+#     user: CurrentUserDep, group_service: GroupServiceDep
+# ) -> list[ReadGroupSchema]:
+#     return await group_service.get_groups_by_user(user.id)
+
+
+# @router.patch("/title", dependencies=perms(["r:can_edit_group_settings"]))
+# async def update_group_title(
+#     group_id: UUID,
+#     group_title: Annotated[str, Body()],
+#     group_service: GroupServiceDep,
+# ) -> ReadGroupSchema:
+#     return await group_service.update(group_id, UpdateGroupSchema(title=group_title))
