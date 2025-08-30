@@ -53,6 +53,11 @@ class Dao(
     read_schema_type: type[ReadSchemaType]
 
     def __init_subclass__(cls) -> None:
+        """
+        Gets from generics
+        read_schema for validation and
+        model_type for building queries in the heirs
+        """
         # used in sublass of DAO
         # __init_subclass__ is called when subclass is initialized
         # __orig_bases__ return all class inheritance

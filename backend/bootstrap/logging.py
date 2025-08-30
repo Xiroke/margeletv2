@@ -41,3 +41,4 @@ def register_logging():
     logging.getLogger("pymongo").setLevel(logging.INFO)
     logging.getLogger("multipart").setLevel(logging.INFO)
     logging.getLogger("asyncio").setLevel(logging.INFO)
+    logging.getLogger("botocore.hooks").setLevel(logging.INFO)

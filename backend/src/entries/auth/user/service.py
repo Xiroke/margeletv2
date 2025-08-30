@@ -1,12 +1,12 @@
 from fastapi import UploadFile
 
-from src.core.abstract.service.dao_service import DaoService
+from src.core.abstract.service_proxy_dao import ProxyServiceToDao
 from src.core.abstract.storage_base import StorageBase
 
 from .dao import UserDaoProtocol
 
 
-class UserService(DaoService, UserDaoProtocol):
+class UserService(ProxyServiceToDao):
     def __init__(
         self,
         dao: UserDaoProtocol,

@@ -1,13 +1,13 @@
 from uuid import UUID
 
-from src.core.abstract.service import DaoService
+from src.core.abstract.service_proxy_dao import ProxyServiceToDao
 from src.core.abstract.storage_base import StorageBase
 
 from .dao import MessageDaoProtocol
 from .schemas import ReadMessageSchema
 
 
-class MessageService(DaoService):
+class MessageService(ProxyServiceToDao):
     def __init__(
         self,
         dao: MessageDaoProtocol,

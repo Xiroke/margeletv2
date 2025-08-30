@@ -5,9 +5,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.db.database import Base
 from src.core.db.mixins import CreatedAtMixin, IntIdMixin
+from src.entries.group.group.models import UserToGroupModel
 
 if TYPE_CHECKING:
-    from src.entries.group.models import UserToGroupModel
     from src.entries.group.role.rule.models import RuleModel
 
 
@@ -16,12 +16,10 @@ class RoleModel(IntIdMixin, CreatedAtMixin, Base):
 
     title: Mapped[str] = mapped_column(nullable=False)
 
-    rules: Mapped[list["RuleModel"]] = relationship(
-        back_populates="roles", secondary="role_to_rule"
-    )
+    rules: Mapped[list["RuleModel"]] = relationship(secondary="role_to_rule")
 
     user_groups: Mapped[list["UserToGroupModel"]] = relationship(
-        back_populates="roles", secondary="role_to_usergroup"
+        secondary="role_to_usergroup"
     )
 
 

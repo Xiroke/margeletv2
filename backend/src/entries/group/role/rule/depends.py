@@ -14,4 +14,4 @@ def get_rule_service(dao: RuleDaoDep):
     return RuleService(dao)
 
 
-RuleServiceDep = Annotated[RuleDaoProtocol, Depends(get_rule_service)]
+RuleServiceDep = Annotated[RuleService | RuleDaoProtocol, Depends(get_rule_service)]

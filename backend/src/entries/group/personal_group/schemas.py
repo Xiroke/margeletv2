@@ -1,4 +1,4 @@
-from ..schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
+from ..group.schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
 
 
 class ReadPersonalGroupSchema(ReadGroupSchema):
@@ -6,9 +6,8 @@ class ReadPersonalGroupSchema(ReadGroupSchema):
 
 
 class CreatePersonalGroupSchema(CreateGroupSchema):
-    description: str
+    pass
 
 
 class UpdatePersonalGroupSchema(UpdateGroupSchema):
-    description: str | None = None
-    avatar_path: str | None = None
+    pass

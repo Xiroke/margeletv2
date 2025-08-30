@@ -64,10 +64,10 @@ router = APIRouter(prefix="/groups", tags=["group"])
 #     group_payload_id = UUID(payload.group_id)
 
 #     await group_service.add_user_to_group(group_payload_id, user.id)
-#     newbie_role = await role_service.src.core.abstract.dao(
-#         RoleModel.title == "newbie", RoleModel.group_id == group_payload_id
+#     member_role = await role_service.src.core.abstract.dao(
+#         RoleModel.title == "member", RoleModel.group_id == group_payload_id
 #     )
-#     await group_service.add_role_to_user(user.id, newbie_role.id)
+#     await group_service.add_role_to_user(user.id, member_role.id)
 
 #     return JSONResponse(status_code=200, content={"message": "Group joined"})
 

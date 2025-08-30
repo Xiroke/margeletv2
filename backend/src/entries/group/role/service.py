@@ -1,9 +1,9 @@
-from src.core.abstract.service import DaoService
+from src.core.abstract.service_proxy_dao import ProxyServiceToDao
 
 from .dao import RoleDaoProtocol
 
 
-class RoleService(DaoService):
+class RoleService(ProxyServiceToDao):
     def __init__(
         self,
         dao: RoleDaoProtocol,

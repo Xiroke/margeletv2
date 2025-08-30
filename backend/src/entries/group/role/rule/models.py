@@ -1,23 +1,19 @@
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.db.database import Base
 from src.core.db.mixins import IntIdMixin
 
 if TYPE_CHECKING:
-    from src.entries.group.role.models import RoleModel
+    pass
 
 
-class RuleModel(IntIdMixin, Base):
+class RuleModel(Base):
     __tablename__ = "rule"
-
-    value: Mapped[str] = mapped_column(nullable=False)
-
-    roles: Mapped[list["RoleModel"]] = relationship(
-        back_populates="rules", secondary="role_to_rule"
-    )
+    # id is the name of the rule
+    id: Mapped[str] = mapped_column(primary_key=True)
 
 
 class RoleToRuleModel(IntIdMixin, Base):

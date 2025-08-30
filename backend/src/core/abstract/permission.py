@@ -56,7 +56,6 @@ class PermissionManager:
 
         @wraps(permission)
         async def wrapped_permission(**deps):
-            # deps pass because is run Depends
             result = permission(**deps)
             # for async functions
             if inspect.isawaitable(result):

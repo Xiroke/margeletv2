@@ -1,8 +1,12 @@
-from src.entries.group.role.rule.depends import RuleServiceDep
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.entries.group.role.rule.dao import RuleSqlDao
 from src.entries.group.role.rule.enums import RuleEnum
 from src.entries.group.role.rule.schemas import CreateRuleSchema
 
 
-async def seed_rule(service: RuleServiceDep):
+async def seed_rule(session: AsyncSession):
+    dao = RuleSqlDao(session)
+
     for rule in RuleEnum:
-        await service.create(CreateRuleSchema(value=rule.value))
+        await dao.create(CreateRuleSchema(id=rule.value))

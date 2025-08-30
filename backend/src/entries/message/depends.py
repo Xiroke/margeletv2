@@ -22,7 +22,9 @@ def get_message_service(
     return MessageService(dao, storage)
 
 
-MessageServiceDep = Annotated[MessageService, Depends(get_message_service)]
+MessageServiceDep = Annotated[
+    MessageService | MessageDaoProtocol, Depends(get_message_service)
+]
 
 __all__ = [
     "MessageDaoDep",

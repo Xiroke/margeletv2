@@ -5,7 +5,7 @@ from fastapi import Depends
 from src.infrastructure.s3 import S3ServiceDep
 from src.utils.depends import get_sql_dao_dep
 
-from .dao import UserSqlDao
+from .dao import UserDaoProtocol, UserSqlDao
 from .service import UserService
 
 UserDaoDep = get_sql_dao_dep(UserSqlDao)
@@ -18,7 +18,7 @@ def get_user_service(
     return UserService(dao, storage)
 
 
-UserServiceDep = Annotated[UserService, Depends(get_user_service)]
+UserServiceDep = Annotated[UserService | UserDaoProtocol, Depends(get_user_service)]
 
 
 __all__ = ["UserDaoDep", "UserServiceDep"]

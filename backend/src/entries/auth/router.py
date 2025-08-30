@@ -2,14 +2,10 @@ from typing import Annotated
 
 from fastapi import Body, Response
 from fastapi.routing import APIRouter
+from pydantic import EmailStr
 
 from config import settings
-from src.entries.auth.depends import (
-    AuthServiceDep,
-    CurrentUserDep,
-    CurrentUserRefresh,
-    RefreshTokenDep,
-)
+from src.entries.auth.depends import AuthServiceDep, CurrentUserDep, RefreshTokenDep
 from src.entries.auth.user.schemas import CreateUserSchema, LoginUserSchema
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -38,16 +34,16 @@ async def login(
 async def register(data: CreateUserSchema, auth: AuthServiceDep):
     """Create user and send verification token"""
     await auth.register(data)
-    return None, 201
+    return "The token has been sent to your email", 201
 
 
 @router.post("/resend_verification")
 async def resend_verification(
-    user: CurrentUserRefresh,
+    email: Annotated[EmailStr, Body()],
     auth: AuthServiceDep,
 ):
     """Resends the verification token"""
-    await auth.resend_verification(user_id=user.id)
+    await auth.resend_verification(email)
     return None, 200
 
 

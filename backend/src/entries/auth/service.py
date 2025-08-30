@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
-from src.core.abstract.service.service_base import Service
+from pydantic import EmailStr
+
 from src.entries.auth.refresh_token.dao import RefreshTokenDaoProtocol
 from src.entries.auth.refresh_token.schemas import CreateRefreshTokenSchema
 from src.infrastructure.smtp import SMTP
@@ -16,15 +17,10 @@ from src.utils.exceptions import (
 
 from .schemas import AccessTokenJWTSchema, VerificationTokenJWTSchema
 from .user.dao import UserDaoProtocol
-from .user.schemas import (
-    CreateUserSchema,
-    LoginUserSchema,
-    ReadUserSchema,
-    UpdateUserSchema,
-)
+from .user.schemas import CreateUserSchema, LoginUserSchema, ReadUserSchema
 
 
-class AuthService(Service):
+class AuthService:
     def __init__(
         self,
         jwt_manager_access: JWTManager[AccessTokenJWTSchema],
@@ -64,6 +60,12 @@ class AuthService(Service):
     async def get_access_from_refresh(self, refresh_token: str):
         user = await self.user_dao.get_user_by_token(refresh_token)
 
+        if not user.is_active:
+            raise HTTPAuthenticationBannedException
+
+        elif not user.is_verified:
+            raise HTTPAuthenticationNotVerifiedException
+
         payload = AccessTokenJWTSchema(user_id=str(user.id))
 
         token = self.jwt_manager_access.encode(payload)
@@ -89,6 +91,12 @@ class AuthService(Service):
         """Create refresh token for user"""
         user = await self.user_dao.get_user_for_check_password(data.email)
 
+        if not user.is_active:
+            raise HTTPAuthenticationBannedException
+
+        elif not user.is_verified:
+            raise HTTPAuthenticationNotVerifiedException
+
         if not user:
             raise HTTPAuthenticationException
 
@@ -106,8 +114,11 @@ class AuthService(Service):
 
         return refresh_token
 
-    async def resend_verification(self, user_id: UUID):
-        user = await self.user_dao.get(user_id)
+    async def resend_verification(
+        self,
+        email: EmailStr,
+    ):
+        user = await self.user_dao.get_user_by_email(email)
 
         payload = VerificationTokenJWTSchema(user_id=str(user.id))
         token = self.jwt_manager_verification.encode(payload)
@@ -115,5 +126,5 @@ class AuthService(Service):
 
     async def verify(self, token: str):
         payload = self.jwt_manager_verification.decode(token)
-        updated_data = UpdateUserSchema(is_verified=True)
-        await self.user_dao.update(UUID(payload.user_id), updated_data)
+
+        await self.user_dao.set_is_verified(UUID(payload.user_id), True)

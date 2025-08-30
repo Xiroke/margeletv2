@@ -1,23 +1,24 @@
 from src.entries.group.role.rule.enums import RuleEnum
 
 creator_rules = [
-    RuleEnum.CAN_CRITICAL,
-    RuleEnum.CAN_EDIT_GROUP_SETTINGS,
-    RuleEnum.CAN_EDIT_ROLES,
-    RuleEnum.CAN_SEND_MESSAGE,
-    RuleEnum.CAN_INVITE,
+    RuleEnum.CAN_CRITICAL.value,
+    RuleEnum.CAN_EDIT_GROUP_SETTINGS.value,
+    RuleEnum.CAN_EDIT_ROLES.value,
+    RuleEnum.CAN_SEND_MESSAGE.value,
+    RuleEnum.CAN_INVITE.value,
 ]
 
 admin_rules = [
-    RuleEnum.CAN_EDIT_GROUP_SETTINGS,
-    RuleEnum.CAN_EDIT_ROLES,
-    RuleEnum.CAN_SEND_MESSAGE,
-    RuleEnum.CAN_INVITE,
+    RuleEnum.CAN_EDIT_GROUP_SETTINGS.value,
+    RuleEnum.CAN_EDIT_ROLES.value,
+    RuleEnum.CAN_SEND_MESSAGE.value,
+    RuleEnum.CAN_INVITE.value,
 ]
 
-newbie_rules = [
-    RuleEnum.CAN_SEND_MESSAGE,
-    RuleEnum.CAN_INVITE,
+member_rules = [
+    RuleEnum.CAN_SEND_MESSAGE.value,
+    RuleEnum.CAN_INVITE.value,
 ]
 
-__all__ = ["creator_rules", "admin_rules", "newbie_rules"]
+
+__all__ = ["creator_rules", "admin_rules", "member_rules"]

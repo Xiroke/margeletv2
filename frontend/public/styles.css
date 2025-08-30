@@ -35,11 +35,19 @@
   background: black;
 }
 
+body {
+  font-family:
+    PT Root UI,
+    'Inter',
+    'Roboto',
+    system-ui,
+    sans-serif;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -50,12 +58,12 @@ h1 {
 
 h2 {
   font-weight: 500;
-  font-weight: 36px;
+  font-size: 36px;
 }
 
 h3 {
   font-weight: 500;
-  font-weight: 28px;
+  font-size: 28px;
 }
 
 a {

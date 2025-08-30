@@ -4,8 +4,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class BaseRuleSchema(BaseModel):
-    id: int
-    value: str
+    id: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -15,4 +14,4 @@ class ReadRuleSchema(BaseRuleSchema):
 
 
 class CreateRuleSchema(BaseModel):
-    value: str
+    id: str

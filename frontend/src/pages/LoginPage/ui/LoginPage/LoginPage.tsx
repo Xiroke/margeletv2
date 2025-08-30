@@ -1,10 +1,13 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 
+import { authQueryProps } from '@/features/auth/api';
+import type { LoginUserSchema } from '@/shared/api/generated';
 import { Button } from '@/shared/ui/Button/Button';
 import { Input } from '@/shared/ui/Input/Input';
+import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { clsx } from 'clsx';
-import type { FC } from 'react';
+import type { FC, FormEvent } from 'react';
 import cls from './LoginPage.module.scss';
 
 interface LoginPageProps {
@@ -14,13 +17,18 @@ interface LoginPageProps {
 /** Докстринг */
 export const LoginPage: FC<LoginPageProps> = memo((props: LoginPageProps) => {
   const { className } = props;
+  const login = useMutation({ ...authQueryProps.loginMut() });
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log({ email, password });
+
+    const form = e.currentTarget as HTMLFormElement;
+
+    const formData = new FormData(form);
+
+    const data = Object.fromEntries(formData.entries()) as LoginUserSchema;
+
+    login.mutate({ body: data });
   };
 
   return (
@@ -29,11 +37,10 @@ export const LoginPage: FC<LoginPageProps> = memo((props: LoginPageProps) => {
       <h2 className={cls.subtitle}>Зайдите в профиль</h2>
 
       <Input
+        name="email"
         type="email"
         label="Email"
         placeholder="example@email.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
         isFull
         required
       />
@@ -41,11 +48,10 @@ export const LoginPage: FC<LoginPageProps> = memo((props: LoginPageProps) => {
       <div className={cls.password}>
         <a>Забыли пароль?</a>
         <Input
+          name="password"
           type="password"
           label="Пароль"
           placeholder="********"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
           isFull
           required
         />

@@ -1,7 +1,7 @@
 from typing import Protocol, cast
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 from src.entries.auth.refresh_token.models import RefreshTokenModel
@@ -27,6 +27,8 @@ class UserDaoProtocol(
     async def get_user_by_email(self, email: str) -> ReadUserSchema: ...
     async def get_user_for_check_password(self, email: str) -> UserModel: ...
     async def get_user_by_token(self, token: str) -> ReadUserSchema: ...
+    async def set_is_verified(self, user_id: UUID, value: bool): ...
+    async def set_is_active(self, user_id: UUID, value: bool): ...
 
 
 class UserSqlDao(
@@ -77,3 +79,11 @@ class UserSqlDao(
             raise ModelNotFoundException(self.model_type.__name__, str(id))
 
         return self.read_schema_type.model_validate(record)
+
+    async def set_is_verified(self, user_id: UUID, value: bool):
+        smtp = update(self.model_type).filter_by(id=user_id).values(is_verified=value)
+        await self.session.execute(smtp)
+
+    async def set_is_active(self, user_id: UUID, value: bool):
+        smtp = update(self.model_type).filter_by(id=user_id).values(is_active=value)
+        await self.session.execute(smtp)
