@@ -15,7 +15,11 @@ from src.utils.exceptions import (
     HTTPAuthenticationNotVerifiedException,
 )
 
-from .schemas import AccessTokenJWTSchema, VerificationTokenJWTSchema
+from .schemas import (
+    AccessTokenJWTSchema,
+    ReadAccessTokenSchema,
+    VerificationTokenJWTSchema,
+)
 from .user.dao import UserDaoProtocol
 from .user.schemas import CreateUserSchema, LoginUserSchema, ReadUserSchema
 
@@ -57,7 +61,9 @@ class AuthService:
 
         return user
 
-    async def get_access_from_refresh(self, refresh_token: str):
+    async def get_access_from_refresh(
+        self, refresh_token: str
+    ) -> ReadAccessTokenSchema:
         user = await self.user_dao.get_user_by_token(refresh_token)
 
         if not user.is_active:
@@ -69,7 +75,7 @@ class AuthService:
         payload = AccessTokenJWTSchema(user_id=str(user.id))
 
         token = self.jwt_manager_access.encode(payload)
-        return {"access_token": token, "token_type": "bearer"}
+        return ReadAccessTokenSchema(access_token=token, token_type="bearer")
 
     async def get_current_user_from_refresh(self, refresh_token: str):
         return await self.user_dao.get_user_by_token(refresh_token)

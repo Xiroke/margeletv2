@@ -1,45 +1,50 @@
 const CACHE_NAME = 'image-cache-v1';
-self.accessToken = null;
-self.BACKEND_URL = null;
-self.ALLOWED_ORIGINS = [];
+self.accessToken = undefined;
+self.BACKEND_URL = undefined;
 self.ALLOWED_CACHED_PATHS = [];
 
 self.addEventListener('message', (event) => {
   const { type, payload } = event.data;
-  console.log('[SW] message received:', type, payload);
   if (type === 'SET_PARAMS') {
     self.BACKEND_URL = payload.BACKEND_URL;
-    self.ALLOWED_ORIGINS = payload.ALLOWED_ORIGINS;
     self.ALLOWED_CACHED_PATHS = payload.ALLOWED_CACHED_PATHS;
   }
 });
 
+/**
+ * Requests an access token using a refresh token
+ */
 const fetchAccessToken = async () => {
+  console.log('token requested');
+
   try {
-    const response = await fetch(`${self.BACKEND_URL}/api/auth/access_token`, {
+    const response = await fetch(`${self.BACKEND_URL}/api/auth/token`, {
       method: 'POST',
       credentials: 'include',
     });
 
     if (!response.ok) {
-      console.log('Failed to fetch access token');
-      return null;
+      console.error('Failed to fetch access token');
+      return undefined;
     }
 
     const data = await response.json();
-    return data.access_token ?? null;
+    return data.access_token;
   } catch (err) {
     console.error('Error fetching access token:', err);
-    return null;
+    return undefined;
   }
 };
 
+/**
+ * When the access token is not present, this function will request a new one and set the value in headers
+ */
 const accessTokenMiddleware = async (request) => {
-  if (request.headers.get('Authorization') !== null) {
+  if (request.headers.get('Authorization')) {
     return fetch(request);
   }
 
-  if (self.accessToken === null) {
+  if (self.accessToken === undefined) {
     self.accessToken = await fetchAccessToken();
   }
 
@@ -58,9 +63,11 @@ const accessTokenMiddleware = async (request) => {
 
   if (response.status === 401) {
     self.accessToken = await fetchAccessToken();
+
     if (!self.accessToken) {
       return response;
     }
+
     const retryRequest = new Request(request, {
       headers: new Headers({
         ...Object.fromEntries(request.headers.entries()),
@@ -76,17 +83,17 @@ const accessTokenMiddleware = async (request) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+  const pathname = url.pathname;
 
-  const isAllowed = self.ALLOWED_ORIGINS.some((origin) => {
-    const pathname = url.pathname;
-    for (const path of self.ALLOWED_CACHED_PATHS) {
-      if (path && pathname.includes(path) && url.href.startsWith(origin)) {
-        return true;
-      }
-    }
-  });
+  var isMustCached = false;
+  // Сhecks whether the result of the given path is cached.
+  // for (const path of self.ALLOWED_CACHED_PATHS) {
+  //   if (path && pathname.includes(path) && url.href.startsWith(origin)) {
+  //     isMustCached = true;
+  //   }
+  // }
 
-  if (isAllowed) {
+  if (isMustCached) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) =>
         cache.match(request).then((cachedResponse) => {

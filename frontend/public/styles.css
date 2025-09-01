@@ -67,6 +67,10 @@ h3 {
 }
 
 a {
+  text-decoration: none;
+}
+
+.link {
   cursor: pointer;
   color: var(--primary);
   text-decoration: none;

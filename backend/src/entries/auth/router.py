@@ -6,6 +6,7 @@ from pydantic import EmailStr
 
 from config import settings
 from src.entries.auth.depends import AuthServiceDep, CurrentUserDep, RefreshTokenDep
+from src.entries.auth.schemas import ReadAccessTokenSchema
 from src.entries.auth.user.schemas import CreateUserSchema, LoginUserSchema
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -55,7 +56,9 @@ async def verify(verification_token: Annotated[str, Body()], auth: AuthServiceDe
 
 
 @router.post("/token")
-async def get_access_token(refresh_token: RefreshTokenDep, auth: AuthServiceDep):
+async def get_access_token(
+    refresh_token: RefreshTokenDep, auth: AuthServiceDep
+) -> ReadAccessTokenSchema:
     return await auth.get_access_from_refresh(refresh_token)
 
 

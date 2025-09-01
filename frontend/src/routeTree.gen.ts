@@ -10,18 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistrationRouteImport } from './routes/registration'
-import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
+import { Route as ChatChar123GroupIdChar125RouteImport } from './routes/chat/{-$groupId}'
 
 const RegistrationRoute = RegistrationRouteImport.update({
   id: '/registration',
   path: '/registration',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,38 +29,53 @@ const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   path: '/demo/tanstack-query',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatChar123GroupIdChar125Route =
+  ChatChar123GroupIdChar125RouteImport.update({
+    id: '/chat/{-$groupId}',
+    path: '/chat/{-$groupId}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
   '/registration': typeof RegistrationRoute
+  '/chat/{-$groupId}': typeof ChatChar123GroupIdChar125Route
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
   '/registration': typeof RegistrationRoute
+  '/chat/{-$groupId}': typeof ChatChar123GroupIdChar125Route
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
   '/registration': typeof RegistrationRoute
+  '/chat/{-$groupId}': typeof ChatChar123GroupIdChar125Route
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chat' | '/registration' | '/demo/tanstack-query'
+  fullPaths:
+    | '/'
+    | '/registration'
+    | '/chat/{-$groupId}'
+    | '/demo/tanstack-query'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat' | '/registration' | '/demo/tanstack-query'
-  id: '__root__' | '/' | '/chat' | '/registration' | '/demo/tanstack-query'
+  to: '/' | '/registration' | '/chat/{-$groupId}' | '/demo/tanstack-query'
+  id:
+    | '__root__'
+    | '/'
+    | '/registration'
+    | '/chat/{-$groupId}'
+    | '/demo/tanstack-query'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ChatRoute: typeof ChatRoute
   RegistrationRoute: typeof RegistrationRoute
+  ChatChar123GroupIdChar125Route: typeof ChatChar123GroupIdChar125Route
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
 }
 
@@ -76,13 +86,6 @@ declare module '@tanstack/react-router' {
       path: '/registration'
       fullPath: '/registration'
       preLoaderRoute: typeof RegistrationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -99,13 +102,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTanstackQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/{-$groupId}': {
+      id: '/chat/{-$groupId}'
+      path: '/chat/{-$groupId}'
+      fullPath: '/chat/{-$groupId}'
+      preLoaderRoute: typeof ChatChar123GroupIdChar125RouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ChatRoute: ChatRoute,
   RegistrationRoute: RegistrationRoute,
+  ChatChar123GroupIdChar125Route: ChatChar123GroupIdChar125Route,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
 }
 export const routeTree = rootRouteImport

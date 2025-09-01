@@ -1,11 +1,12 @@
 .group_card {
   display: flex;
   width: 360px;
-  height: 80px;
+  height: 60px;
   align-items: center;
   cursor: pointer;
   border-radius: 9999px 24px 24px 9999px;
   transition: background-color 0.3s ease;
+  color: var(--text);
 
   &:hover {
     background-color: var(--accent-second);
