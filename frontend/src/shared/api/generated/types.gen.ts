@@ -11,17 +11,18 @@ export type BodyUploadAvatarApiUsersAvatarMePost = {
 };
 
 /**
- * CreateRoleSchema
+ * CreateMessageNoUserSchema
  */
-export type CreateRoleSchema = {
+export type CreateMessageNoUserSchema = {
     /**
-     * Title
+     * Message
+     * Message must be less than 2000 characters
      */
-    title: string;
+    message: string;
     /**
-     * User Group Id
+     * To Group Id
      */
-    user_group_id: string;
+    to_group_id: string;
 };
 
 /**
@@ -89,21 +90,40 @@ export type LoginUserSchema = {
 };
 
 /**
- * ReadRoleSchema
+ * ReadAccessTokenSchema
  */
-export type ReadRoleSchema = {
+export type ReadAccessTokenSchema = {
+    /**
+     * Access Token
+     */
+    access_token: string;
+    /**
+     * Token Type
+     */
+    token_type: 'bearer';
+};
+
+/**
+ * ReadMessageSchema
+ */
+export type ReadMessageSchema = {
     /**
      * Id
      */
-    id: number;
+    id: string;
     /**
-     * Title
+     * Message
+     * Message must be less than 2000 characters
      */
-    title: string;
+    message: string;
     /**
-     * User Group Id
+     * User Id
      */
-    user_group_id: string;
+    user_id: string;
+    /**
+     * To Group Id
+     */
+    to_group_id: string;
     /**
      * Created At
      */
@@ -133,25 +153,10 @@ export type ReadSimpleGroupSchema = {
 };
 
 /**
- * RuleEnum
- */
-export type RuleEnum = 'can_critical' | 'can_edit_group' | 'can_edit_roles' | 'can_send_message' | 'can_invite';
-
-/**
  * UpdatePersonalGroupSchema
  */
 export type UpdatePersonalGroupSchema = {
     [key: string]: unknown;
-};
-
-/**
- * UpdateRoleSchema
- */
-export type UpdateRoleSchema = {
-    /**
-     * Title
-     */
-    title?: string | null;
 };
 
 /**
@@ -299,8 +304,10 @@ export type GetAccessTokenApiAuthTokenPostResponses = {
     /**
      * Successful Response
      */
-    200: unknown;
+    200: ReadAccessTokenSchema;
 };
+
+export type GetAccessTokenApiAuthTokenPostResponse = GetAccessTokenApiAuthTokenPostResponses[keyof GetAccessTokenApiAuthTokenPostResponses];
 
 export type GetMeApiAuthMeGetData = {
     body?: never;
@@ -603,162 +610,59 @@ export type UpdateApiSimpleGroupsIdPatchResponses = {
     200: unknown;
 };
 
-export type DeleteRoleApiRolesRoleIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: number;
-    };
-    query: {
-        rule: RuleEnum;
-        /**
-         * Group Id
-         */
-        group_id: string;
-    };
-    url: '/api/roles/{role_id}';
-};
-
-export type DeleteRoleApiRolesRoleIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteRoleApiRolesRoleIdDeleteError = DeleteRoleApiRolesRoleIdDeleteErrors[keyof DeleteRoleApiRolesRoleIdDeleteErrors];
-
-export type DeleteRoleApiRolesRoleIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetRoleApiRolesRoleIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: number;
-    };
-    query?: never;
-    url: '/api/roles/{role_id}';
-};
-
-export type GetRoleApiRolesRoleIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetRoleApiRolesRoleIdGetError = GetRoleApiRolesRoleIdGetErrors[keyof GetRoleApiRolesRoleIdGetErrors];
-
-export type GetRoleApiRolesRoleIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ReadRoleSchema;
-};
-
-export type GetRoleApiRolesRoleIdGetResponse = GetRoleApiRolesRoleIdGetResponses[keyof GetRoleApiRolesRoleIdGetResponses];
-
-export type UpdateRoleApiRolesRoleIdPatchData = {
-    body: UpdateRoleSchema;
-    path: {
-        /**
-         * Role Id
-         */
-        role_id: number;
-    };
-    query: {
-        rule: RuleEnum;
-        /**
-         * Group Id
-         */
-        group_id: string;
-    };
-    url: '/api/roles/{role_id}';
-};
-
-export type UpdateRoleApiRolesRoleIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateRoleApiRolesRoleIdPatchError = UpdateRoleApiRolesRoleIdPatchErrors[keyof UpdateRoleApiRolesRoleIdPatchErrors];
-
-export type UpdateRoleApiRolesRoleIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetMyPermissionsInGroupApiRolesPermissionsMeGroupIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Group Id
-         */
-        group_id: string;
-    };
-    query?: never;
-    url: '/api/roles/permissions/me/{group_id}';
-};
-
-export type GetMyPermissionsInGroupApiRolesPermissionsMeGroupIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetMyPermissionsInGroupApiRolesPermissionsMeGroupIdGetError = GetMyPermissionsInGroupApiRolesPermissionsMeGroupIdGetErrors[keyof GetMyPermissionsInGroupApiRolesPermissionsMeGroupIdGetErrors];
-
-export type GetMyPermissionsInGroupApiRolesPermissionsMeGroupIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type CreateRoleApiRolesPostData = {
-    body: CreateRoleSchema;
+export type CreateMessageApiMessagesPostData = {
+    body: CreateMessageNoUserSchema;
     path?: never;
-    query: {
-        /**
-         * Group Id
-         */
-        group_id: string;
-        rule: RuleEnum;
-    };
-    url: '/api/roles/';
+    query?: never;
+    url: '/api/messages/';
 };
 
-export type CreateRoleApiRolesPostErrors = {
+export type CreateMessageApiMessagesPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateRoleApiRolesPostError = CreateRoleApiRolesPostErrors[keyof CreateRoleApiRolesPostErrors];
+export type CreateMessageApiMessagesPostError = CreateMessageApiMessagesPostErrors[keyof CreateMessageApiMessagesPostErrors];
 
-export type CreateRoleApiRolesPostResponses = {
+export type CreateMessageApiMessagesPostResponses = {
     /**
      * Successful Response
      */
-    200: ReadRoleSchema;
+    200: unknown;
 };
 
-export type CreateRoleApiRolesPostResponse = CreateRoleApiRolesPostResponses[keyof CreateRoleApiRolesPostResponses];
+export type GetLatestMessagesByGroupApiMessagesGroupIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    query?: never;
+    url: '/api/messages/{group_id}';
+};
+
+export type GetLatestMessagesByGroupApiMessagesGroupIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetLatestMessagesByGroupApiMessagesGroupIdGetError = GetLatestMessagesByGroupApiMessagesGroupIdGetErrors[keyof GetLatestMessagesByGroupApiMessagesGroupIdGetErrors];
+
+export type GetLatestMessagesByGroupApiMessagesGroupIdGetResponses = {
+    /**
+     * Response Get Latest Messages By Group Api Messages  Group Id  Get
+     * Successful Response
+     */
+    200: Array<ReadMessageSchema>;
+};
+
+export type GetLatestMessagesByGroupApiMessagesGroupIdGetResponse = GetLatestMessagesByGroupApiMessagesGroupIdGetResponses[keyof GetLatestMessagesByGroupApiMessagesGroupIdGetResponses];
 
 export type PingApiHealthcheckGetData = {
     body?: never;

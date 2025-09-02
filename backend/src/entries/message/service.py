@@ -16,9 +16,9 @@ class MessageService(ProxyServiceToDao):
         self.storage_service = storage_service
         self.dao = dao
 
-    async def get_messages_by_id_chat(
-        self, chat_id: UUID, amount: int, page=1, skip: int = 0
+    async def get_messages_by_group(
+        self, group_id: UUID, amount: int, page=1, skip: int = 0
     ) -> list[ReadMessageSchema]:
-        return await self.dao.get_messages_by_id_chat(
-            chat_id, amount, (page - 1) * amount + skip
+        return await self.dao.get_messages_by_group(
+            group_id, amount, (page - 1) * amount + skip
         )

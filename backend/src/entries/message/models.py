@@ -9,7 +9,7 @@ class MessageModel(Document):
     id_in_chat: int = Field(default=0)
     message: str
     user_id: UUID
-    to_chat_id: UUID
+    to_group_id: UUID
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:

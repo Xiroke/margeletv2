@@ -30,10 +30,26 @@ body {
   -ms-overflow-style: none;
 }
 
+.chat_line {
+  height: inherit;
+  width: 2px;
+  background-color: var(--accent-primary);
+}
+
+.selected_chat,
 .unselected_chat {
   flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  margin-bottom: 40px;
+}
+
+.selected_chat {
+  justify-content: end;
+}
+
+.unselected_chat {
+  justify-content: center;
   font-weight: 500;
 }

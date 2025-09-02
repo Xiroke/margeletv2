@@ -13,4 +13,5 @@ IdToUsernameDaoDep = Annotated[
     IdToUsernameModelProtocol, Depends(get_id_to_username_dao)
 ]
 
+IdToUsernameServiceDep = IdToUsernameDaoDep
 __all__ = ["IdToUsernameDaoDep"]

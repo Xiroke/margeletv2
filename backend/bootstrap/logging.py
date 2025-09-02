@@ -24,13 +24,18 @@ def setup_logging():
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
 
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+
     stream_handler = logging.StreamHandler()
     file_handler = logging.FileHandler("log.log", mode="a")
 
-    formatter = ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    text_style = "%(levelname)s - %(asctime)s - %(name)s - %(message)s"
+    formatter = logging.Formatter(text_style)
+    color_formatter = ColoredFormatter(text_style)
 
-    stream_handler.setFormatter(formatter)
     file_handler.setFormatter(formatter)
+    stream_handler.setFormatter(color_formatter)
 
     logger.addHandler(stream_handler)
     logger.addHandler(file_handler)

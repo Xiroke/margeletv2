@@ -1,6 +1,22 @@
 import type { ReactNode } from 'react';
 import { ServiceWorkerProvider } from './serviceWorkerProvider';
+import { WebsocketProvider } from './WebsocketProvider';
 
-export const AllProviders = ({ children }: { children: ReactNode }) => {
-  return <ServiceWorkerProvider>{children}</ServiceWorkerProvider>;
+const disabledPathnameWs = ['/', '/registration'];
+
+export const AllProviders = (props: { children: ReactNode | undefined }) => {
+  const { children = null } = props;
+  const pathname = window.location.pathname;
+
+  const isDisabledWs = disabledPathnameWs.some((i) => pathname === i);
+
+  return (
+    <ServiceWorkerProvider>
+      {isDisabledWs ? (
+        <>{children}</>
+      ) : (
+        <WebsocketProvider>{children}</WebsocketProvider>
+      )}
+    </ServiceWorkerProvider>
+  );
 };

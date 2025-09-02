@@ -8,10 +8,12 @@ from src.entries.group.role.router import router as role_router
 from src.entries.group.router import router as group_router
 from src.entries.group.simple_group.router import router as simple_group_router
 from src.entries.message.router import router as message_router
+from src.entries.websocket.router import router as websocket_router
 
 
 def register_routes(app: FastAPI):
     app.include_router(prefix="/api", router=auth_router)
+    app.include_router(prefix="/api", router=websocket_router)
     app.include_router(prefix="/api", router=user_router)
     app.include_router(prefix="/api", router=personal_group_router)
     app.include_router(prefix="/api", router=simple_group_router)

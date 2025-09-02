@@ -1,37 +1,34 @@
+from uuid import UUID
+
 from fastapi import APIRouter
+
+from src.entries.auth.depends import CurrentUserDep
+from src.entries.message.depends import MessageServiceDep
+from src.entries.message.schemas import (
+    CreateMessageNoUserSchema,
+    CreateMessageSchema,
+    ReadMessageSchema,
+)
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 
 
-# @router.websocket("/ws")
-# async def websocket_endpoint(
-#     websocket: WebSocket,
-#     access_token: Annotated[str, Query()],
-#     message_service: MessageServiceDep,
-#     chat_service: chat_service_factory,
-#     jwt: JwtManagerAccess,
-#     user_dao: UserDaoDep,
-#     id_user_dao: IdToUsernameDaoDep,
-# ):
-#     user = await get_current_user_from_access(access_token, jwt, user_dao)
+@router.post("/")
+async def create_message(
+    obj: CreateMessageNoUserSchema, service: MessageServiceDep, user: CurrentUserDep
+):
+    return await service.create(
+        CreateMessageSchema(
+            message=obj.message, user_id=user.id, to_group_id=obj.to_group_id
+        )
+    )
 
-#     if user is None:
-#         raise WebSocketException(401, "Unauthorized")
 
-#     chats = await chat_service.get_chats_by_user(user.id)
-#     chats_id = [i.id for i in chats]
-#     await connection_manager_users.connect(websocket, user.id, chats_id)
-#     try:
-#         while True:
-#             data_raw = await websocket.receive_json()
-#             data = CreateMessageSchema.model_validate(data_raw)
-#             data.user_id = user.id
-#             await connection_manager_users.broadcast(
-#                 user, data, message_service, id_user_dao
-#             )
-
-#     except WebSocketDisconnect:
-#         await connection_manager_users.disconnect(websocket, user.id, chats_id)
+@router.get("/{group_id}")
+async def get_latest_messages_by_group(
+    service: MessageServiceDep, group_id: UUID
+) -> list[ReadMessageSchema]:
+    return await service.get_messages_by_group(group_id, amount=10)
 
 
 # @router.get("/chat/{chat_id}")
@@ -56,7 +53,7 @@ router = APIRouter(prefix="/messages", tags=["messages"])
 
 #     await group_perm.check_user_in_group(user.id, chat_db.group_id)
 
-#     raw_messages = await message_service.get_messages_by_id_chat(
+#     raw_messages = await message_service.get_messages_by_group(
 #         chat_id, amount, page, skip
 #     )
 

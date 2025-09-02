@@ -19,8 +19,8 @@ class MessageDaoProtocol(
     ],
     Protocol,
 ):
-    async def get_messages_by_id_chat(
-        self, chat_id: UUID, amount: int, skip: int = 0
+    async def get_messages_by_group(
+        self, group_id: UUID, amount: int, skip: int = 0
     ) -> list[ReadMessageSchema]: ...
 
 
@@ -33,10 +33,13 @@ class MessageMongoDao(
         UpdateMessageSchema,
     ]
 ):
-    async def get_messages_by_id_chat(
-        self, chat_id: UUID, amount: int, skip: int = 0
+    async def get_messages_by_group(
+        self, group_id: UUID, amount: int, skip: int = 0
     ) -> list[ReadMessageSchema]:
         result = await self.model_type.find_many(
-            {"to_chat_id": chat_id}, sort=[("created_at", -1)], limit=amount, skip=skip
+            {"to_group_id": group_id},
+            sort=[("created_at", -1)],
+            limit=amount,
+            skip=skip,
         ).to_list()  # type: ignore
         return [ReadMessageSchema.model_validate(i) for i in result]

@@ -18,7 +18,10 @@ export const Input: FC<InputProps> = memo((props: InputProps) => {
   return (
     <div className={clsx(cls.wrapper, isFull && cls.full, className)}>
       {label && <label className={cls.label}>{label}</label>}
-      <input {...rest} className={clsx(cls.input, error && cls.error)} />
+      <input
+        {...rest}
+        className={clsx(cls.input, error && cls.error, className)}
+      />
       {error && <span className={cls.errorMessage}>{error}</span>}
     </div>
   );

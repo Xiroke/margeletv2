@@ -12,6 +12,7 @@ from src.infrastructure.smtp.depends import SmtpDep
 from src.security.jwt import JWTManager
 from src.security.password_helper import PasswordHelperDep
 from src.utils.depends import Oauth2SchemeDep
+from src.utils.exceptions import HTTPAuthenticationException
 
 
 def get_jwt_manager_access() -> JWTManager[AccessTokenJWTSchema]:
@@ -64,7 +65,10 @@ AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 
 
 def get_refresh_token(request: Request) -> str:
-    return request.cookies["refresh_token"]
+    try:
+        return request.cookies["refresh_token"]
+    except Exception:
+        raise HTTPAuthenticationException
 
 
 RefreshTokenDep = Annotated[str, Depends(get_refresh_token)]
