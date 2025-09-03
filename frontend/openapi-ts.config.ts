@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// грузим .env из родителя
+// load .env from parent
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export default defineConfig({

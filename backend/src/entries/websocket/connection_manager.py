@@ -1,17 +1,22 @@
+import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import Annotated, Any
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi import Depends, WebSocket
+from pydantic import ValidationError
 
 from src.core.redis.depends import redis_storage
-from src.entries.auth.user.schemas import ReadUserSchema
+from src.entries.group.group.dao import GroupDaoProtocolBase
 from src.entries.message.depends import MessageServiceDep
-from src.entries.message.id_to_username.depends import IdToUsernameServiceDep
-from src.entries.message.id_to_username.schemas import CreateIdToUsernameModelSchema
 from src.entries.message.schemas import CreateMessageSchema
 from src.entries.websocket.enums import UserStatus
+from src.entries.websocket.schemas import (
+    WsDataEvent,
+    WsOutDataSchema,
+    WsOutMessageSchema,
+)
 
 log = logging.getLogger(__name__)
 
@@ -27,8 +32,6 @@ class ConnectionManager:
         # {user_id: [ws1, ws2]}
         self.active_connections: dict[UUID, list[WebSocket]] = {}
 
-        # subscribed_chats by redis
-        self._subscribed_chats: set[UUID] = set()
         self._pubsub = self.redis.pubsub()
         self._listener_task: Any | None = None
 
@@ -48,89 +51,70 @@ class ConnectionManager:
             },
         )  # pyright: ignore[reportGeneralTypeIssues]
 
-        # await self.subscribe_if_needed(user_id)
+        await self.subscribe_if_needed()
 
-    # async def subscribe_if_needed(self, user_id: UUID):
-    #     """
-    #     Subscribe current worker to redis
-    #     """
-    #     # prevent dublication
-    #     if user_id in self._subscribed_chats:
-    #         return
+    async def subscribe_if_needed(self):
+        """
+        Subscribe current worker to redis
+        """
+        await self._pubsub.subscribe(WsDataEvent.MESSAGE)
 
-    #     await self._pubsub.subscribe(f"{ChannelsEnum.MESSAGES.value}:{chat_id}")
-    #     self._subscribed_chats.add(chat_id)
+        if not self._listener_task:
+            log.info("start redis subscriber loop")
 
-    #     if not self._listener_task:
-    #         await self.start()
+            self._listener_task = asyncio.create_task(self.redis_subscriber_loop())
 
-    # async def start(self):
-    #     """
-    #     Start redis subscriber loop
-    #     """
-    #     log.info("start redis subscriber loop")
-
-    #     self._listener_task = asyncio.create_task(self.redis_subscriber_loop())
-
-    async def broadcast(
+    async def broadcast_group_message(
         self,
-        user: ReadUserSchema,
-        raw_message: CreateMessageSchema,
+        obj: CreateMessageSchema,
         message_service: MessageServiceDep,
-        id_user_service: IdToUsernameServiceDep,
+        group_service: GroupDaoProtocolBase,  # you can pass service
     ) -> None:
-        """Send message to redis, it will be send to all users in chat"""
+        message = await message_service.create(obj)
 
-        # we get data and add username to it
-        message = await message_service.create(raw_message)
+        users_id = await group_service.get_users_id_in_group(message.to_group_id)
 
-        username_db = await id_user_service.get(message.user_id)
+        ws_data = WsOutMessageSchema(
+            event=WsDataEvent.MESSAGE, data=message, to_user=uuid4()
+        )
 
-        if not username_db:
-            username_db = await id_user_service.create(
-                CreateIdToUsernameModelSchema(id=message.user_id, username=user.name)
+        for user_id in users_id:
+            ws_data.to_user = user_id
+            # send message to all users
+            await self.redis.publish(
+                WsDataEvent.MESSAGE,
+                ws_data.model_dump_json(),
             )
 
-        # message.username = username_db.username
+    async def redis_subscriber_loop(self):
+        """
+        Handle redis message
+        """
 
-        # data_to_send = SendMessageSchema(data=message, chat_id=message.to_chat_id)
+        async for raw_message in self._pubsub.listen():
+            if raw_message["event"] != WsDataEvent.MESSAGE:
+                continue
 
-        # # send message to all users
-        # await redis_client.publish(
-        #     f"{ChannelsEnum.MESSAGES.value}:{message.to_chat_id}",
-        #     data_to_send.model_dump_json(),
-        # )
+            try:
+                message = WsOutMessageSchema.model_validate_json(raw_message)
+                await self.send_local_chat(message)
+            except ValidationError as e:
+                log.error(f"Error processing message: {e}")
 
-    # async def redis_subscriber_loop(self):
-    #     """
-    #     Handle redis message
-    #     """
+    async def send_local_chat(self, data: WsOutDataSchema):
+        """
+        Every worker send message to all users in current chat
+        """
 
-    #     async for raw_message in self._pubsub.listen():
-    #         if raw_message["type"] != "message":
-    #             continue
+        # chat_id set when user connected
+        connections = self.active_connections.get(data.to_user)
 
-    #         try:
-    #             message = SendMessageSchema.model_validate_json(raw_message["data"])
-    #             await self.send_local_chat(message)
-    #         except ValidationError as e:
-    #             log.error(f"Error processing message: {e}")
+        if connections is None:
+            return
 
-    # async def send_local_chat(self, data: SendMessageSchema):
-    #     """
-    #     Every worker send message to all users in current chat
-    #     """
-
-    #     tasks = []
-
-    #     # chat_id set when user connected
-    #     for user_id in self.chats_connections[data.chat_id]:
-    #         for connection in self.active_connections[user_id]:
-    #             tasks.append(connection.send_text(data.model_dump_json()))
-
-    #     await asyncio.gather(*tasks, return_exceptions=True)
-
-    #     log.info("redis subscriber loop stopped")
+        data_json = data.model_dump_json()
+        for connection in connections:
+            await connection.send_text(data_json)
 
     async def disconnect(
         self,
@@ -157,8 +141,9 @@ class ConnectionManager:
             },
         )  # pyright: ignore[reportGeneralTypeIssues]
 
-        # if user connect from other device, we not remove it
-        self.active_connections[user_id].remove(ws)
+        if ws in self.active_connections[user_id]:
+            self.active_connections[user_id].remove(ws)
+
         if not self.active_connections[user_id]:
             del self.active_connections[user_id]
 

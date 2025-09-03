@@ -20,6 +20,7 @@ class GroupDaoProtocolBase(
     async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None: ...
     async def remove_user_from_group(self, group_id: UUID, user_id: UUID) -> None: ...
     async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> None: ...
+    async def get_users_id_in_group(self, group_id: UUID) -> list[UUID]: ...
 
 
 class GroupSqlDaoBase(ABC):
@@ -73,8 +74,10 @@ class GroupSqlDaoBase(ABC):
         )
         await self.session.flush()  # pyright: ignore[reportAttributeAccessIssue]
 
-    # async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> None:
-    #     await self.session.execute(
-    #         insert(UserToRoleModel).values(user_id=user_id, role_id=role_id)
-    #     )
-    #     await self.session.flush()
+    async def get_users_id_in_group(self, group_id: UUID) -> list[UUID]:
+        result = await self.session.execute(  # pyright: ignore[reportAttributeAccessIssue]
+            select(UserToGroupModel.user_id).filter(
+                UserToGroupModel.group_id == group_id
+            )
+        )
+        return list(result.scalars().all())
