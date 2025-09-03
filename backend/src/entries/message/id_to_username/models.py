@@ -9,7 +9,7 @@ class IdToUsernameModel(Document):
     This allow simple edit of username in all messages
     """
 
-    user_id: UUID
+    id: UUID  # id is user_id
     username: str
 
     class Settings:

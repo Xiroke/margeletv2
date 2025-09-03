@@ -6,6 +6,12 @@ from uuid import UUID
 from fastapi import Depends, WebSocket
 
 from src.core.redis.depends import redis_storage
+from src.entries.auth.user.schemas import ReadUserSchema
+from src.entries.message.depends import MessageServiceDep
+from src.entries.message.id_to_username.depends import IdToUsernameServiceDep
+from src.entries.message.id_to_username.schemas import CreateIdToUsernameModelSchema
+from src.entries.message.schemas import CreateMessageSchema
+from src.entries.websocket.enums import UserStatus
 
 log = logging.getLogger(__name__)
 
@@ -37,7 +43,7 @@ class ConnectionManager:
         await self.redis.hset(
             f"user:{str(user_id)}",
             mapping={
-                "status": "active",
+                "status": UserStatus.ONLINE,
                 "last_updated": datetime.now(timezone.utc).isoformat(),
             },
         )  # pyright: ignore[reportGeneralTypeIssues]
@@ -66,34 +72,34 @@ class ConnectionManager:
 
     #     self._listener_task = asyncio.create_task(self.redis_subscriber_loop())
 
-    # async def broadcast(
-    #     self,
-    #     user: ReadUserSchema,
-    #     raw_message: CreateMessageSchema,
-    #     message_service: MessageServiceDep,
-    #     id_user_dao: IdToUsernameDaoDep,
-    # ) -> None:
-    #     """Send message to redis, it will be send to all users in chat"""
+    async def broadcast(
+        self,
+        user: ReadUserSchema,
+        raw_message: CreateMessageSchema,
+        message_service: MessageServiceDep,
+        id_user_service: IdToUsernameServiceDep,
+    ) -> None:
+        """Send message to redis, it will be send to all users in chat"""
 
-    #     # we get data and add username to it
-    #     message = await message_service.create(raw_message)
+        # we get data and add username to it
+        message = await message_service.create(raw_message)
 
-    #     username_db = await id_user_dao.get(message.user_id)
+        username_db = await id_user_service.get(message.user_id)
 
-    #     if not username_db:
-    #         username_db = await id_user_dao.create(
-    #             CreateIdToUsernameModelSchema(id=message.user_id, username=user.name)
-    #         )
+        if not username_db:
+            username_db = await id_user_service.create(
+                CreateIdToUsernameModelSchema(id=message.user_id, username=user.name)
+            )
 
-    #     message.author = username_db.username
+        # message.username = username_db.username
 
-    #     data_to_send = SendMessageSchema(data=message, chat_id=message.to_chat_id)
+        # data_to_send = SendMessageSchema(data=message, chat_id=message.to_chat_id)
 
-    #     # send message to all users
-    #     await redis_client.publish(
-    #         f"{ChannelsEnum.MESSAGES.value}:{message.to_chat_id}",
-    #         data_to_send.model_dump_json(),
-    #     )
+        # # send message to all users
+        # await redis_client.publish(
+        #     f"{ChannelsEnum.MESSAGES.value}:{message.to_chat_id}",
+        #     data_to_send.model_dump_json(),
+        # )
 
     # async def redis_subscriber_loop(self):
     #     """
@@ -146,7 +152,7 @@ class ConnectionManager:
         await self.redis.hset(
             f"user:{str(user_id)}",
             mapping={
-                "status": "deactive",
+                "status": UserStatus.OFFLINE,
                 "last_updated": datetime.now(timezone.utc).isoformat(),
             },
         )  # pyright: ignore[reportGeneralTypeIssues]

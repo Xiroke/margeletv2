@@ -1,6 +1,5 @@
 from typing import Protocol
-
-from beanie import PydanticObjectId
+from uuid import UUID
 
 from src.core.abstract.dao import DaoProtocol, MongoDaoImpl
 from src.entries.message.id_to_username.schemas import (
@@ -15,7 +14,7 @@ from .models import IdToUsernameModel
 class IdToUsernameModelProtocol(
     DaoProtocol[
         IdToUsernameModel,
-        PydanticObjectId,
+        UUID,
         ReadIdToUsernameModelSchema,
         CreateIdToUsernameModelSchema,
         UpdateIdToUsernameModelSchema,
@@ -28,7 +27,7 @@ class IdToUsernameModelProtocol(
 class IdToUsernameModelDao(
     MongoDaoImpl[
         IdToUsernameModel,
-        PydanticObjectId,
+        UUID,
         ReadIdToUsernameModelSchema,
         CreateIdToUsernameModelSchema,
         UpdateIdToUsernameModelSchema,

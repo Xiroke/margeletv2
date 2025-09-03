@@ -15,6 +15,7 @@ body {
   justify-content: center;
   width: 28px;
   color: var(--text-second);
+  gap: 20px;
   * {
     cursor: pointer;
   }
@@ -27,6 +28,7 @@ body {
   overflow-y: auto;
   height: calc(100vh - 40px);
   scrollbar-width: none;
+  min-width: 360px;
   -ms-overflow-style: none;
 }
 

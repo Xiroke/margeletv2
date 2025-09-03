@@ -79,3 +79,8 @@ a {
     text-decoration: underline;
   }
 }
+
+.no_link {
+  all: unset;
+  cursor: pointer;
+}
