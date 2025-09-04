@@ -70,8 +70,21 @@ class PersonalGroupSqlDao(
         return ReadPersonalGroupSchema.model_validate(group)
 
     async def get_groups_by_user(self, user_id: UUID):
-        data = await self._get_groups_by_user(PersonalGroupModel, user_id)
-        return [ReadPersonalGroupSchema.model_validate(item) for item in data]
+        data: list[PersonalGroupModel] = await self._get_groups_by_user(
+            PersonalGroupModel, user_id
+        )  # pyright: ignore[reportAssignmentType]
+
+        groups = []
+        for item in data:
+            validated = ReadPersonalGroupSchema(
+                id=item.id,
+                type=item.type,
+                created_at=item.created_at,
+                title=item.get_title(user_id),
+            )
+
+            groups.append(validated)
+        return groups
 
     async def is_exist_personal_group(self, user_id: UUID, other_user_id: UUID) -> bool:
         smtp = (

@@ -411,6 +411,37 @@ export type UploadAvatarApiUsersAvatarMePostResponses = {
     200: unknown;
 };
 
+export type GetUsernamesByIdApiUsersUsernamesPostData = {
+    /**
+     * User Ids
+     */
+    body: Array<string>;
+    path?: never;
+    query?: never;
+    url: '/api/users/usernames';
+};
+
+export type GetUsernamesByIdApiUsersUsernamesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetUsernamesByIdApiUsersUsernamesPostError = GetUsernamesByIdApiUsersUsernamesPostErrors[keyof GetUsernamesByIdApiUsersUsernamesPostErrors];
+
+export type GetUsernamesByIdApiUsersUsernamesPostResponses = {
+    /**
+     * Response Get Usernames By Id Api Users Usernames Post
+     * Successful Response
+     */
+    200: {
+        [key: string]: string;
+    };
+};
+
+export type GetUsernamesByIdApiUsersUsernamesPostResponse = GetUsernamesByIdApiUsersUsernamesPostResponses[keyof GetUsernamesByIdApiUsersUsernamesPostResponses];
+
 export type GetMyGroupsApiPersonalGroupsMeGetData = {
     body?: never;
     path?: never;
@@ -475,34 +506,6 @@ export type DeleteApiPersonalGroupsIdDeleteErrors = {
 export type DeleteApiPersonalGroupsIdDeleteError = DeleteApiPersonalGroupsIdDeleteErrors[keyof DeleteApiPersonalGroupsIdDeleteErrors];
 
 export type DeleteApiPersonalGroupsIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetApiPersonalGroupsIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/personal_groups/{id}';
-};
-
-export type GetApiPersonalGroupsIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetApiPersonalGroupsIdGetError = GetApiPersonalGroupsIdGetErrors[keyof GetApiPersonalGroupsIdGetErrors];
-
-export type GetApiPersonalGroupsIdGetResponses = {
     /**
      * Successful Response
      */

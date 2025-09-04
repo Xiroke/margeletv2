@@ -29,6 +29,7 @@ class UserDaoProtocol(
     async def get_user_by_token(self, token: str) -> ReadUserSchema: ...
     async def set_is_verified(self, user_id: UUID, value: bool): ...
     async def set_is_active(self, user_id: UUID, value: bool): ...
+    async def get_usernames_by_id(self, user_ids: list[UUID]) -> dict[str, str]: ...
 
 
 class UserSqlDao(
@@ -87,3 +88,9 @@ class UserSqlDao(
     async def set_is_active(self, user_id: UUID, value: bool):
         smtp = update(self.model_type).filter_by(id=user_id).values(is_active=value)
         await self.session.execute(smtp)
+
+    async def get_usernames_by_id(self, user_ids: list[UUID]) -> dict[str, str]:
+        smtp = select(UserModel.id, UserModel.name).filter(UserModel.id.in_(user_ids))
+        result = await self.session.execute(smtp)
+
+        return {str(row.id): row.name for row in result.all()}

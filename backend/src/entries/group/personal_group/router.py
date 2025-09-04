@@ -37,5 +37,5 @@ router_crud(
     UUID,
     CreatePersonalGroupSchema,
     UpdatePersonalGroupSchema,
-    excepted_router=["create"],
+    excepted_router=["create", "get"],
 )
