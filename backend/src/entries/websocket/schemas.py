@@ -6,7 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from src.entries.message.schemas import CreateMessageSchema, ReadMessageSchema
+from src.entries.message.schemas import CreateMessageNoUserSchema, ReadMessageSchema
 
 
 class WsDataEvent(StrEnum):
@@ -25,7 +25,7 @@ class WsOutDataSchema(BaseModel):
 
 
 class WsInMessageSchema(WsInDataSchema):
-    data: CreateMessageSchema
+    data: CreateMessageNoUserSchema
 
 
 class WsOutMessageSchema(WsOutDataSchema):

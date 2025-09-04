@@ -49,6 +49,7 @@ body {
 
 .selected_chat {
   justify-content: end;
+  flex-direction: column-reverse;
 }
 
 .unselected_chat {

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from bootstrap.exceptions_fastapi import register_exception_handler
 from bootstrap.fastapi import register_fastapi
 from bootstrap.logging import register_logging
+from bootstrap.openapi import register_schemas
 from bootstrap.permissions import register_permission
 from config import settings
 from src.core.nosql.database import init_mongo_db
@@ -28,6 +29,7 @@ register_fastapi(app)
 from bootstrap.routes import register_routes  # noqa: E402
 
 register_routes(app)
+register_schemas(app)
 
 
 @app.get(

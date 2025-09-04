@@ -195,6 +195,57 @@ export type ValidationError = {
     type: string;
 };
 
+/**
+ * WsDataEvent
+ */
+export type WsDataEvent = 'message';
+
+/**
+ * WsInDataSchema
+ */
+export type WsInDataSchema = {
+    event?: WsDataEvent;
+    /**
+     * Data
+     */
+    data: unknown;
+};
+
+/**
+ * WsInMessageSchema
+ */
+export type WsInMessageSchema = {
+    event?: WsDataEvent;
+    data: CreateMessageNoUserSchema;
+};
+
+/**
+ * WsOutDataSchema
+ */
+export type WsOutDataSchema = {
+    event?: WsDataEvent;
+    /**
+     * Data
+     */
+    data: unknown;
+    /**
+     * To User
+     */
+    to_user: string;
+};
+
+/**
+ * WsOutMessageSchema
+ */
+export type WsOutMessageSchema = {
+    event?: WsDataEvent;
+    data: ReadMessageSchema;
+    /**
+     * To User
+     */
+    to_user: string;
+};
+
 export type LoginApiAuthLoginPostData = {
     body: LoginUserSchema;
     path?: never;
@@ -663,6 +714,23 @@ export type GetLatestMessagesByGroupApiMessagesGroupIdGetResponses = {
 };
 
 export type GetLatestMessagesByGroupApiMessagesGroupIdGetResponse = GetLatestMessagesByGroupApiMessagesGroupIdGetResponses[keyof GetLatestMessagesByGroupApiMessagesGroupIdGetResponses];
+
+export type RegisterSchemasRouteRegisterSchemasGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/register_schemas';
+};
+
+export type RegisterSchemasRouteRegisterSchemasGetResponses = {
+    /**
+     * Response Register Schemas Route Register Schemas Get
+     * Successful Response
+     */
+    200: WsInDataSchema | WsOutDataSchema | WsInMessageSchema | WsOutMessageSchema;
+};
+
+export type RegisterSchemasRouteRegisterSchemasGetResponse = RegisterSchemasRouteRegisterSchemasGetResponses[keyof RegisterSchemasRouteRegisterSchemasGetResponses];
 
 export type PingApiHealthcheckGetData = {
     body?: never;

@@ -3,6 +3,7 @@ from logging import getLogger
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException
 
 from src.entries.auth.depends import AuthServiceDep, get_current_user_from_access
+from src.entries.group.group.depends import GroupServiceDep
 from src.entries.message.depends import MessageServiceDep
 from src.entries.message.schemas import CreateMessageSchema
 from src.entries.websocket.connection_manager import ConnectionManagerDep
@@ -18,6 +19,7 @@ async def websocket_endpoint(
     websocket: WebSocket,
     access_token: str,
     message_service: MessageServiceDep,
+    group_service: GroupServiceDep,
     auth: AuthServiceDep,
     connection_manager: ConnectionManagerDep,
 ):
@@ -32,17 +34,17 @@ async def websocket_endpoint(
     try:
         while True:
             json_websocket_data = await websocket.receive_json()
+            log.debug("ws accepted data :%s", json_websocket_data)
             websocket_data = WsInDataSchema.model_validate(json_websocket_data)
 
             match websocket_data.event:
                 case WsDataEvent.MESSAGE:
                     message = CreateMessageSchema(
-                        **websocket_data.data.model_dump(), user_id=user.id
+                        **websocket_data.data, user_id=user.id
                     )
 
                     await connection_manager.broadcast_group_message(
-                        message,
-                        message_service,
+                        message, message_service, group_service
                     )
 
     except WebSocketDisconnect:

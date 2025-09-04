@@ -8,7 +8,7 @@ from fastapi import Depends, WebSocket
 from pydantic import ValidationError
 
 from src.core.redis.depends import redis_storage
-from src.entries.group.group.dao import GroupDaoProtocolBase
+from src.entries.group.group.dao import GroupDaoProtocolParent
 from src.entries.message.depends import MessageServiceDep
 from src.entries.message.schemas import CreateMessageSchema
 from src.entries.websocket.enums import UserStatus
@@ -68,19 +68,19 @@ class ConnectionManager:
         self,
         obj: CreateMessageSchema,
         message_service: MessageServiceDep,
-        group_service: GroupDaoProtocolBase,  # you can pass service
+        group_service: GroupDaoProtocolParent,  # you can pass service
     ) -> None:
         message = await message_service.create(obj)
 
-        users_id = await group_service.get_users_id_in_group(message.to_group_id)
+        user_ids = await group_service.get_user_ids_in_group(message.to_group_id)
 
         ws_data = WsOutMessageSchema(
             event=WsDataEvent.MESSAGE, data=message, to_user=uuid4()
         )
 
-        for user_id in users_id:
+        # send message to all users
+        for user_id in user_ids:
             ws_data.to_user = user_id
-            # send message to all users
             await self.redis.publish(
                 WsDataEvent.MESSAGE,
                 ws_data.model_dump_json(),
@@ -91,12 +91,14 @@ class ConnectionManager:
         Handle redis message
         """
 
+        # example raw_message
+        # {'type': 'subscribe', 'pattern': None, 'channel': b'message', 'data': 1}
         async for raw_message in self._pubsub.listen():
-            if raw_message["event"] != WsDataEvent.MESSAGE:
+            if raw_message["type"] != WsDataEvent.MESSAGE:
                 continue
 
             try:
-                message = WsOutMessageSchema.model_validate_json(raw_message)
+                message = WsOutMessageSchema.model_validate_json(raw_message["data"])
                 await self.send_local_chat(message)
             except ValidationError as e:
                 log.error(f"Error processing message: {e}")

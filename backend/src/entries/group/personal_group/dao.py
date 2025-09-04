@@ -9,7 +9,7 @@ from src.entries.auth.user.models import UserModel
 from src.entries.group.group.models import GroupModel, UserToGroupModel
 from src.utils.exceptions import UniqueViolationError
 
-from ..group.dao import GroupDaoProtocolBase, GroupSqlDaoBase
+from ..group.dao import GroupDaoProtocolParent, GroupSqlDaoParent
 from .models import PersonalGroupModel
 from .schemas import (
     CreatePersonalGroupSchema,
@@ -26,7 +26,7 @@ class PersonalGroupDaoProtocol(
         CreatePersonalGroupSchema,
         UpdatePersonalGroupSchema,
     ],
-    GroupDaoProtocolBase,
+    GroupDaoProtocolParent,
     Protocol,
 ):
     @override
@@ -49,7 +49,7 @@ class PersonalGroupSqlDao(
         CreatePersonalGroupSchema,
         UpdatePersonalGroupSchema,
     ],
-    GroupSqlDaoBase,
+    GroupSqlDaoParent,
 ):
     @override
     async def create(

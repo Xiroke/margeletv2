@@ -2,16 +2,16 @@ import { memo } from 'react';
 
 import { clsx } from 'clsx';
 
-import type { FC } from 'react';
+import type { FC, InputHTMLAttributes } from 'react';
 import cls from './ChatInput.module.scss';
 
-interface ChatInputProps {
+interface ChatInputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
 }
 
 /** Докстринг */
 export const ChatInput: FC<ChatInputProps> = memo((props: ChatInputProps) => {
-  const { className } = props;
+  const { className, ...rest } = props;
 
-  return <input className={clsx(cls.chat_input, className)} />;
+  return <input {...rest} className={clsx(cls.chat_input, className)} />;
 });

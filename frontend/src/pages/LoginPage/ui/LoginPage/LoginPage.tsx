@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 import { authQueryProps } from '@/features/auth/api';
 import type { LoginUserSchema } from '@/shared/api/generated';
 import { Button } from '@/shared/ui/Button/Button';
@@ -15,7 +13,7 @@ interface LoginPageProps {
 }
 
 /** Докстринг */
-export const LoginPage: FC<LoginPageProps> = memo((props: LoginPageProps) => {
+export const LoginPage: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { className } = props;
   const navigate = useNavigate();
   const login = useMutation({ ...authQueryProps.loginMut() });
@@ -71,4 +69,4 @@ export const LoginPage: FC<LoginPageProps> = memo((props: LoginPageProps) => {
       </div>
     </form>
   );
-});
+};

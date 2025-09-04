@@ -6,7 +6,7 @@ from sqlalchemy import insert
 from src.core.abstract.dao import DaoProtocol
 from src.core.abstract.dao.dao import DaoProtocol
 from src.core.abstract.dao.sql_impl import SqlDaoImpl
-from src.entries.group.group.dao import GroupDaoProtocolBase, GroupSqlDaoBase
+from src.entries.group.group.dao import GroupDaoProtocolParent, GroupSqlDaoParent
 from src.entries.group.group.models import UserToGroupModel
 from src.entries.group.role.constants import admin_rules, creator_rules, member_rules
 from src.entries.group.role.models import RoleModel, RoleToUserGroup
@@ -29,7 +29,7 @@ class SimpleGroupDaoProtocol(
         CreateSimpleGroupSchema,
         UpdateSimpleGroupSchema,
     ],
-    GroupDaoProtocolBase,
+    GroupDaoProtocolParent,
     Protocol,
 ):
     async def create(self, obj: CreateGroupSchema) -> ReadSimpleGroupSchema: ...
@@ -50,7 +50,7 @@ class SimpleGroupSqlDao(
         CreateSimpleGroupSchema,
         UpdateSimpleGroupSchema,
     ],
-    GroupSqlDaoBase,
+    GroupSqlDaoParent,
 ):
     @override
     async def create(self, obj: CreateSimpleGroupSchema) -> ReadSimpleGroupSchema:
