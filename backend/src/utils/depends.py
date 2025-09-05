@@ -1,4 +1,4 @@
-from typing import Annotated, Any
+from typing import Any
 
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -13,18 +13,22 @@ Oauth2SchemeDep = OAuth2PasswordBearer(
 )
 
 
-def get_sql_dao_dep(dao_class: type[SqlDaoImpl[Any, Any, Any, Any, Any]]):
+def get_sql_dao_dep[T: SqlDaoImpl[Any, Any, Any, Any, Any]](
+    dao_class: type[T],
+) -> Any:
     """
     Creates a depends dao
 
     Example:
-        UserDaoDep = get_sql_dao_dep(UserSqlDao)
+        GroupDaoDep = Annotated[
+            GroupSqlDao, get_sql_dao_dep(GroupSqlDao)
+        ]
     """
 
-    async def _get_dao(session: async_session):
+    async def _get_dao(session: async_session) -> T:
         return dao_class(session)
 
-    return Annotated[dao_class, Depends(_get_dao)]
+    return Depends(_get_dao)
 
 
 __all__ = ["Oauth2SchemeDep"]

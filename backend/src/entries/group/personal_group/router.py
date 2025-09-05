@@ -6,7 +6,11 @@ from src.entries.auth.depends import CurrentUserDep
 from src.entries.group.personal_group.depends import PersonalGroupServiceDep
 from src.utils.router_crud import router_crud
 
-from .schemas import CreatePersonalGroupSchema, UpdatePersonalGroupSchema
+from .schemas import (
+    CreatePersonalGroupSchema,
+    ReadPersonalGroupSchema,
+    UpdatePersonalGroupSchema,
+)
 
 router = APIRouter(prefix="/personal_groups", tags=["group"])
 
@@ -15,7 +19,7 @@ router = APIRouter(prefix="/personal_groups", tags=["group"])
 async def get_my_groups(
     user: CurrentUserDep,
     service: PersonalGroupServiceDep,
-):
+) -> list[ReadPersonalGroupSchema]:
     return await service.get_groups_by_user(user.id)
 
 

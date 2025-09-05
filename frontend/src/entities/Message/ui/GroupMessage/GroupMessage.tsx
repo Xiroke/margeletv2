@@ -9,7 +9,7 @@ import cls from './GroupMessage.module.scss';
 interface GroupMessageProps {
   className?: string;
   message: ReadMessageSchema;
-  author: string;
+  author: string | undefined;
 }
 
 /** Докстринг */
@@ -28,9 +28,11 @@ export const GroupMessage: FC<GroupMessageProps> = memo(
 
     return (
       <div className={clsx(cls.group_message, className)}>
-        <div className={cls.author}>{author}</div>
-        <div className={cls.text}>{message.message}</div>
-        <div className={cls.created_at}>{timeStr}</div>
+        {author && <span className={cls.author}>{author}</span>}
+        <div className={cls.message_row}>
+          <span className={cls.text}>{message.message}</span>
+          <span className={cls.created_at}>{timeStr}</span>
+        </div>
       </div>
     );
   },

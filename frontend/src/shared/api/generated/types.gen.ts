@@ -131,6 +131,28 @@ export type ReadMessageSchema = {
 };
 
 /**
+ * ReadPersonalGroupSchema
+ */
+export type ReadPersonalGroupSchema = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Type
+     */
+    type: 'simple_group' | 'personal_group';
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Title
+     */
+    title: string;
+};
+
+/**
  * ReadSimpleGroupSchema
  */
 export type ReadSimpleGroupSchema = {
@@ -451,10 +473,13 @@ export type GetMyGroupsApiPersonalGroupsMeGetData = {
 
 export type GetMyGroupsApiPersonalGroupsMeGetResponses = {
     /**
+     * Response Get My Groups Api Personal Groups Me Get
      * Successful Response
      */
-    200: unknown;
+    200: Array<ReadPersonalGroupSchema>;
 };
+
+export type GetMyGroupsApiPersonalGroupsMeGetResponse = GetMyGroupsApiPersonalGroupsMeGetResponses[keyof GetMyGroupsApiPersonalGroupsMeGetResponses];
 
 export type CreateApiPersonalGroupsOtherUserIdPostData = {
     body?: never;

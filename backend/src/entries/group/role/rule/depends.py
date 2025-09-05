@@ -7,7 +7,7 @@ from src.utils.depends import get_sql_dao_dep
 
 from .dao import RuleDaoProtocol, RuleSqlDao
 
-RuleDaoDep = get_sql_dao_dep(RuleSqlDao)
+RuleDaoDep = Annotated[RuleSqlDao, get_sql_dao_dep(RuleSqlDao)]
 
 
 def get_rule_service(dao: RuleDaoDep):

@@ -1,10 +1,37 @@
-.chat_input {
+.input_wrapper {
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  height: 48px;
-  font-size: 16px;
-  padding: 8px 12px;
+  position: relative;
+  align-items: flex-end;
+  min-height: 48px;
   border: 2px solid #ccc;
   border-radius: 6px;
+  padding: 12px 12px;
+}
+
+.chat_input {
+  all: unset;
+  border-radius: 6px;
+  border: none;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
   outline: none;
-  transition: border-color 0.3s ease;
+  padding-right: 52px;
+  transition: height 0.2s ease-out;
+  resize: none;
+  overflow-y: hidden;
+  line-height: 1.5; // Для красивого переноса строк
+  box-sizing: border-box;
+  word-break: break-word;
+}
+
+.send_icon {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  color: var(--text-second);
+  transition: top 0.2s ease-out;
+  cursor: pointer;
 }

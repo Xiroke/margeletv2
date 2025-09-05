@@ -8,7 +8,7 @@ from src.utils.depends import get_sql_dao_dep
 from .dao import UserDaoProtocol, UserSqlDao
 from .service import UserService
 
-UserDaoDep = get_sql_dao_dep(UserSqlDao)
+UserDaoDep = Annotated[UserSqlDao, get_sql_dao_dep(UserSqlDao)]
 
 
 def get_user_service(

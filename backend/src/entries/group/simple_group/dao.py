@@ -4,7 +4,6 @@ from uuid import UUID
 from sqlalchemy import insert
 
 from src.core.abstract.dao import DaoProtocol
-from src.core.abstract.dao.dao import DaoProtocol
 from src.core.abstract.dao.sql_impl import SqlDaoImpl
 from src.entries.group.group.dao import GroupDaoProtocolParent, GroupSqlDaoParent
 from src.entries.group.group.models import UserToGroupModel
@@ -12,7 +11,6 @@ from src.entries.group.role.constants import admin_rules, creator_rules, member_
 from src.entries.group.role.models import RoleModel, RoleToUserGroup
 from src.entries.group.role.rule.models import RoleToRuleModel
 
-from ..group.schemas import CreateGroupSchema
 from .models import SimpleGroupModel
 from .schemas import (
     CreateSimpleGroupSchema,
@@ -22,6 +20,7 @@ from .schemas import (
 
 
 class SimpleGroupDaoProtocol(
+    GroupDaoProtocolParent,
     DaoProtocol[
         SimpleGroupModel,
         UUID,
@@ -29,10 +28,9 @@ class SimpleGroupDaoProtocol(
         CreateSimpleGroupSchema,
         UpdateSimpleGroupSchema,
     ],
-    GroupDaoProtocolParent,
     Protocol,
 ):
-    async def create(self, obj: CreateGroupSchema) -> ReadSimpleGroupSchema: ...
+    async def create(self, obj: CreateSimpleGroupSchema) -> ReadSimpleGroupSchema: ...
     async def set_creator_group(
         self, group_id: UUID, user_id: UUID, creator_role_id
     ) -> None: ...

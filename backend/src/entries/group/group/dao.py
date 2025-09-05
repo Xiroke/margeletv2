@@ -5,6 +5,7 @@ from uuid import UUID
 from sqlalchemy import and_, delete, insert, select
 
 from src.core.abstract.dao.sql_impl import SqlDaoImpl
+from src.entries.group.role.models import RoleToUserGroup
 
 from .models import GroupModel, UserToGroupModel
 from .schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
@@ -14,7 +15,9 @@ class GroupDaoProtocol(Protocol):
     async def is_user_in_group(self, group_id: UUID, user_id: UUID) -> bool: ...
     async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None: ...
     async def remove_user_from_group(self, group_id: UUID, user_id: UUID) -> None: ...
-    async def add_role_to_user(self, user_id: UUID, role_id: UUID) -> None: ...
+    async def add_role_to_user(
+        self, user_id: UUID, group_id, role_id: UUID
+    ) -> None: ...
     async def get_user_ids_in_group(self, group_id: UUID) -> list[UUID]: ...
 
 
@@ -54,6 +57,22 @@ class GroupSqlDaoBase:
             )
         )
         return list(result.scalars().all())
+
+    async def add_role_to_user(
+        self, user_id: UUID, group_id: UUID, role_id: UUID
+    ) -> None:
+        user_group_subquery = (
+            select(UserToGroupModel.id)
+            .filter_by(user_id=user_id, group_id=group_id)
+            .scalar_subquery()
+        )
+
+        smtp = insert(RoleToUserGroup).values(
+            user_group_id=user_group_subquery,
+            role_id=role_id,
+        )
+
+        await self.session.execute(smtp)  # pyright: ignore[reportAttributeAccessIssue]
 
 
 class GroupSqlDao(

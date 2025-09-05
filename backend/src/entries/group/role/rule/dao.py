@@ -21,8 +21,7 @@ class RuleDaoProtocol(
 
     """Get all user's rules from all roles in concrete group"""
 
-    async def get_rule_by_value(self, value: str) -> ReadRuleSchema: ...
-    async def get_rules_by_value_raw(self, values: list[str]) -> list[RuleModel]: ...
+    async def get_rules_by_id_raw(self, ids: list[str]) -> list[RuleModel]: ...
 
 
 class RuleSqlDao(SqlDaoImpl[RuleModel, str, ReadRuleSchema, CreateRuleSchema, Any]):

@@ -16,7 +16,7 @@ import type {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import { Settings, UserIcon, UsersIcon } from 'lucide-react';
-import type { FC, KeyboardEventHandler } from 'react';
+import type { FC } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { ChatInput } from '../ChatInput/ChatInput';
 import cls from './ChatPage.module.scss';
@@ -24,11 +24,6 @@ import cls from './ChatPage.module.scss';
 interface ChatPageProps {
   className?: string;
 }
-
-const groupQueryProps = {
-  simple: simpleGroupQueryProps.getMySimpleGroups,
-  personal: personalGroupQueryProps.getMyPersonalGroups,
-};
 
 /** Докстринг */
 export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
@@ -42,9 +37,6 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
   const ws = useWS();
 
   const queryClient = useQueryClient();
-  const { data: groups } = useQuery({
-    ...groupQueryProps[groupType](),
-  });
 
   const getLatestMessageQuery = messageQueryProps.getLatestMessageOpt({
     path: { group_id: groupId! },
@@ -69,12 +61,7 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
     ...userQueryProps.getUsernamesByIdMut(),
   });
 
-  const onEnter: KeyboardEventHandler<HTMLInputElement> = (e) => {
-    if (e.key != 'Enter') return;
-
-    const value = e.currentTarget.value;
-    e.currentTarget.value = '';
-
+  const onSend = (value: string) => {
     const ws_data: WsInMessageSchema = {
       event: 'message',
       data: { message: value, to_group_id: groupId! },
@@ -102,7 +89,6 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
   }, []);
 
   useEffect(() => {
-    console.log(unknowbUsers);
     if (unknowbUsers.size === 0) return;
 
     const fetchUsername = async () => {
@@ -135,33 +121,29 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
 
         <Settings size={28} strokeWidth={1.6} />
       </div>
+
       <div className={cls.group_list}>
-        {groups
-          ? groups.map((group, idx) => (
-              <Link
-                to="."
-                params={{ groupId: group.id }}
-                className="aSimple"
-                key={group.id}
-              >
-                <GroupChatCard
-                  key={idx}
-                  groupChat={{ ...groupChatTest, title: group.title }}
-                />
-              </Link>
-            ))
-          : 'Нет групп'}
+        <ChatGroupList groupType={groupType} />
       </div>
+
       <div className={cls.chat_line} />
       {groupId ? (
         <div className={cls.selected_chat}>
-          <ChatInput onKeyDown={onEnter} />
+          {/* the order of html elements is reversed */}
+          <ChatInput onSend={onSend} placeholder="Сообщение" />
           {messages &&
-            messages.map((message) => (
+            messages.map((message, idx) => (
               <GroupMessage
                 key={message.id}
                 message={message}
-                author={knownUsers[message.user_id]}
+                // if there are multiple messages in a row from the wrong user,
+                // then only the first message will have a name.
+                author={
+                  !messages[idx + 1] ||
+                  messages[idx + 1].user_id != message.user_id
+                    ? knownUsers[message.user_id]
+                    : undefined
+                }
               />
             ))}
         </div>
@@ -169,5 +151,44 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
         <div className={cls.unselected_chat}>Выберите группу</div>
       )}
     </div>
+  );
+};
+
+const groupQueryProps = {
+  simple: simpleGroupQueryProps.getMySimpleGroups,
+  personal: personalGroupQueryProps.getMyPersonalGroups,
+};
+
+interface ChatGroupListProps {
+  className?: string;
+  groupType: 'simple' | 'personal';
+}
+
+export const ChatGroupList: FC<ChatGroupListProps> = (
+  props: ChatGroupListProps,
+) => {
+  const { groupType } = props;
+  const { data: groups } = useQuery({
+    ...groupQueryProps[groupType](),
+  });
+
+  return (
+    <>
+      {groups
+        ? groups.map((group, idx) => (
+            <Link
+              to="."
+              params={{ groupId: group.id }}
+              className="aSimple"
+              key={group.id}
+            >
+              <GroupChatCard
+                key={idx}
+                groupChat={{ ...groupChatTest, title: group.title }}
+              />
+            </Link>
+          ))
+        : 'Нет групп'}
+    </>
   );
 };

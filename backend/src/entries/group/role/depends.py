@@ -7,7 +7,7 @@ from src.utils.depends import get_sql_dao_dep
 from .dao import RoleDaoProtocol, RoleSqlDao
 from .service import RoleService
 
-RoleDaoDep = get_sql_dao_dep(RoleSqlDao)
+RoleDaoDep = Annotated[RoleSqlDao, get_sql_dao_dep(RoleSqlDao)]
 
 
 def get_role_service(

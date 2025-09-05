@@ -7,9 +7,9 @@ from src.entries.group.simple_group.service import SimpleGroupService
 from src.infrastructure.s3.depends import S3ServiceDep
 from src.utils.depends import get_sql_dao_dep
 
-from .dao import SimpleGroupDaoProtocol, SimpleGroupSqlDao
+from .dao import SimpleGroupSqlDao
 
-SimpleGroupDaoDep = get_sql_dao_dep(SimpleGroupSqlDao)
+SimpleGroupDaoDep = Annotated[SimpleGroupSqlDao, get_sql_dao_dep(SimpleGroupSqlDao)]
 
 
 def get_simple_group_service(
@@ -18,8 +18,6 @@ def get_simple_group_service(
     return SimpleGroupService(dao, rule_dao, storage)
 
 
-SimpleGroupServiceDep = Annotated[
-    SimpleGroupService | SimpleGroupDaoProtocol, Depends(get_simple_group_service)
-]
+SimpleGroupServiceDep = Annotated[SimpleGroupService, Depends(get_simple_group_service)]
 
 __all__ = ["SimpleGroupDaoDep", "SimpleGroupServiceDep"]

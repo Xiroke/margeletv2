@@ -1,5 +1,41 @@
 .group_message {
   background-color: var(--accent-primary);
-  max-width: 100%;
-  min-width: 40%;
+  max-width: 70%;
+  min-width: 0;
+  padding: 12px 12px 12px 12px;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.author {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.message_row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.text {
+  flex: 1;
+  width: fit-content;
+  min-width: 0;
+  overflow-wrap: break-word;
+  margin-right: 2px;
+}
+
+.created_at {
+  font-size: 13px;
+  float: right;
+  margin-bottom: -6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  width: fit-content;
+  color: var(--text-second);
 }
