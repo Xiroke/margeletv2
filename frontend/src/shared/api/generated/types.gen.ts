@@ -16,7 +16,7 @@ export type BodyUploadAvatarApiUsersAvatarMePost = {
 export type CreateMessageNoUserSchema = {
     /**
      * Message
-     * Message must be less than 2000 characters
+     * Message must be less than 2000 characters and more than 1 character
      */
     message: string;
     /**
@@ -104,6 +104,24 @@ export type ReadAccessTokenSchema = {
 };
 
 /**
+ * ReadMessageCursorPaginatedSchema
+ */
+export type ReadMessageCursorPaginatedSchema = {
+    /**
+     * Messages
+     */
+    messages: Array<ReadMessageSchema>;
+    /**
+     * Has More
+     */
+    has_more: boolean;
+    /**
+     * Cursor
+     */
+    cursor: string;
+};
+
+/**
  * ReadMessageSchema
  */
 export type ReadMessageSchema = {
@@ -113,7 +131,6 @@ export type ReadMessageSchema = {
     id: string;
     /**
      * Message
-     * Message must be less than 2000 characters
      */
     message: string;
     /**
@@ -712,7 +729,7 @@ export type CreateMessageApiMessagesPostResponses = {
     200: unknown;
 };
 
-export type GetLatestMessagesByGroupApiMessagesGroupIdGetData = {
+export type GetCursorMessagesByGroupApiMessagesGroupIdGetData = {
     body?: never;
     path: {
         /**
@@ -720,28 +737,36 @@ export type GetLatestMessagesByGroupApiMessagesGroupIdGetData = {
          */
         group_id: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Limit
+         */
+        limit?: number;
+        /**
+         * Cursor
+         */
+        cursor?: string | null;
+    };
     url: '/api/messages/{group_id}';
 };
 
-export type GetLatestMessagesByGroupApiMessagesGroupIdGetErrors = {
+export type GetCursorMessagesByGroupApiMessagesGroupIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetLatestMessagesByGroupApiMessagesGroupIdGetError = GetLatestMessagesByGroupApiMessagesGroupIdGetErrors[keyof GetLatestMessagesByGroupApiMessagesGroupIdGetErrors];
+export type GetCursorMessagesByGroupApiMessagesGroupIdGetError = GetCursorMessagesByGroupApiMessagesGroupIdGetErrors[keyof GetCursorMessagesByGroupApiMessagesGroupIdGetErrors];
 
-export type GetLatestMessagesByGroupApiMessagesGroupIdGetResponses = {
+export type GetCursorMessagesByGroupApiMessagesGroupIdGetResponses = {
     /**
-     * Response Get Latest Messages By Group Api Messages  Group Id  Get
      * Successful Response
      */
-    200: Array<ReadMessageSchema>;
+    200: ReadMessageCursorPaginatedSchema;
 };
 
-export type GetLatestMessagesByGroupApiMessagesGroupIdGetResponse = GetLatestMessagesByGroupApiMessagesGroupIdGetResponses[keyof GetLatestMessagesByGroupApiMessagesGroupIdGetResponses];
+export type GetCursorMessagesByGroupApiMessagesGroupIdGetResponse = GetCursorMessagesByGroupApiMessagesGroupIdGetResponses[keyof GetCursorMessagesByGroupApiMessagesGroupIdGetResponses];
 
 export type RegisterSchemasRouteRegisterSchemasGetData = {
     body?: never;

@@ -1,0 +1,15 @@
+.message_list {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  gap: 16px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  align-items: start;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+.message_list_loader {
+  margin: 0 auto;
+}

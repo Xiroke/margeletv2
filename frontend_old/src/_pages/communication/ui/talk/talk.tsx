@@ -1,26 +1,23 @@
 "use client";
+import clsx from "clsx";
 import {
   HTMLAttributes,
   KeyboardEventHandler,
   useEffect,
-  useReducer,
   useRef,
   useState,
 } from "react";
-import clsx from "clsx";
 
-import styles from "./talk.module.scss";
-import config from "@/shared/config";
-import { useAppDispatch, useAppSelector } from "@/shared/lib/hooks";
-import Sending from "../sending";
+import { ReadMessageSchema, useApiMessage } from "@/entities/message/model";
 import Message from "@/entities/message/ui";
-import { useApiMessage, ReadMessageSchema } from "@/entities/message/model";
-import { useWS } from "@/shared/lib/providers";
-import { InfiniteData, useQueryClient } from "@tanstack/react-query";
-import useMediaQuery from "@/shared/lib/hooks/use_media_query";
-import { useToastStatus } from "@/shared/lib/hooks/use_toast";
 import { ReadMessagePaginatedSchema } from "@/shared/api/requests";
 import { useIntersectionObserver } from "@/shared/lib/hooks/use_intersection_observer";
+import useMediaQuery from "@/shared/lib/hooks/use_media_query";
+import { useToastStatus } from "@/shared/lib/hooks/use_toast";
+import { useWS } from "@/shared/lib/providers";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
+import Sending from "../sending";
+import styles from "./talk.module.scss";
 
 export interface TalkProps extends HTMLAttributes<HTMLDivElement> {
   chatId: string;

@@ -41,21 +41,21 @@ body {
 .selected_chat,
 .unselected_chat {
   display: flex;
-  flex-direction: column;
-  margin-bottom: 40px;
+  margin: 0 auto 40px auto;
 }
 
 .selected_chat {
   justify-content: end;
-  flex-direction: column-reverse;
+  flex-direction: column;
   width: 36%;
-  margin: 0 auto 40px auto;
   align-items: start;
   gap: 12px;
+  height: 90vh;
 }
 
 .unselected_chat {
   flex: 1;
+  flex-direction: column;
   justify-content: center;
   font-weight: 500;
   align-items: center;

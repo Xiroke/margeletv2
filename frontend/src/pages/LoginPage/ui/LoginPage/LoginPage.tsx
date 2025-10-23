@@ -1,12 +1,12 @@
-import { authQueryProps } from '@/features/auth/api';
-import type { LoginUserSchema } from '@/shared/api/generated';
-import { Button } from '@/shared/ui/Button/Button';
-import { Input } from '@/shared/ui/Input/Input';
-import { useMutation } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
-import { clsx } from 'clsx';
-import type { FC, FormEvent } from 'react';
-import cls from './LoginPage.module.scss';
+import { authQueryProps } from "@/features/auth/api";
+import type { LoginUserSchema } from "@/shared/api/generated";
+import { Button } from "@/shared/ui/Button/Button";
+import { Input } from "@/shared/ui/Input/Input";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { clsx } from "clsx";
+import type { FC, FormEvent } from "react";
+import cls from "./LoginPage.module.scss";
 
 interface LoginPageProps {
   className?: string;
@@ -28,7 +28,7 @@ export const LoginPage: FC<LoginPageProps> = (props: LoginPageProps) => {
     const data = Object.fromEntries(formData.entries()) as LoginUserSchema;
 
     login.mutate({ body: data });
-    navigate({ to: '/chat' });
+    navigate({ to: "/simple" });
   };
 
   return (

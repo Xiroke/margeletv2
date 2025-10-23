@@ -1,12 +1,12 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
-import { settings } from '@/config';
-import { authQueryProps } from '@/features/auth/api';
-import type { WsInDataSchema, WsOutDataSchema } from '@/shared/api/generated';
-import { useMutation } from '@tanstack/react-query';
-import type { PropsWithChildren } from 'react';
+import { settings } from "@/config";
+import { authQueryProps } from "@/features/auth/api";
+import type { WsInDataSchema, WsOutDataSchema } from "@/shared/api/generated";
+import { useMutation } from "@tanstack/react-query";
+import type { PropsWithChildren } from "react";
 
-type WsEvent = 'message';
+type WsEvent = "message";
 
 interface SendDataI {
   event: WsEvent;
@@ -34,21 +34,21 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     let ws: WebSocket | null = null;
 
     const runWebsocket = async () => {
-      const token_data = await tokenMut.mutateAsync({ credentials: 'include' });
+      const token_data = await tokenMut.mutateAsync({ credentials: "include" });
       const { access_token } = token_data;
       ws = new WebSocket(
-        `${settings.VITE_BACKEND_WS_URL}/api/ws?access_token=${access_token}`,
+        `${settings.VITE_BACKEND_WS_URL}/api/ws?access_token=${access_token}`
       );
 
       ws.onopen = () => {
-        console.log('connect');
+        console.log("connect");
         setIsConnected(true);
       };
 
       ws.onmessage = (event) => {
         const data: WsOutDataSchema = JSON.parse(event.data);
 
-        if (data.event != 'message') {
+        if (data.event != "message") {
           return;
         }
 
@@ -56,7 +56,7 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
       };
 
       ws.onclose = () => {
-        console.log('disconnect');
+        console.log("disconnect");
         setIsConnected(false);
       };
 
@@ -82,7 +82,7 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {
-      console.warn('WebSocket is not connected');
+      console.warn("WebSocket is not connected");
     }
   };
 
@@ -109,7 +109,7 @@ export const useWS = () => {
   const context = useContext(WSContext);
 
   if (!context) {
-    throw new Error('ws provider is not found');
+    throw new Error("ws provider is not found");
   }
 
   return context;

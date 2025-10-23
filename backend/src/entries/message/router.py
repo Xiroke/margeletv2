@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -7,7 +8,7 @@ from src.entries.message.depends import MessageServiceDep
 from src.entries.message.schemas import (
     CreateMessageNoUserSchema,
     CreateMessageSchema,
-    ReadMessageSchema,
+    ReadMessageCursorPaginatedSchema,
 )
 
 router = APIRouter(prefix="/messages", tags=["messages"])
@@ -25,10 +26,13 @@ async def create_message(
 
 
 @router.get("/{group_id}")
-async def get_latest_messages_by_group(
-    service: MessageServiceDep, group_id: UUID
-) -> list[ReadMessageSchema]:
-    return await service.get_messages_by_group(group_id, amount=10)
+async def get_cursor_messages_by_group(
+    service: MessageServiceDep,
+    group_id: UUID,
+    limit: int = 15,
+    cursor: datetime | None = None,
+) -> ReadMessageCursorPaginatedSchema:
+    return await service.get_cursor_messages_by_group(group_id, limit, cursor)
 
 
 # @router.get("/chat/{chat_id}")
@@ -48,12 +52,12 @@ async def get_latest_messages_by_group(
 #         ),
 #     ] = 1,
 #     skip: Annotated[int, Query(ge=0)] = 0,
-# ) -> ReadMessagePaginatedSchema:
+# ) -> ReadMessageCursorPaginatedSchema:
 #     chat_db = await chat_service.get(chat_id)
 
 #     await group_perm.check_user_in_group(user.id, chat_db.group_id)
 
-#     raw_messages = await message_service.get_messages_by_group(
+#     raw_messages = await message_service.get_cursor_messages_by_group(
 #         chat_id, amount, page, skip
 #     )
 
@@ -71,4 +75,4 @@ async def get_latest_messages_by_group(
 #         message.author = username_db.username
 #         messages.append(message)
 
-#     return ReadMessagePaginatedSchema(messages=messages, page=page, next_page=page + 1)
+#     return ReadMessageCursorPaginatedSchema(messages=messages, page=page, next_page=page + 1)

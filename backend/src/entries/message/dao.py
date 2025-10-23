@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Protocol
 from uuid import UUID
 
@@ -6,7 +7,12 @@ from beanie import PydanticObjectId
 from src.core.abstract.dao import DaoProtocol, MongoDaoImpl
 
 from .models import MessageModel
-from .schemas import CreateMessageSchema, ReadMessageSchema, UpdateMessageSchema
+from .schemas import (
+    CreateMessageSchema,
+    ReadMessageCursorPaginatedSchema,
+    ReadMessageSchema,
+    UpdateMessageSchema,
+)
 
 
 class MessageDaoProtocol(
@@ -19,9 +25,12 @@ class MessageDaoProtocol(
     ],
     Protocol,
 ):
-    async def get_messages_by_group(
-        self, group_id: UUID, amount: int, skip: int = 0
-    ) -> list[ReadMessageSchema]: ...
+    async def get_cursor_messages_by_group(
+        self,
+        group_id: UUID,
+        amount: int,
+        cursor: datetime | None = None,
+    ) -> ReadMessageCursorPaginatedSchema: ...
 
 
 class MessageMongoDao(
@@ -33,13 +42,24 @@ class MessageMongoDao(
         UpdateMessageSchema,
     ]
 ):
-    async def get_messages_by_group(
-        self, group_id: UUID, amount: int, skip: int = 0
-    ) -> list[ReadMessageSchema]:
-        result = await self.model_type.find_many(
-            {"to_group_id": group_id},
-            sort=[("created_at", -1)],
-            limit=amount,
-            skip=skip,
-        ).to_list()  # type: ignore
-        return [ReadMessageSchema.model_validate(i) for i in result]
+    async def get_cursor_messages_by_group(
+        self, group_id: UUID, amount: int, cursor: datetime | None = None
+    ) -> ReadMessageCursorPaginatedSchema:
+        if cursor:
+            query = MessageModel.find_many(
+                MessageModel.created_at < cursor, {"to_group_id": group_id}
+            )
+        else:
+            query = MessageModel.find_many({"to_group_id": group_id})
+
+        query = query.sort(-MessageModel.created_at).limit(amount + 1)
+        result = await query.to_list()  # type: ignore
+        if not result:
+            return ReadMessageCursorPaginatedSchema(
+                messages=[], has_more=False, cursor=None
+            )
+        has_more = len(result) > amount
+        messages = [ReadMessageSchema.model_validate(i) for i in result]
+        return ReadMessageCursorPaginatedSchema(
+            messages=messages, has_more=has_more, cursor=messages[-1].created_at
+        )

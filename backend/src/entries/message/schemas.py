@@ -9,9 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class BaseMessageSchema(BaseModel):
     id: PydanticObjectId
-    message: str = Field(
-        max_length=2000, description="Message must be less than 2000 characters"
-    )
+    message: str
     user_id: UUID
     to_group_id: UUID
     created_at: datetime
@@ -25,7 +23,9 @@ class ReadMessageSchema(BaseMessageSchema):
 
 class CreateMessageNoUserSchema(BaseModel):
     message: str = Field(
-        max_length=2000, description="Message must be less than 2000 characters"
+        min_length=1,
+        max_length=2000,
+        description="Message must be less than 2000 characters and more than 1 character",
     )
     to_group_id: UUID
 
@@ -36,14 +36,16 @@ class CreateMessageSchema(CreateMessageNoUserSchema):
 
 class UpdateMessageSchema(BaseModel):
     message: str | None = Field(
-        max_length=2000, description="Message must be less than 2000 characters"
+        min_length=1,
+        max_length=2000,
+        description="Message must be less than 2000 characters and more than 1 character",
     )
 
 
-class ReadMessagePaginatedSchema(BaseModel):
+class ReadMessageCursorPaginatedSchema(BaseModel):
     messages: list[ReadMessageSchema]
-    page: int
-    next_page: int  # not delete, this using for generate api in frontend
+    has_more: bool
+    cursor: datetime | None
 
 
 class ReciveDataDTO(CreateMessageSchema):

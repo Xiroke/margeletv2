@@ -1,8 +1,8 @@
-import { clsx } from 'clsx';
-import { SendIcon } from 'lucide-react';
-import type { FC, TextareaHTMLAttributes } from 'react';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import cls from './ChatInput.module.scss';
+import { clsx } from "clsx";
+import { SendIcon } from "lucide-react";
+import type { FC, TextareaHTMLAttributes } from "react";
+import { memo, useCallback, useRef, useState } from "react";
+import cls from "./ChatInput.module.scss";
 
 interface ChatInputProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   className?: string;
@@ -23,30 +23,24 @@ export const ChatInput: FC<ChatInputProps> = memo((props: ChatInputProps) => {
     ...rest
   } = props;
 
-  const [inputValue, setInputValue] = useState<string>(value as string);
+  const [inputValue, setInputValue] = useState<string>((value as string) || "");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Функция для автоматической регулировки высоты
+  // Height changes when the number of rows changes
   const adjustHeight = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
-    // Сбрасываем высоту для получения актуального scrollHeight
-    textarea.style.height = 'auto';
+    // To reduce the size when reducing rows
+    textarea.style.height = "auto";
 
-    // Вычисляем новую высоту
+    // Calculate the textarea height
     const scrollHeight = textarea.scrollHeight;
     const lineHeight = parseInt(getComputedStyle(textarea).lineHeight) || 20;
     const maxHeight = lineHeight * maxRows;
 
-    // Устанавливаем высоту с ограничением по maxRows
     textarea.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
   }, [maxRows]);
-
-  // Обновляем высоту при изменении значения
-  useEffect(() => {
-    adjustHeight();
-  }, [value, adjustHeight]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     adjustHeight();
@@ -54,19 +48,21 @@ export const ChatInput: FC<ChatInputProps> = memo((props: ChatInputProps) => {
     onChange?.(e);
   };
 
+  // shift + enter - moving text to a new line
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && inputValue.trim()) {
       e.preventDefault();
       onSend?.(inputValue);
     }
   };
 
+  // When the send button is pressed
   const handleSendClick = () => {
     onSend?.(inputValue);
   };
 
   return (
-    <div className={clsx(cls.input_wrapper, wrapperClassName)}>
+    <div className={clsx(cls.input_wrapper, wrapperClassName, className)}>
       <textarea
         ref={textareaRef}
         value={inputValue}

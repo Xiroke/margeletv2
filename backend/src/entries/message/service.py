@@ -1,10 +1,11 @@
+from datetime import datetime
 from uuid import UUID
 
 from src.core.abstract.service_proxy_dao import ProxyServiceToDao
 from src.core.abstract.storage_base import StorageBase
 
 from .dao import MessageDaoProtocol
-from .schemas import ReadMessageSchema
+from .schemas import ReadMessageCursorPaginatedSchema
 
 
 class MessageService(ProxyServiceToDao):
@@ -16,9 +17,10 @@ class MessageService(ProxyServiceToDao):
         self.storage_service = storage_service
         self.dao = dao
 
-    async def get_messages_by_group(
-        self, group_id: UUID, amount: int, page=1, skip: int = 0
-    ) -> list[ReadMessageSchema]:
-        return await self.dao.get_messages_by_group(
-            group_id, amount, (page - 1) * amount + skip
-        )
+    async def get_cursor_messages_by_group(
+        self,
+        group_id: UUID,
+        limit: int = 15,
+        cursor: datetime | None = None,
+    ) -> ReadMessageCursorPaginatedSchema:
+        return await self.dao.get_cursor_messages_by_group(group_id, limit, cursor)

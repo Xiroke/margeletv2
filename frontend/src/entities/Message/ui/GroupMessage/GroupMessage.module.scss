@@ -2,17 +2,19 @@
   background-color: var(--accent-primary);
   max-width: 70%;
   min-width: 0;
-  padding: 12px 12px 12px 12px;
+  padding: 8px;
   border-radius: 8px;
   position: relative;
   display: flex;
   flex-direction: column;
+  flex-shrink: 1;
 }
 
 .author {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  color: var(--text-second);
 }
 
 .message_row {
@@ -28,6 +30,7 @@
   min-width: 0;
   overflow-wrap: break-word;
   margin-right: 2px;
+  font-size: 16px;
 }
 
 .created_at {

@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { <FTName | capitalize> } from './<FTName | capitalize>';
+import { MessageList } from './MessageList';
 
-const meta: Meta<typeof <FTName | capitalize>> = {
-    title: '<FTName | capitalize>',
-    component: <FTName | capitalize>,
+const meta: Meta<typeof MessageList> = {
+    title: 'MessageList',
+    component: MessageList,
     globals: { theme: 'light' },
 };
 
 export default meta;
-type Story = StoryObj<typeof <FTName | capitalize>>;
+type Story = StoryObj<typeof MessageList>;
 
 export const Light: Story = {
     args: {},
