@@ -89,6 +89,8 @@ export type LoginUserSchema = {
     password: string;
 };
 
+export type PydanticObjectId = string;
+
 /**
  * ReadAccessTokenSchema
  */
@@ -118,17 +120,14 @@ export type ReadMessageCursorPaginatedSchema = {
     /**
      * Cursor
      */
-    cursor: string;
+    cursor: string | null;
 };
 
 /**
  * ReadMessageSchema
  */
 export type ReadMessageSchema = {
-    /**
-     * Id
-     */
-    id: string;
+    id: PydanticObjectId;
     /**
      * Message
      */
@@ -276,7 +275,19 @@ export type WsOutDataSchema = {
 /**
  * WsOutMessageSchema
  */
-export type WsOutMessageSchema = {
+export type WsOutMessageSchemaInput = {
+    event?: WsDataEvent;
+    data: ReadMessageSchema;
+    /**
+     * To User
+     */
+    to_user: string;
+};
+
+/**
+ * WsOutMessageSchema
+ */
+export type WsOutMessageSchemaOutput = {
     event?: WsDataEvent;
     data: ReadMessageSchema;
     /**
@@ -780,7 +791,7 @@ export type RegisterSchemasRouteRegisterSchemasGetResponses = {
      * Response Register Schemas Route Register Schemas Get
      * Successful Response
      */
-    200: WsInDataSchema | WsOutDataSchema | WsInMessageSchema | WsOutMessageSchema;
+    200: WsInDataSchema | WsOutDataSchema | WsInMessageSchema | WsOutMessageSchemaOutput;
 };
 
 export type RegisterSchemasRouteRegisterSchemasGetResponse = RegisterSchemasRouteRegisterSchemasGetResponses[keyof RegisterSchemasRouteRegisterSchemasGetResponses];

@@ -1,11 +1,14 @@
-import { Link } from '@tanstack/react-router';
-import { clsx } from 'clsx';
-import type { FC } from 'react';
-import { useState } from 'react';
-import cls from './RegistrationPage.module.scss';
+import { Link, useNavigate } from "@tanstack/react-router";
+import { clsx } from "clsx";
+import type { FC, FormEvent } from "react";
+import { useState } from "react";
+import cls from "./RegistrationPage.module.scss";
 
-import { Button } from '@/shared/ui/Button/Button';
-import { Input } from '@/shared/ui/Input/Input';
+import { Button } from "@/shared/ui/Button/Button";
+import { Input } from "@/shared/ui/Input/Input";
+import type { CreateUserSchema } from "@/shared/api/generated";
+import { useMutation } from "@tanstack/react-query";
+import { authQueryProps } from "@/features/auth/api";
 
 interface RegistrationPageProps {
   className?: string;
@@ -13,68 +16,79 @@ interface RegistrationPageProps {
 
 /** Докстринг */
 export const RegistrationPage: FC<RegistrationPageProps> = (
-  props: RegistrationPageProps,
+  props: RegistrationPageProps
 ) => {
   const { className } = props;
+  const navigate = useNavigate();
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    account_name: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+  });
+  const registration = useMutation({ ...authQueryProps.registerMut() });
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log({ email, password });
+
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+
+    let data = Object.fromEntries(formData.entries());
+
+    if (data.password != data.password_confirmation) {
+      setFormErrors((prev) => ({
+        ...prev,
+        password_confirmation: "Пароли не совпадают",
+      }));
+      return;
+    }
+
+    data = data as CreateUserSchema;
+
+    registration.mutate({ body: data });
+    navigate({ to: "/verify" });
   };
+
   return (
     <form onSubmit={handleSubmit} className={clsx(cls.form, className)}>
       <h1 className={cls.title}>Регистрация</h1>
-      <h2 className={cls.subtitle}>Создайте новый профиль</h2>
+      <h5 className={cls.subtitle}>Создайте новый профиль</h5>
+
+      <Input label="Имя" placeholder="user" name="name" isFull required />
 
       <Input
-        type="name"
-        label="Имя"
-        placeholder="user"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        isFull
-        required
-      />
-
-      <Input
-        type="account_name"
         label="Уникальное имя аккаунта"
         placeholder="user123"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        name="account_name"
         isFull
         required
       />
 
       <Input
-        type="email"
+        name="email"
         label="Email"
         placeholder="example@email.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
         isFull
         required
       />
 
       <Input
         type="password"
+        name="password"
         label="Пароль"
         placeholder="********"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
         isFull
         required
       />
 
       <Input
         type="password"
+        name="password_confirmation"
         label="Повторный пароль"
         placeholder="********"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        error={formErrors.password_confirmation}
         isFull
         required
       />

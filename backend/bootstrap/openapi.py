@@ -11,6 +11,10 @@ schemas = WsInDataSchema | WsOutDataSchema | WsInMessageSchema | WsOutMessageSch
 
 
 def register_schemas(app: FastAPI):
-    @app.get("/register_schemas", response_model=schemas)
+    @app.get(
+        "/register_schemas",
+        response_model=schemas,
+    )
     def register_schemas_route():
+        """Register fastapi schemas in openapi"""
         pass

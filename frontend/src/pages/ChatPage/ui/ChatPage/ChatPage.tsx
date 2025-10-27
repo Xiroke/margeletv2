@@ -49,7 +49,7 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
           to="/$groupType/{-$groupId}"
           params={(prev) => ({ ...prev, groupType: "personal" })}
         >
-          <UserIcon size={28} strokeWidth={1.6} />
+          <UserIcon size={28} strokeWidth={2} />
         </Link>
         <Link
           className="no_link"

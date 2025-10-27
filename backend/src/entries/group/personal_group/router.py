@@ -12,7 +12,7 @@ from .schemas import (
     UpdatePersonalGroupSchema,
 )
 
-router = APIRouter(prefix="/personal_groups", tags=["group"])
+router = APIRouter(prefix="/personal_groups", tags=["personal_groups"])
 
 
 @router.get("/me")

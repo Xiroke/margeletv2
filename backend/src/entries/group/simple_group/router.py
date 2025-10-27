@@ -12,7 +12,7 @@ from .schemas import (
     UpdateSimpleGroupSchema,
 )
 
-router = APIRouter(prefix="/simple_groups", tags=["group"])
+router = APIRouter(prefix="/simple_groups", tags=["simple_group"])
 
 
 @router.post("/")

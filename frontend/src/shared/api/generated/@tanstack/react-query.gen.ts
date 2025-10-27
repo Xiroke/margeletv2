@@ -468,6 +468,7 @@ export const registerSchemasRouteRegisterSchemasGetQueryKey = (options?: Options
 
 /**
  * Register Schemas Route
+ * Register fastapi schemas in openapi
  */
 export const registerSchemasRouteRegisterSchemasGetOptions = (options?: Options<RegisterSchemasRouteRegisterSchemasGetData>) => {
     return queryOptions({

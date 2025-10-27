@@ -34,7 +34,7 @@ export const LoginPage: FC<LoginPageProps> = (props: LoginPageProps) => {
   return (
     <form onSubmit={handleSubmit} className={clsx(cls.form, className)}>
       <h1 className={cls.title}>Вход</h1>
-      <h2 className={cls.subtitle}>Зайдите в профиль</h2>
+      <h5 className={cls.subtitle}>Зайдите в профиль</h5>
 
       <Input
         name="email"

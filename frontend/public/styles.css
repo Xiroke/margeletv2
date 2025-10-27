@@ -14,6 +14,8 @@
     --text-second, --accent-nocolor-primary, --accent-nocolor-primary;
   transition-duration: 0.3s;
   transition-timing-function: ease;
+
+  --success: rgb(33, 204, 87);
 }
 
 .light-theme {
@@ -54,6 +56,7 @@ body {
 
 h1 {
   font-weight: 500;
+  font-size: 32px;
 }
 
 h2 {
@@ -64,6 +67,12 @@ h2 {
 h3 {
   font-weight: 500;
   font-size: 28px;
+}
+
+h5 {
+  font-size: 16px;
+  color: var(--text-second);
+  font-weight: 500;
 }
 
 a {
@@ -83,4 +92,8 @@ a {
 .no_link {
   all: unset;
   cursor: pointer;
+}
+
+.success {
+  color: var(--success);
 }

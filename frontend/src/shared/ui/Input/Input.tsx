@@ -1,8 +1,8 @@
-import { clsx } from 'clsx';
-import { memo } from 'react';
+import { clsx } from "clsx";
+import { forwardRef, memo } from "react";
 
-import type { FC, InputHTMLAttributes } from 'react';
-import cls from './Input.module.scss';
+import type { ForwardedRef, InputHTMLAttributes } from "react";
+import cls from "./Input.module.scss";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
@@ -12,11 +12,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 /** Универсальный Input */
-export const Input: FC<InputProps> = memo((props: InputProps) => {
+const InputComponent = (
+  props: InputProps,
+  ref: ForwardedRef<HTMLInputElement>
+) => {
   const { className, label, error, isFull = false, ...rest } = props;
 
   return (
-    <div className={clsx(cls.wrapper, isFull && cls.full, className)}>
+    <div className={clsx(cls.wrapper, isFull && cls.full, className)} ref={ref}>
       {label && <label className={cls.label}>{label}</label>}
       <input
         {...rest}
@@ -25,4 +28,6 @@ export const Input: FC<InputProps> = memo((props: InputProps) => {
       {error && <span className={cls.errorMessage}>{error}</span>}
     </div>
   );
-});
+};
+
+export const Input = memo(forwardRef(InputComponent));

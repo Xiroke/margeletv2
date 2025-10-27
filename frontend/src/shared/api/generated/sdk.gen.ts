@@ -315,6 +315,7 @@ export const getCursorMessagesByGroupApiMessagesGroupIdGet = <ThrowOnError exten
 
 /**
  * Register Schemas Route
+ * Register fastapi schemas in openapi
  */
 export const registerSchemasRouteRegisterSchemasGet = <ThrowOnError extends boolean = false>(options?: Options<RegisterSchemasRouteRegisterSchemasGetData, ThrowOnError>) => {
     return (options?.client ?? _heyApiClient).get<RegisterSchemasRouteRegisterSchemasGetResponses, unknown, ThrowOnError>({

@@ -1,14 +1,16 @@
-import { memo } from 'react';
+import { memo } from "react";
 
-import { clsx } from 'clsx';
+import { clsx } from "clsx";
 
-import type { ButtonHTMLAttributes, FC, ReactNode } from 'react';
-import cls from './Button.module.scss';
+import type { ButtonHTMLAttributes, FC, ReactNode } from "react";
+import cls from "./Button.module.scss";
+import { Loading } from "../Loading";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
-  styleType?: 'none' | 'default' | 'text' | 'outline' | 'inverse';
-  size: 'nosize' | 'sm' | 'md';
+  styleType?: "none" | "default" | "text" | "outline" | "inverse";
+  size: "nosize" | "sm" | "md";
+  loading?: boolean;
   isFull?: boolean;
   children?: ReactNode;
 }
@@ -18,9 +20,10 @@ export const Button: FC<ButtonProps> = memo((props: ButtonProps) => {
   const {
     className,
     size,
-    styleType = 'text',
+    styleType = "text",
+    loading = false,
     isFull = false,
-    children = '',
+    children = "",
     ...rest
   } = props;
 
@@ -32,10 +35,10 @@ export const Button: FC<ButtonProps> = memo((props: ButtonProps) => {
         cls[styleType],
         cls[size],
         isFull && cls.full,
-        className,
+        className
       )}
     >
-      {children}
+      {loading ? <Loading /> : children}
     </button>
   );
 });
