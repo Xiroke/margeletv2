@@ -1,4 +1,28 @@
+import logging
+from functools import wraps
+from typing import Type
+
 from fastapi import HTTPException
+
+log = logging.getLogger(__name__)
+
+
+def log_exception[T](cls: Type[T]) -> Type[T]:
+    """
+    Декоратор для классов исключений - логирует при создании экземпляра
+    """
+    original_init = cls.__init__
+
+    @wraps(original_init)
+    def new_init(self, *args, **kwargs):
+        # Логируем перед созданием исключения
+        log.debug(
+            f"Exception raised: {cls.__name__}: {args[0] if args else 'No message'}"
+        )
+        original_init(self, *args, **kwargs)
+
+    cls.__init__ = new_init
+    return cls
 
 
 class ServiceNotFoundException(Exception):
@@ -38,6 +62,7 @@ class HTTPAuthenticationBannedException(HTTPException):
         super().__init__(status_code, detail, headers)
 
 
+@log_exception
 class HTTPAuthenticationNotVerifiedException(HTTPException):
     def __init__(self, status_code=401, detail="Account not verified", headers=None):
         super().__init__(status_code, detail, headers)

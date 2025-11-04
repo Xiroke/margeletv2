@@ -1,29 +1,50 @@
-import { clsx } from "clsx";
-import { forwardRef, memo } from "react";
+import type {
+  ForwardedRef,
+  InputHTMLAttributes,
+  TextareaHTMLAttributes,
+} from 'react';
 
-import type { ForwardedRef, InputHTMLAttributes } from "react";
-import cls from "./Input.module.scss";
+import { clsx } from 'clsx';
+import { forwardRef, memo } from 'react';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+import cls from './Input.module.scss';
+
+interface BaseProps {
+  as?: 'input' | 'textarea';
   className?: string;
-  label?: string;
   error?: string;
-  isFull?: boolean;
+  full?: boolean;
+  label?: string;
 }
 
-/** Универсальный Input */
+type InputProps = BaseProps &
+  (
+    | InputHTMLAttributes<HTMLInputElement>
+    | TextareaHTMLAttributes<HTMLTextAreaElement>
+  );
+
 const InputComponent = (
   props: InputProps,
-  ref: ForwardedRef<HTMLInputElement>
+  ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>
 ) => {
-  const { className, label, error, isFull = false, ...rest } = props;
+  const {
+    as = 'input',
+    className,
+    error,
+    full = false,
+    label,
+    ...rest
+  } = props;
+
+  const Component = as === 'textarea' ? 'textarea' : 'input';
 
   return (
-    <div className={clsx(cls.wrapper, isFull && cls.full, className)} ref={ref}>
+    <div className={clsx(cls.wrapper, full && cls.full, className)}>
       {label && <label className={cls.label}>{label}</label>}
-      <input
-        {...rest}
-        className={clsx(cls.input, error && cls.error, className)}
+      <Component
+        {...(rest as any)}
+        className={clsx(cls.component, cls[as], error && cls.error, className)}
+        ref={ref as any}
       />
       {error && <span className={cls.errorMessage}>{error}</span>}
     </div>

@@ -1,0 +1,1 @@
+export { CreateSimpleGroupPage } from './CreateSimpleGroupPage';

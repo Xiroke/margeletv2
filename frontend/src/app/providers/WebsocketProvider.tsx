@@ -1,29 +1,36 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import type { PropsWithChildren } from 'react';
 
-import { settings } from "@/config";
-import { authQueryProps } from "@/features/auth/api";
-import type { WsInDataSchema, WsOutDataSchema } from "@/shared/api/generated";
-import { useMutation } from "@tanstack/react-query";
-import type { PropsWithChildren } from "react";
+import { useMutation } from '@tanstack/react-query';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 
-type WsEvent = "message";
+import type { WsInDataSchema, WsOutDataSchema } from '@/shared/api/generated';
+
+import { settings, wsIgnorePaths } from '@/config';
+import { authQueryProps } from '@/features/auth/api';
+import { useShouldIgnorePath } from '@/shared/hooks/useShouldIgnoredPath';
+
+interface IWSContext {
+  isConnected: boolean;
+  onMessage: (callback: (data: WsOutDataSchema) => void) => void;
+  send: (data: WsInDataSchema) => void;
+}
 
 interface SendDataI {
-  event: WsEvent;
   data: any;
+  event: WsEvent;
 }
 interface WebsocketProviderProps extends PropsWithChildren {}
 
-interface IWSContext {
-  send: (data: WsInDataSchema) => void;
-  onMessage: (callback: (data: WsOutDataSchema) => void) => void;
-  isConnected: boolean;
-}
+type WsEvent = 'message';
 
 const WSContext = createContext<IWSContext | null>(null);
 
 export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
-  const wsRef = useRef<WebSocket | null>(null);
+  const isShouldIgnore = useShouldIgnorePath(wsIgnorePaths);
+
+  if (isShouldIgnore) return <>{children}</>;
+
+  const wsRef = useRef<null | WebSocket>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   // request acceess token
@@ -31,24 +38,24 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   const onMessageFuncRef = useRef<(data: any) => void>((data: any) => {});
 
   useEffect(() => {
-    let ws: WebSocket | null = null;
+    let ws: null | WebSocket = null;
 
     const runWebsocket = async () => {
-      const token_data = await tokenMut.mutateAsync({ credentials: "include" });
+      const token_data = await tokenMut.mutateAsync({ credentials: 'include' });
       const { access_token } = token_data;
       ws = new WebSocket(
         `${settings.VITE_BACKEND_WS_URL}/api/ws?access_token=${access_token}`
       );
 
       ws.onopen = () => {
-        console.log("connect");
+        console.log('connect');
         setIsConnected(true);
       };
 
       ws.onmessage = (event) => {
         const data: WsOutDataSchema = JSON.parse(event.data);
 
-        if (data.event != "message") {
+        if (data.event != 'message') {
           return;
         }
 
@@ -56,7 +63,7 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
       };
 
       ws.onclose = () => {
-        console.log("disconnect");
+        console.log('disconnect');
         setIsConnected(false);
       };
 
@@ -82,7 +89,7 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data));
     } else {
-      console.warn("WebSocket is not connected");
+      console.warn('WebSocket is not connected');
     }
   };
 
@@ -93,23 +100,30 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   };
 
   return (
-    <WSContext.Provider
+    <WSContext
       value={{
-        send,
-        onMessage,
         isConnected,
+        onMessage,
+        send,
       }}
     >
       {children}
-    </WSContext.Provider>
+    </WSContext>
   );
 };
 
 export const useWS = () => {
-  const context = useContext(WSContext);
+  const context = use(WSContext);
 
   if (!context) {
-    throw new Error("ws provider is not found");
+    console.warn(
+      'WebsocketProvider not found - returning dummy implementation'
+    );
+    return {
+      isConnected: false,
+      onMessage: () => {},
+      send: () => console.warn('WebSocket not available'),
+    };
   }
 
   return context;

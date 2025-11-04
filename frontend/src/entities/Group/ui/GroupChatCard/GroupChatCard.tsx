@@ -1,9 +1,13 @@
+import type { FC } from 'react';
+
 import { clsx } from 'clsx';
 import { memo } from 'react';
 
-import { Tag } from '@/shared/ui/Tag/Tag';
-import type { FC } from 'react';
+import { cn } from '@/shared/lib/utils';
+import { Badge } from '@/shared/ui/badge';
+
 import type { GroupChat } from '../../model/types';
+
 import cls from './GroupChatCard.module.scss';
 
 interface GroupChatCardProps {
@@ -13,12 +17,12 @@ interface GroupChatCardProps {
 export const GroupChatCard: FC<GroupChatCardProps> = memo(
   (props: GroupChatCardProps) => {
     const { className, groupChat } = props;
-    const { avatarUrl, title, lastMessage, time, unreadCount } = groupChat;
+    const { avatarUrl, lastMessage, time, title, unreadCount } = groupChat;
 
     return (
       <div className={clsx(cls.group_card, className)}>
-        <div className={cls.avatar}>
-          {avatarUrl && <img src={avatarUrl} alt="group_avatar" />}
+        <div className={cn(cls.avatar, 'flex items-center justify-center')}>
+          {avatarUrl ? <img alt="group_avatar" src={avatarUrl} /> : title.slice(0, 2)}
         </div>
 
         <div className={cls.main}>
@@ -28,11 +32,11 @@ export const GroupChatCard: FC<GroupChatCardProps> = memo(
 
         <div className={cls.addition}>
           <div className={cls.time}>{time}</div>
-          <Tag className={cls.unread_count} styleType="outline">
+          <Badge className={cls.unread_count} variant="secondary">
             {unreadCount && unreadCount > 0 ? unreadCount : ''}
-          </Tag>
+          </Badge>
         </div>
       </div>
     );
-  },
+  }
 );

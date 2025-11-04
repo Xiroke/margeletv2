@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { ServiceWorkerProvider } from './serviceWorkerProvider';
+
+import { ServiceWorkerProvider } from './ServiceWorkerProvider';
 import { WebsocketProvider } from './WebsocketProvider';
 
 const disabledPathnameWs = ['/', '/registration'];

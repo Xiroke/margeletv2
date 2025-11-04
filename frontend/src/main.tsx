@@ -1,25 +1,28 @@
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx';
-
+import reportWebVitals from './reportWebVitals.ts';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
-
-import { AllProviders } from './app/providers/AllProviders.tsx';
-import reportWebVitals from './reportWebVitals.ts';
+import { client } from './shared/api/generated/client.gen.ts';
+import './index.css';
 
 // Create a new router instance
 const router = createRouter({
-  routeTree,
   context: {
     ...TanStackQueryProvider.getContext(),
   },
   defaultPreload: 'intent',
-  scrollRestoration: true,
-  defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultStructuralSharing: true,
+  routeTree,
+  scrollRestoration: true,
+});
+
+client.setConfig({
+  credentials: 'include',
 });
 
 // Register the router instance for type safety
@@ -36,11 +39,9 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <TanStackQueryProvider.Provider>
-        <AllProviders>
-          <RouterProvider router={router} />
-        </AllProviders>
+        <RouterProvider router={router} />
       </TanStackQueryProvider.Provider>
-    </StrictMode>,
+    </StrictMode>
   );
 }
 

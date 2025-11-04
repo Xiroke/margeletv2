@@ -71,7 +71,7 @@ const RegistrationForm = ({}: RegistrationFormProps) => {
         Зарегистрироваться
       </Button>
       <Link href="/">
-        <Button styleType="invert" size="full">
+        <Button variant="invert" size="full">
           Войти
         </Button>
       </Link>

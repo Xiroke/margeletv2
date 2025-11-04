@@ -32,6 +32,10 @@ class MessageDaoProtocol(
         cursor: datetime | None = None,
     ) -> ReadMessageCursorPaginatedSchema: ...
 
+    async def get_last_messages_by_group(
+        self, group_id: UUID, amount: int
+    ) -> list[ReadMessageSchema]: ...
+
 
 class MessageMongoDao(
     MongoDaoImpl[
@@ -63,3 +67,13 @@ class MessageMongoDao(
         return ReadMessageCursorPaginatedSchema(
             messages=messages, has_more=has_more, cursor=messages[-1].created_at
         )
+
+    async def get_last_messages_by_group(
+        self, group_id: UUID, amount: int
+    ) -> list[ReadMessageSchema]:
+        query = (
+            MessageModel.find_many({"to_group_id": group_id})
+            .sort(-MessageModel.created_at)
+            .limit(amount)
+        )
+        return [ReadMessageSchema.model_validate(i) for i in await query.to_list()]

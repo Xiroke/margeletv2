@@ -1,6 +1,8 @@
-import { settings } from '@/config';
 import type { ReactNode } from 'react';
+
 import { useEffect } from 'react';
+
+import { settings } from '@/config';
 
 export const ServiceWorkerProvider = ({
   children,
@@ -24,10 +26,10 @@ export const ServiceWorkerProvider = ({
         }
 
         registration.active.postMessage({
-          type: 'SET_PARAMS',
           payload: {
             BACKEND_URL: settings.VITE_BACKEND_URL,
           },
+          type: 'SET_PARAMS',
         });
       });
     }

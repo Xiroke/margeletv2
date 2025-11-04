@@ -1,7 +1,9 @@
 from contextlib import asynccontextmanager
+from logging import getLogger
 
 from fastapi import FastAPI
 
+from bootstrap.check import run_checks
 from bootstrap.exceptions_fastapi import register_exception_handler
 from bootstrap.fastapi import register_fastapi
 from bootstrap.logging import register_logging
@@ -12,10 +14,15 @@ from src.core.nosql.database import init_mongo_db
 
 register_logging()
 
+log = getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_mongo_db()
+    log.info("Start checks...")
+    await run_checks()
+    log.info("All checks passed")
     yield
 
 

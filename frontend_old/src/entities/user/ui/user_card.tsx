@@ -5,11 +5,11 @@ import { useApiUser } from "../model";
 import clsx from "clsx";
 
 export interface UserCardProps extends HTMLAttributes<HTMLDivElement> {
-  styleType?: "small" | "default";
+  variant?: "small" | "default";
 }
 
 export const UserCard = ({
-  styleType = "default",
+  variant = "default",
   ...props
 }: UserCardProps) => {
   const { data } = useApiUser.get();
@@ -22,7 +22,7 @@ export const UserCard = ({
     <div
       {...props}
       className={clsx(
-        styleType == "default" ? styles.default : styles.small,
+        variant == "default" ? styles.default : styles.small,
         styles.user_card
       )}
     >

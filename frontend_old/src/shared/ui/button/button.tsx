@@ -4,13 +4,13 @@ import clsx from "clsx";
 import styles from "./button.module.scss";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  styleType?: "default" | "invert";
+  variant?: "default" | "invert";
   size?: "small" | "medium" | "large" | "full";
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { children, className, styleType = "default", size = "medium", ...props },
+    { children, className, variant = "default", size = "medium", ...props },
     ref
   ) => {
     return (
@@ -20,7 +20,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={clsx(
           styles.button,
           styles[size],
-          styles[styleType],
+          styles[variant],
           className
         )}
       >

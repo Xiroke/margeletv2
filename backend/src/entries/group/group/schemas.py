@@ -28,7 +28,7 @@ class ReadGroupSchema(BaseGroupSchema):
 
 
 class CreateGroupSchema(BaseModel):
-    type: GroupTypes
+    pass
 
 
 class UpdateGroupSchema(BaseModel):

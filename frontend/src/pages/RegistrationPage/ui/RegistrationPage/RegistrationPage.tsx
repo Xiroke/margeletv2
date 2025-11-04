@@ -1,100 +1,192 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { clsx } from "clsx";
-import type { FC, FormEvent } from "react";
-import { useState } from "react";
-import cls from "./RegistrationPage.module.scss";
+import type { FC } from 'react';
 
-import { Button } from "@/shared/ui/Button/Button";
-import { Input } from "@/shared/ui/Input/Input";
-import type { CreateUserSchema } from "@/shared/api/generated";
-import { useMutation } from "@tanstack/react-query";
-import { authQueryProps } from "@/features/auth/api";
+import { useForm } from '@tanstack/react-form'
+import { useMutation } from '@tanstack/react-query';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { clsx } from 'clsx';
+
+import { authQueryProps } from '@/features/auth/api';
+import { Button } from '@/shared/ui/button';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+import { Input } from '@/shared/ui/input';
+
+import cls from './RegistrationPage.module.scss';
 
 interface RegistrationPageProps {
   className?: string;
 }
 
-/** Докстринг */
 export const RegistrationPage: FC<RegistrationPageProps> = (
   props: RegistrationPageProps
 ) => {
   const { className } = props;
   const navigate = useNavigate();
-  const [formErrors, setFormErrors] = useState({
-    name: "",
-    account_name: "",
-    email: "",
-    password: "",
-    password_confirmation: "",
-  });
-  const registration = useMutation({ ...authQueryProps.registerMut() });
+  const register = useMutation({ ...authQueryProps.registerMut() })
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  // CreateUserSchema
+  const form = useForm({
+    defaultValues: {
+      account_name: '',
+      email: '',
+      name: '',
+      password: '',
+      password_confirmation: '',
+    },
 
-    const form = e.currentTarget as HTMLFormElement;
-    const formData = new FormData(form);
-
-    let data = Object.fromEntries(formData.entries());
-
-    if (data.password != data.password_confirmation) {
-      setFormErrors((prev) => ({
-        ...prev,
-        password_confirmation: "Пароли не совпадают",
-      }));
-      return;
-    }
-
-    data = data as CreateUserSchema;
-
-    registration.mutate({ body: data });
-    navigate({ to: "/verify" });
-  };
+    onSubmit: (data) => {
+      register.mutate({ body: data.value });
+      navigate({
+        params: { email: data.value.email },
+        to: '/verify/$email/{-$token}',
+      });
+    },
+  })
 
   return (
-    <form onSubmit={handleSubmit} className={clsx(cls.form, className)}>
-      <h1 className={cls.title}>Регистрация</h1>
-      <h5 className={cls.subtitle}>Создайте новый профиль</h5>
+    <form className={clsx(cls.form, className)}
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}>
+      <div className='text-center'>
+        <h2>Registration</h2>
+        <span className="muted">Create new account</span>
+      </div>
+      <FieldGroup>
+        <form.Field
+          children={(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                <Input
+                  aria-invalid={isInvalid}
+                  autoComplete="off"
+                  id={field.name}
+                  name={field.name}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="user"
+                  value={field.state.value}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            )
+          }}
+          name="name"
+        />
+      </FieldGroup>
 
-      <Input label="Имя" placeholder="user" name="name" isFull required />
+      <FieldGroup>
+        <form.Field
+          children={(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>Уникальное имя аккаунта</FieldLabel>
+                <Input
+                  aria-invalid={isInvalid}
+                  autoComplete="off"
+                  id={field.name}
+                  name={field.name}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="user123"
+                  value={field.state.value}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            )
+          }}
+          name="account_name"
+        />
+      </FieldGroup>
 
-      <Input
-        label="Уникальное имя аккаунта"
-        placeholder="user123"
-        name="account_name"
-        isFull
-        required
-      />
+      <FieldGroup>
+        <form.Field
+          children={(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                <Input
+                  aria-invalid={isInvalid}
+                  autoComplete="off"
+                  id={field.name}
+                  name={field.name}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="example@email.com"
+                  value={field.state.value}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            )
+          }}
+          name="email"
+        />
+      </FieldGroup>
 
-      <Input
-        name="email"
-        label="Email"
-        placeholder="example@email.com"
-        isFull
-        required
-      />
+      <FieldGroup>
+        <form.Field
+          children={(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>Пароль</FieldLabel>
+                <Input
+                  aria-invalid={isInvalid}
+                  autoComplete="off"
+                  id={field.name}
+                  name={field.name}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="********"
+                  type="password"
+                  value={field.state.value}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            )
+          }}
+          name="password"
+        />
+      </FieldGroup>
 
-      <Input
-        type="password"
-        name="password"
-        label="Пароль"
-        placeholder="********"
-        isFull
-        required
-      />
-
-      <Input
-        type="password"
-        name="password_confirmation"
-        label="Повторный пароль"
-        placeholder="********"
-        error={formErrors.password_confirmation}
-        isFull
-        required
-      />
+      <FieldGroup>
+        <form.Field
+          children={(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>Повторный пароль</FieldLabel>
+                <Input
+                  aria-invalid={isInvalid}
+                  autoComplete="off"
+                  id={field.name}
+                  name={field.name}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="********"
+                  type="password"
+                  value={field.state.value}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            )
+          }}
+          name="password_confirmation"
+        />
+      </FieldGroup>
 
       <div className={cls.actions}>
-        <Button type="submit" size="md" styleType="default" isFull>
+        <Button full type="submit" variant="default">
           Зарегистрироваться
         </Button>
       </div>

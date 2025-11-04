@@ -57,7 +57,7 @@ export const LoginForm = ({}: LoginFormProps) => {
         Войти
       </Button>
       <Link href="/registration">
-        <Button styleType="invert" size="full">
+        <Button variant="invert" size="full">
           Зарегистрироваться
         </Button>
       </Link>

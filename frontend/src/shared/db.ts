@@ -1,22 +1,25 @@
-import Dexie, { type EntityTable } from "dexie";
-import type { ReadMessageSchema } from "./api/generated";
+import type {EntityTable} from 'dexie';
 
-interface CachedMessage extends ReadMessageSchema {}
+import Dexie from 'dexie';
+
+import type { ReadMessageSchema } from './api/generated';
+
 interface CachedCursorMessage {
+  cursor: null | string;
   group_id: string;
-  cursor: string | null;
   has_more: boolean;
 }
+interface CachedMessage extends ReadMessageSchema {}
 
-const db = new Dexie("DB") as Dexie & {
-  messages: EntityTable<CachedMessage, "id">;
-  cursors: EntityTable<CachedCursorMessage, "group_id">;
+const db = new Dexie('DB') as Dexie & {
+  cursors: EntityTable<CachedCursorMessage, 'group_id'>;
+  messages: EntityTable<CachedMessage, 'id'>;
 };
 
 // Schema declaration:
 db.version(1).stores({
-  messages: "id, created_at, to_group_id",
-  cachedMessages: "group_id, cursor",
+  cachedMessages: 'group_id, cursor',
+  messages: 'id, created_at, to_group_id',
 });
 
 export type { CachedCursorMessage, CachedMessage };

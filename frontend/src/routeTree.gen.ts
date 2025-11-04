@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistrationRouteImport } from './routes/registration'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as VerifyChar123TokenChar125RouteImport } from './routes/verify.{-$token}'
+import { Route as GroupsSearchRouteImport } from './routes/groups/search'
+import { Route as GroupsCreateSimpleRouteImport } from './routes/groups/createSimple'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
-import { Route as GroupTypeChar123GroupIdChar125RouteImport } from './routes/$groupType/{-$groupId}'
+import { Route as VerifyEmailChar123TokenChar125RouteImport } from './routes/verify.$email.{-$token}'
+import { Route as GroupGroupTypeChar123GroupIdChar125RouteImport } from './routes/group/$groupType/{-$groupId}'
 
 const RegistrationRoute = RegistrationRouteImport.update({
   id: '/registration',
@@ -25,76 +27,100 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VerifyChar123TokenChar125Route =
-  VerifyChar123TokenChar125RouteImport.update({
-    id: '/verify/{-$token}',
-    path: '/verify/{-$token}',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const GroupsSearchRoute = GroupsSearchRouteImport.update({
+  id: '/groups/search',
+  path: '/groups/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GroupsCreateSimpleRoute = GroupsCreateSimpleRouteImport.update({
+  id: '/groups/createSimple',
+  path: '/groups/createSimple',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
   path: '/demo/tanstack-query',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GroupTypeChar123GroupIdChar125Route =
-  GroupTypeChar123GroupIdChar125RouteImport.update({
-    id: '/$groupType/{-$groupId}',
-    path: '/$groupType/{-$groupId}',
+const VerifyEmailChar123TokenChar125Route =
+  VerifyEmailChar123TokenChar125RouteImport.update({
+    id: '/verify/$email/{-$token}',
+    path: '/verify/$email/{-$token}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GroupGroupTypeChar123GroupIdChar125Route =
+  GroupGroupTypeChar123GroupIdChar125RouteImport.update({
+    id: '/group/$groupType/{-$groupId}',
+    path: '/group/$groupType/{-$groupId}',
     getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
-  '/$groupType/{-$groupId}': typeof GroupTypeChar123GroupIdChar125Route
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/verify/{-$token}': typeof VerifyChar123TokenChar125Route
+  '/groups/createSimple': typeof GroupsCreateSimpleRoute
+  '/groups/search': typeof GroupsSearchRoute
+  '/group/$groupType/{-$groupId}': typeof GroupGroupTypeChar123GroupIdChar125Route
+  '/verify/$email/{-$token}': typeof VerifyEmailChar123TokenChar125Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
-  '/$groupType/{-$groupId}': typeof GroupTypeChar123GroupIdChar125Route
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/verify/{-$token}': typeof VerifyChar123TokenChar125Route
+  '/groups/createSimple': typeof GroupsCreateSimpleRoute
+  '/groups/search': typeof GroupsSearchRoute
+  '/group/$groupType/{-$groupId}': typeof GroupGroupTypeChar123GroupIdChar125Route
+  '/verify/$email/{-$token}': typeof VerifyEmailChar123TokenChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
-  '/$groupType/{-$groupId}': typeof GroupTypeChar123GroupIdChar125Route
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/verify/{-$token}': typeof VerifyChar123TokenChar125Route
+  '/groups/createSimple': typeof GroupsCreateSimpleRoute
+  '/groups/search': typeof GroupsSearchRoute
+  '/group/$groupType/{-$groupId}': typeof GroupGroupTypeChar123GroupIdChar125Route
+  '/verify/$email/{-$token}': typeof VerifyEmailChar123TokenChar125Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/registration'
-    | '/$groupType/{-$groupId}'
     | '/demo/tanstack-query'
-    | '/verify/{-$token}'
+    | '/groups/createSimple'
+    | '/groups/search'
+    | '/group/$groupType/{-$groupId}'
+    | '/verify/$email/{-$token}'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/registration'
-    | '/$groupType/{-$groupId}'
     | '/demo/tanstack-query'
-    | '/verify/{-$token}'
+    | '/groups/createSimple'
+    | '/groups/search'
+    | '/group/$groupType/{-$groupId}'
+    | '/verify/$email/{-$token}'
   id:
     | '__root__'
     | '/'
     | '/registration'
-    | '/$groupType/{-$groupId}'
     | '/demo/tanstack-query'
-    | '/verify/{-$token}'
+    | '/groups/createSimple'
+    | '/groups/search'
+    | '/group/$groupType/{-$groupId}'
+    | '/verify/$email/{-$token}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RegistrationRoute: typeof RegistrationRoute
-  GroupTypeChar123GroupIdChar125Route: typeof GroupTypeChar123GroupIdChar125Route
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  VerifyChar123TokenChar125Route: typeof VerifyChar123TokenChar125Route
+  GroupsCreateSimpleRoute: typeof GroupsCreateSimpleRoute
+  GroupsSearchRoute: typeof GroupsSearchRoute
+  GroupGroupTypeChar123GroupIdChar125Route: typeof GroupGroupTypeChar123GroupIdChar125Route
+  VerifyEmailChar123TokenChar125Route: typeof VerifyEmailChar123TokenChar125Route
 }
 
 declare module '@tanstack/react-router' {
@@ -113,11 +139,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verify/{-$token}': {
-      id: '/verify/{-$token}'
-      path: '/verify/{-$token}'
-      fullPath: '/verify/{-$token}'
-      preLoaderRoute: typeof VerifyChar123TokenChar125RouteImport
+    '/groups/search': {
+      id: '/groups/search'
+      path: '/groups/search'
+      fullPath: '/groups/search'
+      preLoaderRoute: typeof GroupsSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/groups/createSimple': {
+      id: '/groups/createSimple'
+      path: '/groups/createSimple'
+      fullPath: '/groups/createSimple'
+      preLoaderRoute: typeof GroupsCreateSimpleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/tanstack-query': {
@@ -127,11 +160,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTanstackQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$groupType/{-$groupId}': {
-      id: '/$groupType/{-$groupId}'
-      path: '/$groupType/{-$groupId}'
-      fullPath: '/$groupType/{-$groupId}'
-      preLoaderRoute: typeof GroupTypeChar123GroupIdChar125RouteImport
+    '/verify/$email/{-$token}': {
+      id: '/verify/$email/{-$token}'
+      path: '/verify/$email/{-$token}'
+      fullPath: '/verify/$email/{-$token}'
+      preLoaderRoute: typeof VerifyEmailChar123TokenChar125RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/group/$groupType/{-$groupId}': {
+      id: '/group/$groupType/{-$groupId}'
+      path: '/group/$groupType/{-$groupId}'
+      fullPath: '/group/$groupType/{-$groupId}'
+      preLoaderRoute: typeof GroupGroupTypeChar123GroupIdChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -140,9 +180,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RegistrationRoute: RegistrationRoute,
-  GroupTypeChar123GroupIdChar125Route: GroupTypeChar123GroupIdChar125Route,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  VerifyChar123TokenChar125Route: VerifyChar123TokenChar125Route,
+  GroupsCreateSimpleRoute: GroupsCreateSimpleRoute,
+  GroupsSearchRoute: GroupsSearchRoute,
+  GroupGroupTypeChar123GroupIdChar125Route:
+    GroupGroupTypeChar123GroupIdChar125Route,
+  VerifyEmailChar123TokenChar125Route: VerifyEmailChar123TokenChar125Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

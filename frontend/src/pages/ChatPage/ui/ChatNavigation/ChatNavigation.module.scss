@@ -1,0 +1,9 @@
+.chatNavigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  color: var(--text-second);
+  gap: 20px;
+}

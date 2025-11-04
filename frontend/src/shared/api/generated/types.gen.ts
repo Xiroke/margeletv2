@@ -30,10 +30,6 @@ export type CreateMessageNoUserSchema = {
  */
 export type CreateSimpleGroupSchema = {
     /**
-     * Type
-     */
-    type: 'simple_group' | 'personal_group';
-    /**
      * Title
      */
     title: string;
@@ -188,6 +184,17 @@ export type ReadSimpleGroupSchema = {
      * Title
      */
     title: string;
+};
+
+/**
+ * UpdateMessageSchema
+ */
+export type UpdateMessageSchema = {
+    /**
+     * Message
+     * Message must be less than 2000 characters and more than 1 character
+     */
+    message: string | null;
 };
 
 /**
@@ -740,7 +747,7 @@ export type CreateMessageApiMessagesPostResponses = {
     200: unknown;
 };
 
-export type GetCursorMessagesByGroupApiMessagesGroupIdGetData = {
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetData = {
     body?: never;
     path: {
         /**
@@ -758,26 +765,112 @@ export type GetCursorMessagesByGroupApiMessagesGroupIdGetData = {
          */
         cursor?: string | null;
     };
-    url: '/api/messages/{group_id}';
+    url: '/api/messages/cursor/{group_id}';
 };
 
-export type GetCursorMessagesByGroupApiMessagesGroupIdGetErrors = {
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetCursorMessagesByGroupApiMessagesGroupIdGetError = GetCursorMessagesByGroupApiMessagesGroupIdGetErrors[keyof GetCursorMessagesByGroupApiMessagesGroupIdGetErrors];
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetError = GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors[keyof GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors];
 
-export type GetCursorMessagesByGroupApiMessagesGroupIdGetResponses = {
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses = {
     /**
      * Successful Response
      */
     200: ReadMessageCursorPaginatedSchema;
 };
 
-export type GetCursorMessagesByGroupApiMessagesGroupIdGetResponse = GetCursorMessagesByGroupApiMessagesGroupIdGetResponses[keyof GetCursorMessagesByGroupApiMessagesGroupIdGetResponses];
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponse = GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses[keyof GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses];
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    query?: {
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/messages/last/{group_id}';
+};
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetError = GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors[keyof GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors];
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses = {
+    /**
+     * Response Get Last Messages By Group Api Messages Last  Group Id  Get
+     * Successful Response
+     */
+    200: Array<ReadMessageSchema>;
+};
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponse = GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses[keyof GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses];
+
+export type DeleteApiMessagesIdDeleteData = {
+    body?: never;
+    path: {
+        id: PydanticObjectId;
+    };
+    query?: never;
+    url: '/api/messages/{id}';
+};
+
+export type DeleteApiMessagesIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteApiMessagesIdDeleteError = DeleteApiMessagesIdDeleteErrors[keyof DeleteApiMessagesIdDeleteErrors];
+
+export type DeleteApiMessagesIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type UpdateApiMessagesIdPatchData = {
+    body: UpdateMessageSchema;
+    path: {
+        id: PydanticObjectId;
+    };
+    query?: never;
+    url: '/api/messages/{id}';
+};
+
+export type UpdateApiMessagesIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApiMessagesIdPatchError = UpdateApiMessagesIdPatchErrors[keyof UpdateApiMessagesIdPatchErrors];
+
+export type UpdateApiMessagesIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type RegisterSchemasRouteRegisterSchemasGetData = {
     body?: never;

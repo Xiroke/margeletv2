@@ -77,7 +77,7 @@ const DialogInvitation = ({ open, setOpen }: DialogInvitationProps) => {
 
               <div className={styles.buttons}>
                 <Dialog.Close asChild>
-                  <Button className={styles.button} styleType="invert">
+                  <Button className={styles.button} variant="invert">
                     Отмена
                   </Button>
                 </Dialog.Close>

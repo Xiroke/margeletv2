@@ -7,10 +7,10 @@ export const Route = createFileRoute('/demo/tanstack-query')({
 
 function TanStackQueryDemo() {
   const { data } = useQuery({
-    queryKey: ['people'],
+    initialData: [],
     queryFn: () =>
       Promise.resolve([{ name: 'John Doe' }, { name: 'Jane Doe' }]),
-    initialData: [],
+    queryKey: ['people'],
   });
 
   return (

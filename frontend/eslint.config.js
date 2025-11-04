@@ -1,23 +1,101 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
+import { fixupPluginRules } from '@eslint/compat';
+import eslint from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
+import perfectionist from 'eslint-plugin-perfectionist';
+import pluginReact from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import storybook from 'eslint-plugin-storybook';
+import unusedImports from 'eslint-plugin-unused-imports';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
-import { tanstackConfig } from "@tanstack/eslint-config";
-import eslintPluginPrettierRecommended, {
-  plugins,
-} from "eslint-plugin-prettier/recommended";
-import stylistic from "@stylistic/eslint-plugin";
-
-export default [
-  ...tanstackConfig,
-  ...storybook.configs["flat/recommended"],
-  eslintPluginPrettierRecommended,
+export default defineConfig([
+  globalIgnores(['src/shared/api/gererated/']),
+  ...storybook.configs['flat/recommended'],
+  ...tseslint.configs.recommended,
+  eslint.configs.recommended,
   {
+    files: ['**/*.{ts,tsx,js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      }
+    },
     plugins: {
-      "@stylistic": stylistic,
+      '@stylistic': stylistic,
+      perfectionist,
+      pluginReact: fixupPluginRules(pluginReact),
     },
     rules: {
-      "arrow-body-style": "off",
-      "prefer-arrow-callback": "off",
+      '@stylistic/indent': ['error', 2],
+      'import/no-cycle': 'off',
+      ...{
+        ...perfectionist.configs['recommended-natural'].rules,
+      },
+    }
+  },
+  {
+    extends: [pluginReact.configs.flat.recommended],
+    files: ['**/*.{js,ts,jsx,tsx}'],
+    languageOptions: {
+      globals: { React: 'readonly' },
+    },
+    plugins: {
+      pluginReact: fixupPluginRules(pluginReact),
+      'react-hooks': fixupPluginRules(reactHooks),
+    },
+    rules: {
+      // === TypeScript ===
+      '@typescript-eslint/no-shadow': 'error',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+
+      'no-shadow': 'off',
+      'no-undef': 'off',
+
+      quotes: ['error', 'single', { avoidEscape: true }],
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/rules-of-hooks': 'error',
+
+      // кастыли
+      'react/display-name': 'off',
+      'react/function-component-definition': 'off',
+      'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
+      'react/no-array-index-key': 'off',
+      // for forms
+      'react/no-children-prop': 'off',
+      'react/no-unstable-nested-components': 'warn',
+
+      // === React ===
+      'react/prop-types': 'off',
+
+      'react/react-in-jsx-scope': 'off',
+
+      'react/require-default-props': 'off',
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
     },
   },
-];
+
+  {
+    plugins: {
+      'unused-imports': unusedImports,
+    },
+    rules: {
+      'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off",
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          'args': 'after-used',
+          'argsIgnorePattern': '^_',
+          'vars': 'all',
+          'varsIgnorePattern': '^_',
+        },
+      ]
+    }
+  }
+]);

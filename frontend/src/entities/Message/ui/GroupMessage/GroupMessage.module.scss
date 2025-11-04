@@ -6,8 +6,10 @@
   border-radius: 8px;
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-shrink: 1;
+  gap: 12px;
+  align-items: end;
 }
 
 .author {
@@ -40,5 +42,5 @@
   flex-shrink: 0;
   white-space: nowrap;
   width: fit-content;
-  color: var(--text-second);
+  color: var(--foreground);
 }

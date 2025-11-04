@@ -2,10 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { GroupCard } from './GroupChatCard';
 
+
 const meta: Meta<typeof GroupCard> = {
-  title: 'GroupCard',
   component: GroupCard,
   globals: { theme: 'light' },
+  title: 'GroupCard',
 };
 
 export default meta;

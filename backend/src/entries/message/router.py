@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
+from beanie import PydanticObjectId
 from fastapi import APIRouter
 
 from src.entries.auth.depends import CurrentUserDep
@@ -9,7 +10,10 @@ from src.entries.message.schemas import (
     CreateMessageNoUserSchema,
     CreateMessageSchema,
     ReadMessageCursorPaginatedSchema,
+    ReadMessageSchema,
+    UpdateMessageSchema,
 )
+from src.utils.router_crud import router_crud
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 
@@ -25,7 +29,7 @@ async def create_message(
     )
 
 
-@router.get("/{group_id}")
+@router.get("/cursor/{group_id}")
 async def get_cursor_messages_by_group(
     service: MessageServiceDep,
     group_id: UUID,
@@ -33,6 +37,15 @@ async def get_cursor_messages_by_group(
     cursor: datetime | None = None,
 ) -> ReadMessageCursorPaginatedSchema:
     return await service.get_cursor_messages_by_group(group_id, limit, cursor)
+
+
+@router.get("/last/{group_id}")
+async def get_last_messages_by_group(
+    service: MessageServiceDep,
+    group_id: UUID,
+    limit: int = 15,
+) -> list[ReadMessageSchema]:
+    return await service.get_last_messages_by_group(group_id, limit)
 
 
 # @router.get("/chat/{chat_id}")
@@ -76,3 +89,12 @@ async def get_cursor_messages_by_group(
 #         messages.append(message)
 
 #     return ReadMessageCursorPaginatedSchema(messages=messages, page=page, next_page=page + 1)
+
+router_crud(
+    router,
+    MessageServiceDep,
+    PydanticObjectId,
+    CreateMessageSchema,
+    UpdateMessageSchema,
+    excepted_router=["get", "create"],
+)

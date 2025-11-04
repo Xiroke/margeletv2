@@ -1,10 +1,9 @@
 from typing import Annotated
 
+from config import settings
 from fastapi import Body, Response
 from fastapi.routing import APIRouter
 from pydantic import EmailStr
-
-from config import settings
 from src.entries.auth.depends import AuthServiceDep, CurrentUserDep, RefreshTokenDep
 from src.entries.auth.schemas import ReadAccessTokenSchema
 from src.entries.auth.user.schemas import CreateUserSchema, LoginUserSchema
@@ -26,9 +25,8 @@ async def login(
         httponly=settings.COOKIE_HTTPONLY,
         samesite=settings.COOKIE_SAMESITE,
         secure=settings.COOKIE_SECURE,
-        path="/api/auth",
+        # path="/api/auth",
     )
-    return None, 201
 
 
 @router.post("/register")
@@ -45,14 +43,12 @@ async def resend_verification(
 ):
     """Resends the verification token"""
     await auth.resend_verification(email)
-    return None, 200
 
 
 @router.post("/verify")
 async def verify(verification_token: Annotated[str, Body()], auth: AuthServiceDep):
     """Verifies the user"""
     await auth.verify(verification_token)
-    return None, 200
 
 
 @router.post("/token")

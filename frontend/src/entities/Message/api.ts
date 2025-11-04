@@ -1,17 +1,18 @@
-import { infiniteQueryOptions } from "@tanstack/react-query";
-import { getCursorMessagesByGroupApiMessagesGroupIdGetInfiniteOptions } from "@/shared/api/generated/@tanstack/react-query.gen";
-import { getCachedMessages, saveMessages } from "./db";
-import { getCursorMessagesByGroupApiMessagesGroupIdGet } from "@/shared/api/generated";
+import { getCursorMessagesByGroupApiMessagesCursorGroupIdGet } from '@/shared/api/generated';
+import { getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteOptions } from '@/shared/api/generated/@tanstack/react-query.gen';
+
+import { getCachedMessages, saveMessages } from './db';
+
 
 const getCursorMessagesInfWithCache = (groupId: string) => {
   const baseOptions =
-    getCursorMessagesByGroupApiMessagesGroupIdGetInfiniteOptions({
+    getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteOptions({
       path: { group_id: groupId },
     });
 
   return {
     ...baseOptions,
-    queryFn: async ({ pageParam }: { pageParam: string | null }) => {
+    queryFn: async ({ pageParam }: { pageParam: null | string }) => {
       const cachedData = await getCachedMessages(groupId);
 
       if (cachedData.messages.length > 0) {
@@ -19,7 +20,7 @@ const getCursorMessagesInfWithCache = (groupId: string) => {
       }
 
       try {
-        const response = await getCursorMessagesByGroupApiMessagesGroupIdGet({
+        const response = await getCursorMessagesByGroupApiMessagesCursorGroupIdGet({
           path: { group_id: groupId },
           query: pageParam ? { cursor: pageParam } : undefined,
         });
@@ -35,8 +36,8 @@ const getCursorMessagesInfWithCache = (groupId: string) => {
         );
         return response.data;
       } catch (error) {
-        console.error("API request failed:", error);
-        return { messages: [], cursor: null, has_more: false };
+        console.error('API request failed:', error);
+        return { cursor: null, has_more: false, messages: [] };
       }
     },
   };
@@ -44,6 +45,6 @@ const getCursorMessagesInfWithCache = (groupId: string) => {
 
 export const messageQueryProps = {
   getCursorMessagesInf:
-    getCursorMessagesByGroupApiMessagesGroupIdGetInfiniteOptions,
+    getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteOptions,
   getCursorMessagesInfWithCache,
 };

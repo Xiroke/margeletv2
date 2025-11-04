@@ -1,17 +1,14 @@
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
-import viteReact from '@vitejs/plugin-react';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import { resolve } from 'node:path';
-
-// https://vitejs.dev/config/
-import path from 'node:path';
-
-import { fileURLToPath } from 'node:url';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-
+import viteReact from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
+/// <reference types="vitest/config" />
+import { resolve } from 'node:path';
+import path from 'node:path';
+// https://vitejs.dev/config/
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,9 +29,14 @@ export default defineConfig({
     viteReact(),
     tailwindcss(),
   ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
   test: {
-    globals: true,
     environment: 'jsdom',
+    globals: true,
     projects: [
       {
         extends: true,
@@ -46,25 +48,20 @@ export default defineConfig({
           }),
         ],
         test: {
-          name: 'storybook',
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
             instances: [
               {
                 browser: 'chromium',
               },
             ],
+            provider: 'playwright',
           },
+          name: 'storybook',
           setupFiles: ['.storybook/vitest.setup.ts'],
         },
       },
     ],
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
   },
 });

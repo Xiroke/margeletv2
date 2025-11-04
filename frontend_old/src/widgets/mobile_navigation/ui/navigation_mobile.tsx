@@ -20,7 +20,7 @@ export const NavigationMobile = ({
     <div {...props} className={clsx(styles.navigation_mobile, className)}>
       {children}
       <UserDropdown>
-        <UserCard styleType="small" />
+        <UserCard variant="small" />
       </UserDropdown>
       <Link
         className={styles.navigation_item}

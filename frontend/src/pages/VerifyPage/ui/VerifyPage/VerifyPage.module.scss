@@ -1,6 +1,7 @@
 @use '@/shared/styles/form.module.scss';
 
 .actions {
+    min-width: 260px;
     width: 20%;
     display: flex;
     flex-direction: column;

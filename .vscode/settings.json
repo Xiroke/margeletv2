@@ -1,9 +1,12 @@
 {
   "python.analysis.autoImportCompletions": true,
-  "python.analysis.typeCheckingMode": "strict",
-  "python.analysis.extraPaths": ["backend"],
-  "python.autoComplete.extraPaths": ["backend"],
-
+  "python.analysis.typeCheckingMode": "standard",
+  "python.analysis.extraPaths": [
+    "backend"
+  ],
+  "python.autoComplete.extraPaths": [
+    "backend"
+  ],
   "files.exclude": {
     "**/node_modules/": true,
     "**/__pycache__": true,
@@ -15,5 +18,12 @@
   },
   "search.exclude": {
     "**/node_modules/": true
-  }
+  },
+  // disable prettier
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  },
 }

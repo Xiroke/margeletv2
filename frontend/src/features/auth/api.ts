@@ -9,10 +9,10 @@ import {
 
 export const authQueryProps = {
   loginMut: loginApiAuthLoginPostMutation,
+  meOpt: getMeApiAuthMeGetOptions,
   registerMut: registerApiAuthRegisterPostMutation,
   resendVerificationMut:
     resendVerificationApiAuthResendVerificationPostMutation,
-  verifyMut: verifyApiAuthVerifyPostMutation,
   tokenMut: getAccessTokenApiAuthTokenPostMutation,
-  meOpt: getMeApiAuthMeGetOptions,
+  verifyMut: verifyApiAuthVerifyPostMutation,
 };

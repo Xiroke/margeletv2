@@ -5,20 +5,9 @@ body {
 .chat {
   padding: 40px 20px;
   display: flex;
+  flex-direction: row;
   gap: 20px;
-}
-
-.control_panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  color: var(--text-second);
-  gap: 20px;
-  * {
-    cursor: pointer;
-  }
+  height: 100vh;
 }
 
 .group_list {

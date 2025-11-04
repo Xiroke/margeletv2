@@ -2,21 +2,22 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { ChatMessagesLoader } from './ChatMessagesLoader';
 
+
 const meta: Meta<typeof ChatMessagesLoader> = {
-    title: 'ChatMessagesLoader',
-    component: ChatMessagesLoader,
-    globals: { theme: 'light' },
+  component: ChatMessagesLoader,
+  globals: { theme: 'light' },
+  title: 'ChatMessagesLoader',
 };
 
 export default meta;
 type Story = StoryObj<typeof ChatMessagesLoader>;
 
 export const Light: Story = {
-    args: {},
+  args: {},
 };
 
 export const Dark: Story = {
-    args: {},
-    globals: { theme: 'dark' },
+  args: {},
+  globals: { theme: 'dark' },
 };
 

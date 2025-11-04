@@ -1,8 +1,10 @@
-import type { ReadMessageSchema } from "@/shared/api/generated";
-import { db, type CachedCursorMessage } from "@/shared/db";
+import type { ReadMessageSchema } from '@/shared/api/generated';
+import type {CachedCursorMessage} from '@/shared/db';
+
+import {  db } from '@/shared/db';
 
 export const saveCachedMessages = async (
-  messages: ReadMessageSchema[],
+  messages: Array<ReadMessageSchema>,
   cursor: CachedCursorMessage
 ) => {
   await db.messages.bulkPut(messages);
@@ -15,29 +17,29 @@ export const getCachedMessages = async (groupId: string) => {
     const cursorDB = await db.cursors.get(groupId);
 
     if (!cursorDB) {
-      return { messages: [], cursor: null, has_more: false };
+      return { cursor: null, has_more: false, messages: [] };
     }
 
     const messages = await db.messages
-      .where("groupId")
+      .where('groupId')
       .equals(groupId)
-      .sortBy("created_at");
+      .sortBy('created_at');
 
     return {
-      messages,
       cursor: cursorDB.cursor,
       has_more: cursorDB.has_more,
+      messages,
     };
   } catch (error) {
-    console.error("IndexedDB error:", error);
-    return { messages: [], cursor: null, has_more: false };
+    console.error('IndexedDB error:', error);
+    return { cursor: null, has_more: false, messages: [] };
   }
 };
 
 export const saveMessages = async (
   groupId: string,
-  messages: ReadMessageSchema[],
-  cursor: string | null,
+  messages: Array<ReadMessageSchema>,
+  cursor: null | string,
   has_more: boolean = true
 ) => {
   try {
@@ -46,11 +48,11 @@ export const saveMessages = async (
 
     // Сохраняем курсор
     await db.cursors.put({
-      group_id: groupId,
       cursor,
+      group_id: groupId,
       has_more,
     });
   } catch (error) {
-    console.error("Failed to save to IndexedDB:", error);
+    console.error('Failed to save to IndexedDB:', error);
   }
 };

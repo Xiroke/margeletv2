@@ -11,8 +11,7 @@
       "module": "uvicorn",
       "args": ["main:app", "--reload"],
       "cwd": "${workspaceFolder}/backend",
-      "justMyCode": false,
-      "jinja": true
+      "justMyCode": true,
     },
     {
       "name": "Python Debugger: Current File with Arguments",

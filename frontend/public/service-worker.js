@@ -1,11 +1,11 @@
-const CACHE_NAME = "image-cache-v1";
+const CACHE_NAME = 'image-cache-v1';
 self.accessToken = undefined;
 self.BACKEND_URL = undefined;
 self.ALLOWED_CACHED_PATHS = [];
 
-self.addEventListener("message", (event) => {
-  const { type, payload } = event.data;
-  if (type === "SET_PARAMS") {
+self.addEventListener('message', (event) => {
+  const { payload, type } = event.data;
+  if (type === 'SET_PARAMS') {
     self.BACKEND_URL = payload.BACKEND_URL;
     self.ALLOWED_CACHED_PATHS = payload.ALLOWED_CACHED_PATHS;
   }
@@ -15,23 +15,23 @@ self.addEventListener("message", (event) => {
  * Requests an access token using a refresh token
  */
 const fetchAccessToken = async () => {
-  console.log("token requested");
+  console.log('token requested');
 
   try {
     const response = await fetch(`${self.BACKEND_URL}/api/auth/token`, {
-      method: "POST",
-      credentials: "include",
+      credentials: 'include',
+      method: 'POST',
     });
 
     if (!response.ok) {
-      console.error("Failed to fetch access token");
+      console.error('Failed to fetch access token');
       return undefined;
     }
 
     const data = await response.json();
     return data.access_token;
   } catch (err) {
-    console.error("Error fetching access token:", err);
+    console.error('Error fetching access token:', err);
     return undefined;
   }
 };
@@ -40,7 +40,7 @@ const fetchAccessToken = async () => {
  * When the access token is not present, this function will request a new one and set the value in headers
  */
 const accessTokenMiddleware = async (request) => {
-  if (request.headers.get("Authorization")) {
+  if (request.headers.get('Authorization')) {
     return fetch(request);
   }
 
@@ -80,7 +80,7 @@ const accessTokenMiddleware = async (request) => {
   return response;
 };
 
-self.addEventListener("fetch", (event) => {
+self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   const pathname = url.pathname;
@@ -92,7 +92,6 @@ self.addEventListener("fetch", (event) => {
   //     isMustCached = true;
   //   }
   // }
-
   if (isMustCached) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) =>
@@ -109,7 +108,7 @@ self.addEventListener("fetch", (event) => {
       )
     );
   } else if (request.url.startsWith(self.BACKEND_URL)) {
-    if (url.pathname.includes("/api/auth/")) {
+    if (url.pathname.includes('/api/auth/')) {
       event.respondWith(fetch(request));
     } else {
       event.respondWith(accessTokenMiddleware(request));

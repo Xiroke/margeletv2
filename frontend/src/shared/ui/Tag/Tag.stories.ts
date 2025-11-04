@@ -2,10 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Tag } from './Tag';
 
+
 const meta: Meta<typeof Tag> = {
-  title: 'Tag',
   component: Tag,
   globals: { theme: 'light' },
+  title: 'Tag',
 };
 
 export default meta;

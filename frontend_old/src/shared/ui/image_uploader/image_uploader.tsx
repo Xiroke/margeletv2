@@ -132,7 +132,7 @@ export const ImageUploader = ({
         <div className={styles.actionContainer}>
           {previewUrl && (
             <Button
-              styleType="invert"
+              variant="invert"
               className={styles.button}
               onClick={clearSelection}
             >

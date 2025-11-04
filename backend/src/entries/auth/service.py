@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
+from logging import getLogger
 from uuid import UUID
 
 from pydantic import EmailStr
-
 from src.entries.auth.refresh_token.dao import RefreshTokenDaoProtocol
 from src.entries.auth.refresh_token.schemas import CreateRefreshTokenSchema
 from src.infrastructure.smtp import SMTP
@@ -22,6 +22,8 @@ from .schemas import (
 )
 from .user.dao import UserDaoProtocol
 from .user.schemas import CreateUserSchema, LoginUserSchema, ReadUserSchema
+
+log = getLogger(__name__)
 
 
 class AuthService:
@@ -95,6 +97,7 @@ class AuthService:
 
     async def login(self, data: LoginUserSchema):
         """Create refresh token for user"""
+        log.debug("Login attempt by user %s", data.email)
         user = await self.user_dao.get_user_for_check_password(data.email)
 
         if not user.is_active:
@@ -116,6 +119,7 @@ class AuthService:
         refresh_token_validated = CreateRefreshTokenSchema(
             value=generated_key, user_id=str(user.id), expired_at=expired_at
         )
+        log.debug("Generate refresh token for %s", data.email)
         refresh_token = await self.refresh_token_dao.create(refresh_token_validated)
 
         return refresh_token
