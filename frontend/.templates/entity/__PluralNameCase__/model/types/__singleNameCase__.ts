@@ -1,1 +1,1 @@
-export type __SingleNameCase__ = {};
+export type __SingleNameCase__ = {}

@@ -1,15 +1,15 @@
-import type {FC} from 'react';
+import type { FC } from 'react'
 
-import { clsx } from 'clsx';
-import {  memo } from 'react';
+import { clsx } from 'clsx'
+import { memo } from 'react'
 
-import cls from './Loading.module.scss';
+import cls from './Loading.module.scss'
 
 interface LoadingProps {
-  className?: string;
-  color?: 'primary' | 'white';
-  size?: 'large' | 'medium' | 'small';
-  variant?: 'dots' | 'spinner';
+  className?: string
+  color?: 'primary' | 'white'
+  size?: 'large' | 'medium' | 'small'
+  variant?: 'dots' | 'spinner'
 }
 
 export const Loading: FC<LoadingProps> = memo((props) => {
@@ -18,7 +18,7 @@ export const Loading: FC<LoadingProps> = memo((props) => {
     color = 'white',
     size = 'medium',
     variant = 'spinner',
-  } = props;
+  } = props
   if (variant === 'dots') {
     return (
       <div className={cls.dots}>
@@ -26,7 +26,7 @@ export const Loading: FC<LoadingProps> = memo((props) => {
         <div className={cls.dot} />
         <div className={cls.dot} />
       </div>
-    );
+    )
   }
 
   const loadingClassName = clsx([
@@ -35,7 +35,7 @@ export const Loading: FC<LoadingProps> = memo((props) => {
     cls[color],
     cls[variant],
     className,
-  ]);
+  ])
 
-  return <div className={loadingClassName} />;
-});
+  return <div className={loadingClassName} />
+})

@@ -5,7 +5,7 @@ import {
   registerApiAuthRegisterPostMutation,
   resendVerificationApiAuthResendVerificationPostMutation,
   verifyApiAuthVerifyPostMutation,
-} from '@/shared/api/generated/@tanstack/react-query.gen';
+} from '@/shared/api/generated/@tanstack/react-query.gen'
 
 export const authQueryProps = {
   loginMut: loginApiAuthLoginPostMutation,
@@ -15,4 +15,4 @@ export const authQueryProps = {
     resendVerificationApiAuthResendVerificationPostMutation,
   tokenMut: getAccessTokenApiAuthTokenPostMutation,
   verifyMut: verifyApiAuthVerifyPostMutation,
-};
+}

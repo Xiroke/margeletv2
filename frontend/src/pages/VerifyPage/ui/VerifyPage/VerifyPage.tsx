@@ -1,70 +1,71 @@
+import type { FC } from 'react'
 
-import type { FC, FormEvent } from 'react';
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { clsx } from 'clsx'
+import { memo, useEffect, useRef, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { clsx } from 'clsx';
-import { memo, useEffect, useRef, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { authQueryProps } from '@/features/auth/api'
+import { Button } from '@/shared/ui/button'
+import { Input } from '@/shared/ui/input'
 
-import { authQueryProps } from '@/features/auth/api';
-import { Button } from '@/shared/ui/button';
-import { Input } from '@/shared/ui/input';
-
-import cls from './VerifyPage.module.scss';
+import cls from './VerifyPage.module.scss'
 
 interface VerifyPageProps {
-  className?: string;
+  className?: string
 }
 
 export const VerifyPage: FC<VerifyPageProps> = memo(
   (props: VerifyPageProps) => {
-    const { className } = props;
-    const navigate = useNavigate();
-    const verify = useMutation({ ...authQueryProps.verifyMut() });
+    const { className } = props
+    const navigate = useNavigate()
+    const verify = useMutation({ ...authQueryProps.verifyMut() })
     const resendVerification = useMutation({
       ...authQueryProps.resendVerificationMut(),
-    });
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    })
+    const inputRef = useRef<HTMLInputElement>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     const { email, token: tokenParam } = useParams({
       from: '/verify/$email/{-$token}',
-    });
+    })
 
     const [token, setToken] = useState<string | undefined>(
-      tokenParam ? tokenParam : ''
-    );
+      tokenParam ? tokenParam : '',
+    )
 
     const fetchVerify = async () => {
-      if (!token) return;
+      if (!token) return
 
-      setIsLoading(true);
-      await verify.mutateAsync({ body: token });
-      setIsLoading(false);
+      setIsLoading(true)
+      await verify.mutateAsync({ body: token })
+      setIsLoading(false)
       if (verify.error) {
-        toast.error('Ошибка');
-      } else {
-        toast.success('Аккаунт подтвержден');
+        toast.error('Ошибка')
+      }
+      else {
+        toast.success('Аккаунт подтвержден')
 
         setTimeout(() => {
-          navigate({ to: '/' });
-        }, 3000);
+          navigate({ to: '/' })
+        }, 3000)
       }
-    };
+    }
 
     const fetchResendVerification = async () => {
-      await resendVerification.mutateAsync({ body: email });
+      await resendVerification.mutateAsync({ body: email })
       if (resendVerification.error) {
-        toast.error('Ошибка');
-      } else {
-        toast.success('Токен отправлен на вашу почту');
+        toast.error('Ошибка')
       }
-    };
+      else {
+        toast.success('Токен отправлен на вашу почту')
+      }
+    }
 
     useEffect(() => {
-      fetchResendVerification();
-    }, []);
+      fetchResendVerification()
+    }, [])
 
     return (
       <div className={clsx(cls.verifyPage, className)}>
@@ -75,7 +76,7 @@ export const VerifyPage: FC<VerifyPageProps> = memo(
             full
             label="Токен верификации"
             name="token"
-            onChange={(e) => setToken(e.target.value)}
+            onChange={e => setToken(e.target.value)}
             placeholder="eyJhbGciOiJ..."
             ref={inputRef}
             required
@@ -101,6 +102,6 @@ export const VerifyPage: FC<VerifyPageProps> = memo(
           </Button>
         </div>
       </div>
-    );
-  }
-);
+    )
+  },
+)

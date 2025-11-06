@@ -4,905 +4,905 @@
  * Body_upload_avatar_api_users_avatar_me_post
  */
 export type BodyUploadAvatarApiUsersAvatarMePost = {
-    /**
+  /**
      * Image
      */
-    image: Blob | File;
-};
+  image: Blob | File
+}
+
+export type ClientOptions = {
+  baseUrl: 'http://localhost:8000' | (string & {})
+}
+
+export type CreateApiPersonalGroupsOtherUserIdPostData = {
+  body?: never
+  path: {
+    /**
+         * Other User Id
+         */
+    other_user_id: string
+  }
+  query?: never
+  url: '/api/personal_groups/{other_user_id}'
+}
+
+export type CreateApiPersonalGroupsOtherUserIdPostError = CreateApiPersonalGroupsOtherUserIdPostErrors[keyof CreateApiPersonalGroupsOtherUserIdPostErrors]
+
+export type CreateApiPersonalGroupsOtherUserIdPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type CreateApiPersonalGroupsOtherUserIdPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type CreateApiSimpleGroupsPostData = {
+  body: CreateSimpleGroupSchema
+  path?: never
+  query?: never
+  url: '/api/simple_groups/'
+}
+
+export type CreateApiSimpleGroupsPostError = CreateApiSimpleGroupsPostErrors[keyof CreateApiSimpleGroupsPostErrors]
+
+export type CreateApiSimpleGroupsPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type CreateApiSimpleGroupsPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type CreateMessageApiMessagesPostData = {
+  body: CreateMessageNoUserSchema
+  path?: never
+  query?: never
+  url: '/api/messages/'
+}
+
+export type CreateMessageApiMessagesPostError = CreateMessageApiMessagesPostErrors[keyof CreateMessageApiMessagesPostErrors]
+
+export type CreateMessageApiMessagesPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type CreateMessageApiMessagesPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
 
 /**
  * CreateMessageNoUserSchema
  */
 export type CreateMessageNoUserSchema = {
-    /**
+  /**
      * Message
      * Message must be less than 2000 characters and more than 1 character
      */
-    message: string;
-    /**
+  message: string
+  /**
      * To Group Id
      */
-    to_group_id: string;
-};
+  to_group_id: string
+}
 
 /**
  * CreateSimpleGroupSchema
  */
 export type CreateSimpleGroupSchema = {
-    /**
-     * Title
-     */
-    title: string;
-    /**
+  /**
      * Description
      */
-    description: string;
-};
+  description: string
+  /**
+     * Title
+     */
+  title: string
+}
 
 /**
  * CreateUserSchema
  */
 export type CreateUserSchema = {
-    /**
-     * Name
-     */
-    name: string;
-    /**
+  /**
      * Account Name
      */
-    account_name: string;
-    /**
+  account_name: string
+  /**
      * Email
      */
-    email: string;
-    /**
+  email: string
+  /**
+     * Name
+     */
+  name: string
+  /**
      * Password
      */
-    password: string;
-};
+  password: string
+}
+
+export type DeleteApiMessagesIdDeleteData = {
+  body?: never
+  path: {
+    id: PydanticObjectId
+  }
+  query?: never
+  url: '/api/messages/{id}'
+}
+
+export type DeleteApiMessagesIdDeleteError = DeleteApiMessagesIdDeleteErrors[keyof DeleteApiMessagesIdDeleteErrors]
+
+export type DeleteApiMessagesIdDeleteErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type DeleteApiMessagesIdDeleteResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type DeleteApiPersonalGroupsIdDeleteData = {
+  body?: never
+  path: {
+    /**
+         * Id
+         */
+    id: string
+  }
+  query?: never
+  url: '/api/personal_groups/{id}'
+}
+
+export type DeleteApiPersonalGroupsIdDeleteError = DeleteApiPersonalGroupsIdDeleteErrors[keyof DeleteApiPersonalGroupsIdDeleteErrors]
+
+export type DeleteApiPersonalGroupsIdDeleteErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type DeleteApiPersonalGroupsIdDeleteResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type DeleteApiSimpleGroupsIdDeleteData = {
+  body?: never
+  path: {
+    /**
+         * Id
+         */
+    id: string
+  }
+  query?: never
+  url: '/api/simple_groups/{id}'
+}
+
+export type DeleteApiSimpleGroupsIdDeleteError = DeleteApiSimpleGroupsIdDeleteErrors[keyof DeleteApiSimpleGroupsIdDeleteErrors]
+
+export type DeleteApiSimpleGroupsIdDeleteErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type DeleteApiSimpleGroupsIdDeleteResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type GetAccessTokenApiAuthTokenPostData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/auth/token'
+}
+
+export type GetAccessTokenApiAuthTokenPostResponse = GetAccessTokenApiAuthTokenPostResponses[keyof GetAccessTokenApiAuthTokenPostResponses]
+
+export type GetAccessTokenApiAuthTokenPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: ReadAccessTokenSchema
+}
+
+export type GetApiSimpleGroupsIdGetData = {
+  body?: never
+  path: {
+    /**
+         * Id
+         */
+    id: string
+  }
+  query?: never
+  url: '/api/simple_groups/{id}'
+}
+
+export type GetApiSimpleGroupsIdGetError = GetApiSimpleGroupsIdGetErrors[keyof GetApiSimpleGroupsIdGetErrors]
+
+export type GetApiSimpleGroupsIdGetErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type GetApiSimpleGroupsIdGetResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetData = {
+  body?: never
+  path: {
+    /**
+         * Group Id
+         */
+    group_id: string
+  }
+  query?: {
+    /**
+         * Cursor
+         */
+    cursor?: null | string
+    /**
+         * Limit
+         */
+    limit?: number
+  }
+  url: '/api/messages/cursor/{group_id}'
+}
+
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetError = GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors[keyof GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors]
+
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponse = GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses[keyof GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses]
+
+export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses = {
+  /**
+     * Successful Response
+     */
+  200: ReadMessageCursorPaginatedSchema
+}
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetData = {
+  body?: never
+  path: {
+    /**
+         * Group Id
+         */
+    group_id: string
+  }
+  query?: {
+    /**
+         * Limit
+         */
+    limit?: number
+  }
+  url: '/api/messages/last/{group_id}'
+}
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetError = GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors[keyof GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors]
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponse = GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses[keyof GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses]
+
+export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses = {
+  /**
+     * Response Get Last Messages By Group Api Messages Last  Group Id  Get
+     * Successful Response
+     */
+  200: Array<ReadMessageSchema>
+}
+
+export type GetMeApiAuthMeGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/auth/me'
+}
+
+export type GetMeApiAuthMeGetResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type GetMyGroupsApiPersonalGroupsMeGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/personal_groups/me'
+}
+
+export type GetMyGroupsApiPersonalGroupsMeGetResponse = GetMyGroupsApiPersonalGroupsMeGetResponses[keyof GetMyGroupsApiPersonalGroupsMeGetResponses]
+
+export type GetMyGroupsApiPersonalGroupsMeGetResponses = {
+  /**
+     * Response Get My Groups Api Personal Groups Me Get
+     * Successful Response
+     */
+  200: Array<ReadPersonalGroupSchema>
+}
+
+export type GetMySimpleGroupsApiSimpleGroupsMeGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/simple_groups/me'
+}
+
+export type GetMySimpleGroupsApiSimpleGroupsMeGetResponse = GetMySimpleGroupsApiSimpleGroupsMeGetResponses[keyof GetMySimpleGroupsApiSimpleGroupsMeGetResponses]
+
+export type GetMySimpleGroupsApiSimpleGroupsMeGetResponses = {
+  /**
+     * Response Get My Simple Groups Api Simple Groups Me Get
+     * Successful Response
+     */
+  200: Array<ReadSimpleGroupSchema>
+}
+
+export type GetUsernamesByIdApiUsersUsernamesPostData = {
+  /**
+     * User Ids
+     */
+  body: Array<string>
+  path?: never
+  query?: never
+  url: '/api/users/usernames'
+}
+
+export type GetUsernamesByIdApiUsersUsernamesPostError = GetUsernamesByIdApiUsersUsernamesPostErrors[keyof GetUsernamesByIdApiUsersUsernamesPostErrors]
+
+export type GetUsernamesByIdApiUsersUsernamesPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type GetUsernamesByIdApiUsersUsernamesPostResponse = GetUsernamesByIdApiUsersUsernamesPostResponses[keyof GetUsernamesByIdApiUsersUsernamesPostResponses]
+
+export type GetUsernamesByIdApiUsersUsernamesPostResponses = {
+  /**
+     * Response Get Usernames By Id Api Users Usernames Post
+     * Successful Response
+     */
+  200: {
+    [key: string]: string
+  }
+}
 
 /**
  * HTTPValidationError
  */
 export type HttpValidationError = {
-    /**
+  /**
      * Detail
      */
-    detail?: Array<ValidationError>;
-};
+  detail?: Array<ValidationError>
+}
+
+export type LoadAvatarApiUsersAvatarMeGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/users/avatar/me'
+}
+
+export type LoadAvatarApiUsersAvatarMeGetResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type LoginApiAuthLoginPostData = {
+  body: LoginUserSchema
+  path?: never
+  query?: never
+  url: '/api/auth/login'
+}
+
+export type LoginApiAuthLoginPostError = LoginApiAuthLoginPostErrors[keyof LoginApiAuthLoginPostErrors]
+
+export type LoginApiAuthLoginPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type LoginApiAuthLoginPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
 
 /**
  * LoginUserSchema
  */
 export type LoginUserSchema = {
-    /**
+  /**
      * Email
      */
-    email: string;
-    /**
+  email: string
+  /**
      * Password
      */
-    password: string;
-};
+  password: string
+}
 
-export type PydanticObjectId = string;
+export type PingApiHealthcheckGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/healthcheck'
+}
+
+export type PingApiHealthcheckGetResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type PydanticObjectId = string
 
 /**
  * ReadAccessTokenSchema
  */
 export type ReadAccessTokenSchema = {
-    /**
+  /**
      * Access Token
      */
-    access_token: string;
-    /**
+  access_token: string
+  /**
      * Token Type
      */
-    token_type: 'bearer';
-};
+  token_type: 'bearer'
+}
 
 /**
  * ReadMessageCursorPaginatedSchema
  */
 export type ReadMessageCursorPaginatedSchema = {
-    /**
-     * Messages
-     */
-    messages: Array<ReadMessageSchema>;
-    /**
-     * Has More
-     */
-    has_more: boolean;
-    /**
+  /**
      * Cursor
      */
-    cursor: string | null;
-};
+  cursor: null | string
+  /**
+     * Has More
+     */
+  has_more: boolean
+  /**
+     * Messages
+     */
+  messages: Array<ReadMessageSchema>
+}
 
 /**
  * ReadMessageSchema
  */
 export type ReadMessageSchema = {
-    id: PydanticObjectId;
-    /**
-     * Message
-     */
-    message: string;
-    /**
-     * User Id
-     */
-    user_id: string;
-    /**
-     * To Group Id
-     */
-    to_group_id: string;
-    /**
+  /**
      * Created At
      */
-    created_at: string;
-};
+  created_at: string
+  id: PydanticObjectId
+  /**
+     * Message
+     */
+  message: string
+  /**
+     * To Group Id
+     */
+  to_group_id: string
+  /**
+     * User Id
+     */
+  user_id: string
+}
 
 /**
  * ReadPersonalGroupSchema
  */
 export type ReadPersonalGroupSchema = {
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Type
-     */
-    type: 'simple_group' | 'personal_group';
-    /**
+  /**
      * Created At
      */
-    created_at: string;
-    /**
+  created_at: string
+  /**
+     * Id
+     */
+  id: string
+  /**
      * Title
      */
-    title: string;
-};
+  title: string
+  /**
+     * Type
+     */
+  type: 'personal_group' | 'simple_group'
+}
 
 /**
  * ReadSimpleGroupSchema
  */
 export type ReadSimpleGroupSchema = {
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Type
-     */
-    type: 'simple_group' | 'personal_group';
-    /**
+  /**
      * Created At
      */
-    created_at: string;
-    /**
+  created_at: string
+  /**
+     * Id
+     */
+  id: string
+  /**
      * Title
      */
-    title: string;
-};
+  title: string
+  /**
+     * Type
+     */
+  type: 'personal_group' | 'simple_group'
+}
+
+export type RegisterApiAuthRegisterPostData = {
+  body: CreateUserSchema
+  path?: never
+  query?: never
+  url: '/api/auth/register'
+}
+
+export type RegisterApiAuthRegisterPostError = RegisterApiAuthRegisterPostErrors[keyof RegisterApiAuthRegisterPostErrors]
+
+export type RegisterApiAuthRegisterPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type RegisterApiAuthRegisterPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type RegisterSchemasRouteRegisterSchemasGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/register_schemas'
+}
+
+export type RegisterSchemasRouteRegisterSchemasGetResponse = RegisterSchemasRouteRegisterSchemasGetResponses[keyof RegisterSchemasRouteRegisterSchemasGetResponses]
+
+export type RegisterSchemasRouteRegisterSchemasGetResponses = {
+  /**
+     * Response Register Schemas Route Register Schemas Get
+     * Successful Response
+     */
+  200: WsInDataSchema | WsInMessageSchema | WsOutDataSchema | WsOutMessageSchemaOutput
+}
+
+export type ResendVerificationApiAuthResendVerificationPostData = {
+  /**
+     * Email
+     */
+  body: string
+  path?: never
+  query?: never
+  url: '/api/auth/resend_verification'
+}
+
+export type ResendVerificationApiAuthResendVerificationPostError = ResendVerificationApiAuthResendVerificationPostErrors[keyof ResendVerificationApiAuthResendVerificationPostErrors]
+
+export type ResendVerificationApiAuthResendVerificationPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type ResendVerificationApiAuthResendVerificationPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type UpdateApiMessagesIdPatchData = {
+  body: UpdateMessageSchema
+  path: {
+    id: PydanticObjectId
+  }
+  query?: never
+  url: '/api/messages/{id}'
+}
+
+export type UpdateApiMessagesIdPatchError = UpdateApiMessagesIdPatchErrors[keyof UpdateApiMessagesIdPatchErrors]
+
+export type UpdateApiMessagesIdPatchErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type UpdateApiMessagesIdPatchResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type UpdateApiPersonalGroupsIdPatchData = {
+  body: UpdatePersonalGroupSchema
+  path: {
+    /**
+         * Id
+         */
+    id: string
+  }
+  query?: never
+  url: '/api/personal_groups/{id}'
+}
+
+export type UpdateApiPersonalGroupsIdPatchError = UpdateApiPersonalGroupsIdPatchErrors[keyof UpdateApiPersonalGroupsIdPatchErrors]
+
+export type UpdateApiPersonalGroupsIdPatchErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type UpdateApiPersonalGroupsIdPatchResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
+
+export type UpdateApiSimpleGroupsIdPatchData = {
+  body: UpdateSimpleGroupSchema
+  path: {
+    /**
+         * Id
+         */
+    id: string
+  }
+  query?: never
+  url: '/api/simple_groups/{id}'
+}
+
+export type UpdateApiSimpleGroupsIdPatchError = UpdateApiSimpleGroupsIdPatchErrors[keyof UpdateApiSimpleGroupsIdPatchErrors]
+
+export type UpdateApiSimpleGroupsIdPatchErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type UpdateApiSimpleGroupsIdPatchResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
 
 /**
  * UpdateMessageSchema
  */
 export type UpdateMessageSchema = {
-    /**
+  /**
      * Message
      * Message must be less than 2000 characters and more than 1 character
      */
-    message: string | null;
-};
+  message: null | string
+}
 
 /**
  * UpdatePersonalGroupSchema
  */
 export type UpdatePersonalGroupSchema = {
-    [key: string]: unknown;
-};
+  [key: string]: unknown
+}
 
 /**
  * UpdateSimpleGroupSchema
  */
 export type UpdateSimpleGroupSchema = {
-    /**
-     * Title
-     */
-    title?: string | null;
-    /**
-     * Description
-     */
-    description?: string | null;
-    /**
+  /**
      * Avatar Path
      */
-    avatar_path?: string | null;
-};
+  avatar_path?: null | string
+  /**
+     * Description
+     */
+  description?: null | string
+  /**
+     * Title
+     */
+  title?: null | string
+}
+
+export type UploadAvatarApiUsersAvatarMePostData = {
+  body: BodyUploadAvatarApiUsersAvatarMePost
+  path?: never
+  query?: never
+  url: '/api/users/avatar/me'
+}
+
+export type UploadAvatarApiUsersAvatarMePostError = UploadAvatarApiUsersAvatarMePostErrors[keyof UploadAvatarApiUsersAvatarMePostErrors]
+
+export type UploadAvatarApiUsersAvatarMePostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type UploadAvatarApiUsersAvatarMePostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
 
 /**
  * ValidationError
  */
 export type ValidationError = {
-    /**
+  /**
      * Location
      */
-    loc: Array<string | number>;
-    /**
+  loc: Array<number | string>
+  /**
      * Message
      */
-    msg: string;
-    /**
+  msg: string
+  /**
      * Error Type
      */
-    type: string;
-};
+  type: string
+}
+
+export type VerifyApiAuthVerifyPostData = {
+  /**
+     * Verification Token
+     */
+  body: string
+  path?: never
+  query?: never
+  url: '/api/auth/verify'
+}
+
+export type VerifyApiAuthVerifyPostError = VerifyApiAuthVerifyPostErrors[keyof VerifyApiAuthVerifyPostErrors]
+
+export type VerifyApiAuthVerifyPostErrors = {
+  /**
+     * Validation Error
+     */
+  422: HttpValidationError
+}
+
+export type VerifyApiAuthVerifyPostResponses = {
+  /**
+     * Successful Response
+     */
+  200: unknown
+}
 
 /**
  * WsDataEvent
  */
-export type WsDataEvent = 'message';
+export type WsDataEvent = 'message'
 
 /**
  * WsInDataSchema
  */
 export type WsInDataSchema = {
-    event?: WsDataEvent;
-    /**
+  /**
      * Data
      */
-    data: unknown;
-};
+  data: unknown
+  event?: WsDataEvent
+}
 
 /**
  * WsInMessageSchema
  */
 export type WsInMessageSchema = {
-    event?: WsDataEvent;
-    data: CreateMessageNoUserSchema;
-};
+  data: CreateMessageNoUserSchema
+  event?: WsDataEvent
+}
 
 /**
  * WsOutDataSchema
  */
 export type WsOutDataSchema = {
-    event?: WsDataEvent;
-    /**
+  /**
      * Data
      */
-    data: unknown;
-    /**
+  data: unknown
+  event?: WsDataEvent
+  /**
      * To User
      */
-    to_user: string;
-};
+  to_user: string
+}
 
 /**
  * WsOutMessageSchema
  */
 export type WsOutMessageSchemaInput = {
-    event?: WsDataEvent;
-    data: ReadMessageSchema;
-    /**
+  data: ReadMessageSchema
+  event?: WsDataEvent
+  /**
      * To User
      */
-    to_user: string;
-};
+  to_user: string
+}
 
 /**
  * WsOutMessageSchema
  */
 export type WsOutMessageSchemaOutput = {
-    event?: WsDataEvent;
-    data: ReadMessageSchema;
-    /**
+  data: ReadMessageSchema
+  event?: WsDataEvent
+  /**
      * To User
      */
-    to_user: string;
-};
-
-export type LoginApiAuthLoginPostData = {
-    body: LoginUserSchema;
-    path?: never;
-    query?: never;
-    url: '/api/auth/login';
-};
-
-export type LoginApiAuthLoginPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type LoginApiAuthLoginPostError = LoginApiAuthLoginPostErrors[keyof LoginApiAuthLoginPostErrors];
-
-export type LoginApiAuthLoginPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type RegisterApiAuthRegisterPostData = {
-    body: CreateUserSchema;
-    path?: never;
-    query?: never;
-    url: '/api/auth/register';
-};
-
-export type RegisterApiAuthRegisterPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RegisterApiAuthRegisterPostError = RegisterApiAuthRegisterPostErrors[keyof RegisterApiAuthRegisterPostErrors];
-
-export type RegisterApiAuthRegisterPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type ResendVerificationApiAuthResendVerificationPostData = {
-    /**
-     * Email
-     */
-    body: string;
-    path?: never;
-    query?: never;
-    url: '/api/auth/resend_verification';
-};
-
-export type ResendVerificationApiAuthResendVerificationPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type ResendVerificationApiAuthResendVerificationPostError = ResendVerificationApiAuthResendVerificationPostErrors[keyof ResendVerificationApiAuthResendVerificationPostErrors];
-
-export type ResendVerificationApiAuthResendVerificationPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type VerifyApiAuthVerifyPostData = {
-    /**
-     * Verification Token
-     */
-    body: string;
-    path?: never;
-    query?: never;
-    url: '/api/auth/verify';
-};
-
-export type VerifyApiAuthVerifyPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type VerifyApiAuthVerifyPostError = VerifyApiAuthVerifyPostErrors[keyof VerifyApiAuthVerifyPostErrors];
-
-export type VerifyApiAuthVerifyPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetAccessTokenApiAuthTokenPostData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/auth/token';
-};
-
-export type GetAccessTokenApiAuthTokenPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: ReadAccessTokenSchema;
-};
-
-export type GetAccessTokenApiAuthTokenPostResponse = GetAccessTokenApiAuthTokenPostResponses[keyof GetAccessTokenApiAuthTokenPostResponses];
-
-export type GetMeApiAuthMeGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/auth/me';
-};
-
-export type GetMeApiAuthMeGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type LoadAvatarApiUsersAvatarMeGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/users/avatar/me';
-};
-
-export type LoadAvatarApiUsersAvatarMeGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type UploadAvatarApiUsersAvatarMePostData = {
-    body: BodyUploadAvatarApiUsersAvatarMePost;
-    path?: never;
-    query?: never;
-    url: '/api/users/avatar/me';
-};
-
-export type UploadAvatarApiUsersAvatarMePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UploadAvatarApiUsersAvatarMePostError = UploadAvatarApiUsersAvatarMePostErrors[keyof UploadAvatarApiUsersAvatarMePostErrors];
-
-export type UploadAvatarApiUsersAvatarMePostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetUsernamesByIdApiUsersUsernamesPostData = {
-    /**
-     * User Ids
-     */
-    body: Array<string>;
-    path?: never;
-    query?: never;
-    url: '/api/users/usernames';
-};
-
-export type GetUsernamesByIdApiUsersUsernamesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetUsernamesByIdApiUsersUsernamesPostError = GetUsernamesByIdApiUsersUsernamesPostErrors[keyof GetUsernamesByIdApiUsersUsernamesPostErrors];
-
-export type GetUsernamesByIdApiUsersUsernamesPostResponses = {
-    /**
-     * Response Get Usernames By Id Api Users Usernames Post
-     * Successful Response
-     */
-    200: {
-        [key: string]: string;
-    };
-};
-
-export type GetUsernamesByIdApiUsersUsernamesPostResponse = GetUsernamesByIdApiUsersUsernamesPostResponses[keyof GetUsernamesByIdApiUsersUsernamesPostResponses];
-
-export type GetMyGroupsApiPersonalGroupsMeGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/personal_groups/me';
-};
-
-export type GetMyGroupsApiPersonalGroupsMeGetResponses = {
-    /**
-     * Response Get My Groups Api Personal Groups Me Get
-     * Successful Response
-     */
-    200: Array<ReadPersonalGroupSchema>;
-};
-
-export type GetMyGroupsApiPersonalGroupsMeGetResponse = GetMyGroupsApiPersonalGroupsMeGetResponses[keyof GetMyGroupsApiPersonalGroupsMeGetResponses];
-
-export type CreateApiPersonalGroupsOtherUserIdPostData = {
-    body?: never;
-    path: {
-        /**
-         * Other User Id
-         */
-        other_user_id: string;
-    };
-    query?: never;
-    url: '/api/personal_groups/{other_user_id}';
-};
-
-export type CreateApiPersonalGroupsOtherUserIdPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateApiPersonalGroupsOtherUserIdPostError = CreateApiPersonalGroupsOtherUserIdPostErrors[keyof CreateApiPersonalGroupsOtherUserIdPostErrors];
-
-export type CreateApiPersonalGroupsOtherUserIdPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type DeleteApiPersonalGroupsIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/personal_groups/{id}';
-};
-
-export type DeleteApiPersonalGroupsIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteApiPersonalGroupsIdDeleteError = DeleteApiPersonalGroupsIdDeleteErrors[keyof DeleteApiPersonalGroupsIdDeleteErrors];
-
-export type DeleteApiPersonalGroupsIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type UpdateApiPersonalGroupsIdPatchData = {
-    body: UpdatePersonalGroupSchema;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/personal_groups/{id}';
-};
-
-export type UpdateApiPersonalGroupsIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApiPersonalGroupsIdPatchError = UpdateApiPersonalGroupsIdPatchErrors[keyof UpdateApiPersonalGroupsIdPatchErrors];
-
-export type UpdateApiPersonalGroupsIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type CreateApiSimpleGroupsPostData = {
-    body: CreateSimpleGroupSchema;
-    path?: never;
-    query?: never;
-    url: '/api/simple_groups/';
-};
-
-export type CreateApiSimpleGroupsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateApiSimpleGroupsPostError = CreateApiSimpleGroupsPostErrors[keyof CreateApiSimpleGroupsPostErrors];
-
-export type CreateApiSimpleGroupsPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetMySimpleGroupsApiSimpleGroupsMeGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/simple_groups/me';
-};
-
-export type GetMySimpleGroupsApiSimpleGroupsMeGetResponses = {
-    /**
-     * Response Get My Simple Groups Api Simple Groups Me Get
-     * Successful Response
-     */
-    200: Array<ReadSimpleGroupSchema>;
-};
-
-export type GetMySimpleGroupsApiSimpleGroupsMeGetResponse = GetMySimpleGroupsApiSimpleGroupsMeGetResponses[keyof GetMySimpleGroupsApiSimpleGroupsMeGetResponses];
-
-export type DeleteApiSimpleGroupsIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/simple_groups/{id}';
-};
-
-export type DeleteApiSimpleGroupsIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteApiSimpleGroupsIdDeleteError = DeleteApiSimpleGroupsIdDeleteErrors[keyof DeleteApiSimpleGroupsIdDeleteErrors];
-
-export type DeleteApiSimpleGroupsIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetApiSimpleGroupsIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/simple_groups/{id}';
-};
-
-export type GetApiSimpleGroupsIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetApiSimpleGroupsIdGetError = GetApiSimpleGroupsIdGetErrors[keyof GetApiSimpleGroupsIdGetErrors];
-
-export type GetApiSimpleGroupsIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type UpdateApiSimpleGroupsIdPatchData = {
-    body: UpdateSimpleGroupSchema;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/simple_groups/{id}';
-};
-
-export type UpdateApiSimpleGroupsIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApiSimpleGroupsIdPatchError = UpdateApiSimpleGroupsIdPatchErrors[keyof UpdateApiSimpleGroupsIdPatchErrors];
-
-export type UpdateApiSimpleGroupsIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type CreateMessageApiMessagesPostData = {
-    body: CreateMessageNoUserSchema;
-    path?: never;
-    query?: never;
-    url: '/api/messages/';
-};
-
-export type CreateMessageApiMessagesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateMessageApiMessagesPostError = CreateMessageApiMessagesPostErrors[keyof CreateMessageApiMessagesPostErrors];
-
-export type CreateMessageApiMessagesPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Group Id
-         */
-        group_id: string;
-    };
-    query?: {
-        /**
-         * Limit
-         */
-        limit?: number;
-        /**
-         * Cursor
-         */
-        cursor?: string | null;
-    };
-    url: '/api/messages/cursor/{group_id}';
-};
-
-export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetError = GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors[keyof GetCursorMessagesByGroupApiMessagesCursorGroupIdGetErrors];
-
-export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ReadMessageCursorPaginatedSchema;
-};
-
-export type GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponse = GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses[keyof GetCursorMessagesByGroupApiMessagesCursorGroupIdGetResponses];
-
-export type GetLastMessagesByGroupApiMessagesLastGroupIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Group Id
-         */
-        group_id: string;
-    };
-    query?: {
-        /**
-         * Limit
-         */
-        limit?: number;
-    };
-    url: '/api/messages/last/{group_id}';
-};
-
-export type GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetLastMessagesByGroupApiMessagesLastGroupIdGetError = GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors[keyof GetLastMessagesByGroupApiMessagesLastGroupIdGetErrors];
-
-export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses = {
-    /**
-     * Response Get Last Messages By Group Api Messages Last  Group Id  Get
-     * Successful Response
-     */
-    200: Array<ReadMessageSchema>;
-};
-
-export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponse = GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses[keyof GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses];
-
-export type DeleteApiMessagesIdDeleteData = {
-    body?: never;
-    path: {
-        id: PydanticObjectId;
-    };
-    query?: never;
-    url: '/api/messages/{id}';
-};
-
-export type DeleteApiMessagesIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteApiMessagesIdDeleteError = DeleteApiMessagesIdDeleteErrors[keyof DeleteApiMessagesIdDeleteErrors];
-
-export type DeleteApiMessagesIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type UpdateApiMessagesIdPatchData = {
-    body: UpdateMessageSchema;
-    path: {
-        id: PydanticObjectId;
-    };
-    query?: never;
-    url: '/api/messages/{id}';
-};
-
-export type UpdateApiMessagesIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApiMessagesIdPatchError = UpdateApiMessagesIdPatchErrors[keyof UpdateApiMessagesIdPatchErrors];
-
-export type UpdateApiMessagesIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type RegisterSchemasRouteRegisterSchemasGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/register_schemas';
-};
-
-export type RegisterSchemasRouteRegisterSchemasGetResponses = {
-    /**
-     * Response Register Schemas Route Register Schemas Get
-     * Successful Response
-     */
-    200: WsInDataSchema | WsOutDataSchema | WsInMessageSchema | WsOutMessageSchemaOutput;
-};
-
-export type RegisterSchemasRouteRegisterSchemasGetResponse = RegisterSchemasRouteRegisterSchemasGetResponses[keyof RegisterSchemasRouteRegisterSchemasGetResponses];
-
-export type PingApiHealthcheckGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/healthcheck';
-};
-
-export type PingApiHealthcheckGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type ClientOptions = {
-    baseUrl: 'http://localhost:8000' | (string & {});
-};
+  to_user: string
+}

@@ -1,32 +1,33 @@
-import type { FC } from 'react';
+import type { FC } from 'react'
 
 import { useForm } from '@tanstack/react-form'
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { clsx } from 'clsx';
-import { ResultAsync } from 'neverthrow';
-import { memo } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { clsx } from 'clsx'
+import { ResultAsync } from 'neverthrow'
+import { memo } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 
-import type { CreateSimpleGroupSchema } from '@/shared/api/generated';
+import type { CreateSimpleGroupSchema } from '@/shared/api/generated'
 
-import { simpleGroupQueryProps } from '@/entities/SimpleGroup/api';
-import { Button } from '@/shared/ui/button';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
-import { Input } from '@/shared/ui/input';
+import { simpleGroupQueryProps } from '@/entities/SimpleGroup/api'
+import { BackButton } from '@/shared/ui/BackButton'
+import { Button } from '@/shared/ui/button'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field'
+import { Input } from '@/shared/ui/input'
 
-import cls from './CreateSimpleGroupPage.module.scss';
+import cls from './CreateSimpleGroupPage.module.scss'
 
 interface CreateSimpleGroupPageProps {
-  className?: string;
+  className?: string
 }
 
 export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
   (props: CreateSimpleGroupPageProps) => {
-    const { className } = props;
-    const navigate = useNavigate();
+    const { className } = props
+    const navigate = useNavigate()
 
-    const createGroup = useMutation({ ...simpleGroupQueryProps.create() });
+    const createGroup = useMutation({ ...simpleGroupQueryProps.create() })
 
     const form = useForm({
       defaultValues: {
@@ -38,28 +39,32 @@ export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
         const payload = data.value as CreateSimpleGroupSchema
         const result = await ResultAsync.fromPromise(
           createGroup.mutateAsync({ body: payload }),
-          (error) => error as { detail: string },
-        );
+          error => error as { detail: string },
+        )
 
         if (result.isErr()) {
-          toast.error(result.error.detail || 'Не удалось создать группу');
-        } else {
-          toast.success('Группа успешно создана');
-          navigate({ to: '/groups/search' });
+          toast.error(result.error.detail || 'Не удалось создать группу')
+        }
+        else {
+          toast.success('Группа успешно создана')
+          navigate({ to: '/groups/search' })
         }
       },
     })
 
     return (
-      <form className={clsx(cls.form, className)}
+      <form
+        className={clsx(cls.form, className)}
         onSubmit={(e) => {
           e.preventDefault()
           e.stopPropagation()
           form.handleSubmit()
-        }}>
+        }}
+      >
         <Toaster position="top-center" />
+        <BackButton />
 
-        <div className='text-center mb-2'>
+        <div className="text-center mb-2">
           <h3>Create group</h3>
           <span className="muted">Enter group details</span>
         </div>
@@ -67,8 +72,8 @@ export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
         <FieldGroup>
           <form.Field
             children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid
+              const isInvalid
+                = field.state.meta.isTouched && !field.state.meta.isValid
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Group name</FieldLabel>
@@ -79,7 +84,7 @@ export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
                     id={field.name}
                     name={field.name}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={e => field.handleChange(e.target.value)}
                     placeholder="Happy group"
                     type="text"
                     value={field.state.value}
@@ -95,8 +100,8 @@ export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
         <FieldGroup>
           <form.Field
             children={(field) => {
-              const isInvalid =
-                field.state.meta.isTouched && !field.state.meta.isValid
+              const isInvalid
+                = field.state.meta.isTouched && !field.state.meta.isValid
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Description</FieldLabel>
@@ -107,7 +112,7 @@ export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
                     id={field.name}
                     name={field.name}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={e => field.handleChange(e.target.value)}
                     placeholder="Enter short descriptions"
                     type="text"
                     value={field.state.value}
@@ -126,6 +131,6 @@ export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
           </Button>
         </div>
       </form>
-    );
-  }
-);
+    )
+  },
+)

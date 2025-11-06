@@ -4,7 +4,7 @@ import {
   getApiSimpleGroupsIdGetOptions,
   getMySimpleGroupsApiSimpleGroupsMeGetOptions,
   updateApiSimpleGroupsIdPatchMutation,
-} from '@/shared/api/generated/@tanstack/react-query.gen';
+} from '@/shared/api/generated/@tanstack/react-query.gen'
 
 export const simpleGroupQueryProps = {
   create: createApiSimpleGroupsPostMutation,
@@ -12,4 +12,4 @@ export const simpleGroupQueryProps = {
   get: getApiSimpleGroupsIdGetOptions,
   getMySimpleGroups: getMySimpleGroupsApiSimpleGroupsMeGetOptions,
   update: updateApiSimpleGroupsIdPatchMutation,
-};
+}

@@ -1,28 +1,28 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
-import { settings } from '@/config';
+import { settings } from '@/config'
 
 export const ServiceWorkerProvider = ({
   children,
 }: {
-  children: ReactNode;
+  children: ReactNode
 }) => {
   useEffect(() => {
     if (typeof window == 'undefined') {
-      return;
+      return
     }
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/service-worker.js')
         .then(() => console.log('Service Worker registered'))
-        .catch(() => console.error('Service Worker registration failed'));
+        .catch(() => console.error('Service Worker registration failed'))
 
       navigator.serviceWorker.ready.then((registration) => {
         if (!registration.active) {
-          return;
+          return
         }
 
         registration.active.postMessage({
@@ -30,9 +30,9 @@ export const ServiceWorkerProvider = ({
             BACKEND_URL: settings.VITE_BACKEND_URL,
           },
           type: 'SET_PARAMS',
-        });
-      });
+        })
+      })
     }
-  }, []);
-  return <>{children}</>;
-};
+  }, [])
+  return <>{children}</>
+}

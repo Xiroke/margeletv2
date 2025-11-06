@@ -1,10 +1,10 @@
 export interface Group {
-  avatarUrl?: string;
-  title: string;
+  avatarUrl?: string
+  title: string
 }
 
 export interface GroupChat extends Group {
-  lastMessage: string;
-  time: string;
-  unreadCount?: number;
+  lastMessage: string
+  time: string
+  unreadCount?: number
 }

@@ -1,1 +1,1 @@
-export { GroupChatCard } from './ui/GroupChatCard/GroupChatCard';
+export { GroupChatCard } from './ui/GroupChatCard/GroupChatCard'

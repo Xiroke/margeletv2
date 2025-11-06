@@ -1,26 +1,26 @@
-import type { FC } from 'react';
+import type { FC } from 'react'
 
 import { useForm } from '@tanstack/react-form'
-import { useMutation } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
-import { clsx } from 'clsx';
+import { useMutation } from '@tanstack/react-query'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { clsx } from 'clsx'
 
-import { authQueryProps } from '@/features/auth/api';
-import { Button } from '@/shared/ui/button';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
-import { Input } from '@/shared/ui/input';
+import { authQueryProps } from '@/features/auth/api'
+import { Button } from '@/shared/ui/button'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field'
+import { Input } from '@/shared/ui/input'
 
-import cls from './RegistrationPage.module.scss';
+import cls from './RegistrationPage.module.scss'
 
 interface RegistrationPageProps {
-  className?: string;
+  className?: string
 }
 
 export const RegistrationPage: FC<RegistrationPageProps> = (
-  props: RegistrationPageProps
+  props: RegistrationPageProps,
 ) => {
-  const { className } = props;
-  const navigate = useNavigate();
+  const { className } = props
+  const navigate = useNavigate()
   const register = useMutation({ ...authQueryProps.registerMut() })
 
   // CreateUserSchema
@@ -34,30 +34,32 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
     },
 
     onSubmit: (data) => {
-      register.mutate({ body: data.value });
+      register.mutate({ body: data.value })
       navigate({
         params: { email: data.value.email },
         to: '/verify/$email/{-$token}',
-      });
+      })
     },
   })
 
   return (
-    <form className={clsx(cls.form, className)}
+    <form
+      className={clsx(cls.form, className)}
       onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()
         form.handleSubmit()
-      }}>
-      <div className='text-center'>
+      }}
+    >
+      <div className="text-center">
         <h2>Registration</h2>
         <span className="muted">Create new account</span>
       </div>
       <FieldGroup>
         <form.Field
           children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid
+            const isInvalid
+              = field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Name</FieldLabel>
@@ -67,7 +69,7 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={e => field.handleChange(e.target.value)}
                   placeholder="user"
                   value={field.state.value}
                 />
@@ -82,8 +84,8 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
       <FieldGroup>
         <form.Field
           children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid
+            const isInvalid
+              = field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Уникальное имя аккаунта</FieldLabel>
@@ -93,7 +95,7 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={e => field.handleChange(e.target.value)}
                   placeholder="user123"
                   value={field.state.value}
                 />
@@ -108,8 +110,8 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
       <FieldGroup>
         <form.Field
           children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid
+            const isInvalid
+              = field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Email</FieldLabel>
@@ -119,7 +121,7 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={e => field.handleChange(e.target.value)}
                   placeholder="example@email.com"
                   value={field.state.value}
                 />
@@ -134,8 +136,8 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
       <FieldGroup>
         <form.Field
           children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid
+            const isInvalid
+              = field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Пароль</FieldLabel>
@@ -145,7 +147,7 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={e => field.handleChange(e.target.value)}
                   placeholder="********"
                   type="password"
                   value={field.state.value}
@@ -161,8 +163,8 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
       <FieldGroup>
         <form.Field
           children={(field) => {
-            const isInvalid =
-              field.state.meta.isTouched && !field.state.meta.isValid
+            const isInvalid
+              = field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Повторный пароль</FieldLabel>
@@ -172,7 +174,7 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={e => field.handleChange(e.target.value)}
                   placeholder="********"
                   type="password"
                   value={field.state.value}
@@ -196,5 +198,5 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
         <Link to="/">Войти</Link>
       </div>
     </form>
-  );
-};
+  )
+}

@@ -4,11 +4,11 @@ from ..group.schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchem
 
 
 class ReadSimpleGroupSchema(ReadGroupSchema):
-    title: str = Field(max_length=20)
+    title: str
 
 
 class CreateSimpleGroupSchema(CreateGroupSchema):
-    title: str = Field(max_length=20)
+    title: str = Field(min_length=3, max_length=20)
     description: str
 
 

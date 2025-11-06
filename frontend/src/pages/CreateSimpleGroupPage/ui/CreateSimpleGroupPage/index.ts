@@ -1,1 +1,1 @@
-export { CreateSimpleGroupPage } from './CreateSimpleGroupPage';
+export { CreateSimpleGroupPage } from './CreateSimpleGroupPage'

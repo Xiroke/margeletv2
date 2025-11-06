@@ -1,81 +1,88 @@
+import type { FC } from 'react'
 
-import type { FC } from 'react';
+import { clsx } from 'clsx'
+import { PlusIcon, SearchIcon, Settings, SunMoonIcon, UserIcon, UsersIcon } from 'lucide-react'
+import { memo } from 'react'
 
-import { clsx } from 'clsx';
-import { PlusIcon, Settings, SunMoonIcon, UserIcon, UsersIcon } from 'lucide-react';
-import { memo } from 'react';
+import { switchTheme } from '@/shared/lib/switchTheme'
+import { Button } from '@/shared/ui/button'
 
-import { switchTheme } from '@/shared/lib/switchTheme';
-import { Button } from '@/shared/ui/button';
-
-import cls from './ChatNavigation.module.scss';
+import cls from './ChatNavigation.module.scss'
 
 interface ChatNavigationProps {
-  className?: string;
+  className?: string
 }
 
 export const ChatNavigation: FC<ChatNavigationProps> = memo(
   (props: ChatNavigationProps) => {
-    const { className } = props;
+    const { className } = props
 
     return (
       <div className={clsx(cls.chatNavigation, className)}>
         <Button
           navigateOptions={{
-            to: '/groups/createSimple',
+            to: '/search',
           }}
-          variant='ghost'
+          variant="ghost"
         >
-          <PlusIcon className="size-6" size={24} strokeWidth={2}/>
+          <SearchIcon className="size-6" size={24} strokeWidth={2} />
         </Button>
 
         <Button
           navigateOptions={{
-            params: (prev) => ({
+            to: '/groups/createSimple',
+          }}
+          variant="ghost"
+        >
+          <PlusIcon className="size-6" size={24} strokeWidth={2} />
+        </Button>
+
+        <Button
+          navigateOptions={{
+            params: prev => ({
               ...prev,
               groupType: 'personal',
             }),
-            to:'/group/$groupType/{-$groupId}'
+            to: '/group/$groupType/{-$groupId}',
           }}
-          variant='ghost'
+          variant="ghost"
         >
           <UserIcon className="size-6" size={24} strokeWidth={2} />
         </Button>
 
         <Button
           navigateOptions={{
-            params: (prev) => ({
+            params: prev => ({
               ...prev,
               groupType: 'simple',
             }),
-            to:'/group/$groupType/{-$groupId}'
+            to: '/group/$groupType/{-$groupId}',
           }}
-          variant='ghost'
+          variant="ghost"
         >
           <UsersIcon className="size-6" size={24} strokeWidth={1.6} />
         </Button>
 
         <Button
           onClick={switchTheme}
-          variant='ghost'
+          variant="ghost"
         >
           <SunMoonIcon className="size-6" size={24} strokeWidth={1.6} />
         </Button>
 
-
         <Button
           navigateOptions={{
-            params: (prev) => ({
+            params: prev => ({
               ...prev,
               groupType: 'simple',
             }),
-            to:'/group/$groupType/{-$groupId}'
+            to: '/group/$groupType/{-$groupId}',
           }}
-          variant='ghost'
+          variant="ghost"
         >
           <Settings className="size-6" size={24} strokeWidth={1.6} />
         </Button>
       </div>
-    );
-  }
-);
+    )
+  },
+)

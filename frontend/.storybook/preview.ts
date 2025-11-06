@@ -32,7 +32,7 @@ export const decorators = [
   }),
 ]
 
-//connect global css to storybook
+// connect global css to storybook
 if (typeof document !== 'undefined') {
   const link = document.createElement('link')
   link.rel = 'stylesheet'

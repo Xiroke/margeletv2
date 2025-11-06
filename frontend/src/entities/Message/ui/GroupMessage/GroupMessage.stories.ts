@@ -1,22 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { GroupMessage } from './GroupMessage';
-
+import { GroupMessage } from './GroupMessage'
 
 const meta: Meta<typeof GroupMessage> = {
   component: GroupMessage,
   globals: { theme: 'light' },
   title: 'GroupMessage',
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof GroupMessage>;
+export default meta
+type Story = StoryObj<typeof GroupMessage>
 
 export const Light: Story = {
   args: {},
-};
+}
 
 export const Dark: Story = {
   args: {},
   globals: { theme: 'dark' },
-};
+}

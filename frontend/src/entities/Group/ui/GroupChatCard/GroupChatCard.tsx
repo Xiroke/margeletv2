@@ -1,23 +1,41 @@
-import type { FC } from 'react';
+import type { FC } from 'react'
 
-import { clsx } from 'clsx';
-import { memo } from 'react';
+import { clsx } from 'clsx'
+import { memo } from 'react'
 
-import { cn } from '@/shared/lib/utils';
-import { Badge } from '@/shared/ui/badge';
+import { cn } from '@/shared/lib/utils'
+import { Badge } from '@/shared/ui/badge'
+import { Skeleton } from '@/shared/ui/skeleton'
 
-import type { GroupChat } from '../../model/types';
+import type { GroupChat } from '../../model/types'
 
-import cls from './GroupChatCard.module.scss';
+import cls from './GroupChatCard.module.scss'
 
 interface GroupChatCardProps {
-  className?: string;
-  groupChat: GroupChat;
+  className?: string
+  groupChat: GroupChat
 }
+
+export const GroupChatCardSkeleton = memo(({ className}: { className?: string }) => {
+  return (
+    <div className={clsx(cls.group_card, className)}>
+      <Skeleton className="w-15 h-15 mr-4 rounded-full" />
+      <div className={cls.main}>
+        <Skeleton className="w-50 h-4" />
+        <Skeleton className="w-50 h-3" />
+      </div>
+      <div className={cls.addition}>
+        <Skeleton className="w-6 h-4" />
+        <Skeleton className="w-6 h-4" />
+      </div>
+    </div>
+  )
+})
+
 export const GroupChatCard: FC<GroupChatCardProps> = memo(
   (props: GroupChatCardProps) => {
-    const { className, groupChat } = props;
-    const { avatarUrl, lastMessage, time, title, unreadCount } = groupChat;
+    const { className, groupChat } = props
+    const { avatarUrl, lastMessage, time, title, unreadCount } = groupChat
 
     return (
       <div className={clsx(cls.group_card, className)}>
@@ -37,6 +55,6 @@ export const GroupChatCard: FC<GroupChatCardProps> = memo(
           </Badge>
         </div>
       </div>
-    );
-  }
-);
+    )
+  },
+)

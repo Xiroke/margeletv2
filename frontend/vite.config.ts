@@ -1,24 +1,24 @@
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-import tailwindcss from '@tailwindcss/vite';
-import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import viteReact from '@vitejs/plugin-react';
-import dotenv from 'dotenv';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
+import tailwindcss from '@tailwindcss/vite'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import viteReact from '@vitejs/plugin-react'
+import dotenv from 'dotenv'
 /// <reference types="vitest/config" />
-import { resolve } from 'node:path';
-import path from 'node:path';
+import { resolve } from 'node:path'
+import path from 'node:path'
 // https://vitejs.dev/config/
-import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
+import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'vite'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-const dirname =
-  typeof __dirname !== 'undefined'
+const dirname
+  = typeof __dirname !== 'undefined'
     ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url));
+    : path.dirname(fileURLToPath(import.meta.url))
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') })
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -64,4 +64,4 @@ export default defineConfig({
       },
     ],
   },
-});
+})

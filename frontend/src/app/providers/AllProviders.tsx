@@ -1,23 +1,25 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
-import { ServiceWorkerProvider } from './ServiceWorkerProvider';
-import { WebsocketProvider } from './WebsocketProvider';
+import { ServiceWorkerProvider } from './ServiceWorkerProvider'
+import { BoundedWs } from './WebsocketProvider'
 
-const disabledPathnameWs = ['/', '/registration'];
+const disabledPathnameWs = ['/', '/registration']
 
 export const AllProviders = (props: { children: ReactNode | undefined }) => {
-  const { children = null } = props;
-  const pathname = window.location.pathname;
+  const { children = null } = props
+  const pathname = window.location.pathname
 
-  const isDisabledWs = disabledPathnameWs.some((i) => pathname === i);
+  const isDisabledWs = disabledPathnameWs.some(i => pathname === i)
 
   return (
     <ServiceWorkerProvider>
-      {isDisabledWs ? (
-        <>{children}</>
-      ) : (
-        <WebsocketProvider>{children}</WebsocketProvider>
-      )}
+      {isDisabledWs
+        ? (
+            <>{children}</>
+          )
+        : (
+            <BoundedWs>{children}</BoundedWs>
+          )}
     </ServiceWorkerProvider>
-  );
-};
+  )
+}

@@ -1,1 +1,1 @@
-export { VerifyPage } from './VerifyPage';
+export { VerifyPage } from './VerifyPage'
