@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { SearchPage } from './SearchPage'
+import { UserCard } from './UserCard'
 
-const meta: Meta<typeof SearchPage> = {
-  component: SearchPage,
+const meta: Meta<typeof UserCard> = {
+  component: UserCard,
   globals: { theme: 'light' },
-  title: 'SearchPage ',
+  title: 'UserCard ',
 }
 
 export default meta
-type Story = StoryObj<typeof SearchPage>
+type Story = StoryObj<typeof UserCard>
 
 export const Light: Story = {
   args: {},

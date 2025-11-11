@@ -13,6 +13,14 @@
   }
 }
 
+.active {
+  background-color: var(--accent);
+
+  &:hover {
+    background-color: var(--accent);
+  }
+}
+
 .avatar {
   width: 60px;
   height: 60px;

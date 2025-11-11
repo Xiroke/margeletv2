@@ -115,6 +115,7 @@
     @apply border-border outline-ring/50;
   }
   body {
+    min-height: 100vh;
     @apply bg-background text-foreground;
   }
 

@@ -110,7 +110,11 @@ self.addEventListener('fetch', (event) => {
     )
   }
   else if (request.url.startsWith(self.BACKEND_URL)) {
-    if (url.pathname.includes('/api/auth/')) {
+    if (url.pathname.includes('/api/auth/logout')) {
+      event.respondWith(fetch(request))
+      self.accessToken = undefined
+    }
+    else if (url.pathname.includes('/api/auth/')) {
       event.respondWith(fetch(request))
     }
     else {

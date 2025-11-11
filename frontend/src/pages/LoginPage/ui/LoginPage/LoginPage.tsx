@@ -8,6 +8,7 @@ import { ResultAsync } from 'neverthrow'
 import { toast } from 'sonner'
 
 import { authQueryProps } from '@/features/auth/api'
+import { useIsAuth } from '@/features/auth/useIsAuth'
 import { Button } from '@/shared/ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
@@ -20,6 +21,7 @@ interface LoginPageProps {
 
 export const LoginPage: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { className } = props
+  useIsAuth()
   const navigate = useNavigate()
   const login = useMutation({ ...authQueryProps.loginMut() })
 

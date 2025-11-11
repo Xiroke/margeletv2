@@ -1,7 +1,7 @@
 import {
   getAccessTokenApiAuthTokenPostMutation,
-  getMeApiAuthMeGetOptions,
   loginApiAuthLoginPostMutation,
+  logoutApiAuthLogoutPostMutation,
   registerApiAuthRegisterPostMutation,
   resendVerificationApiAuthResendVerificationPostMutation,
   verifyApiAuthVerifyPostMutation,
@@ -9,7 +9,7 @@ import {
 
 export const authQueryProps = {
   loginMut: loginApiAuthLoginPostMutation,
-  meOpt: getMeApiAuthMeGetOptions,
+  logoutMut: logoutApiAuthLogoutPostMutation,
   registerMut: registerApiAuthRegisterPostMutation,
   resendVerificationMut:
     resendVerificationApiAuthResendVerificationPostMutation,

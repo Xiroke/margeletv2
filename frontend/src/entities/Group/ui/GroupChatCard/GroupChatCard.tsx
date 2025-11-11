@@ -4,7 +4,6 @@ import { clsx } from 'clsx'
 import { memo } from 'react'
 
 import { cn } from '@/shared/lib/utils'
-import { Badge } from '@/shared/ui/badge'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 import type { GroupChat } from '../../model/types'
@@ -12,6 +11,7 @@ import type { GroupChat } from '../../model/types'
 import cls from './GroupChatCard.module.scss'
 
 interface GroupChatCardProps {
+  active: boolean
   className?: string
   groupChat: GroupChat
 }
@@ -34,26 +34,26 @@ export const GroupChatCardSkeleton = memo(({ className}: { className?: string })
 
 export const GroupChatCard: FC<GroupChatCardProps> = memo(
   (props: GroupChatCardProps) => {
-    const { className, groupChat } = props
-    const { avatarUrl, lastMessage, time, title, unreadCount } = groupChat
+    const { active, className, groupChat } = props
+    const { avatarUrl, lastMessage, time, title = 'Group', unreadCount } = groupChat
 
     return (
-      <div className={clsx(cls.group_card, className)}>
+      <div className={clsx(cls.group_card, active && cls.active, className)}>
         <div className={cn(cls.avatar, 'flex items-center justify-center')}>
           {avatarUrl ? <img alt="group_avatar" src={avatarUrl} /> : title.slice(0, 2)}
         </div>
 
         <div className={cls.main}>
           <div className={cls.title}>{title}</div>
-          <div className={cls.last_message}>{lastMessage}</div>
+          {/* <div className={cls.last_message}>{lastMessage}</div> */}
         </div>
 
-        <div className={cls.addition}>
+        {/* <div className={cn(cls.addition, 'mt-auto mb-1 mr-2')}>
           <div className={cls.time}>{time}</div>
-          <Badge className={cls.unread_count} variant="secondary">
+          <Badge className={cls.unread_count} variant={active ? 'default' : 'secondary'}>
             {unreadCount && unreadCount > 0 ? unreadCount : ''}
           </Badge>
-        </div>
+        </div> */}
       </div>
     )
   },

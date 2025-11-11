@@ -9,6 +9,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { authQueryProps } from '@/features/auth/api'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
+import { Label } from '@/shared/ui/label'
 
 import cls from './VerifyPage.module.scss'
 
@@ -70,11 +71,12 @@ export const VerifyPage: FC<VerifyPageProps> = memo(
     return (
       <div className={clsx(cls.verifyPage, className)}>
         <Toaster position="top-center" />
-        <h1>Подтвердите аккаунт</h1>
+        <h1>Verify account</h1>
         <div className={cls.actions}>
+          <Label>Token</Label>
           <Input
             full
-            label="Токен верификации"
+
             name="token"
             onChange={e => setToken(e.target.value)}
             placeholder="eyJhbGciOiJ..."
@@ -85,20 +87,17 @@ export const VerifyPage: FC<VerifyPageProps> = memo(
 
           <Button
             full
-            loading={isLoading}
             onClick={() => fetchVerify()}
-            size="md"
             variant="default"
           >
-            Подтвердить
+            Verify
           </Button>
           <Button
             full
             onClick={() => fetchResendVerification()}
-            size="md"
             variant="outline"
           >
-            Повторно отправить токен
+            Repeat send token
           </Button>
         </div>
       </div>

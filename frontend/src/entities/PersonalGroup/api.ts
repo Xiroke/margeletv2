@@ -1,13 +1,13 @@
 import {
   createApiPersonalGroupsOtherUserIdPostMutation,
   deleteApiPersonalGroupsIdDeleteMutation,
-  getMyGroupsApiPersonalGroupsMeGetOptions,
+  getMyPersonalGroupsApiPersonalGroupsMeGroupsGetOptions,
   updateApiPersonalGroupsIdPatchMutation,
 } from '@/shared/api/generated/@tanstack/react-query.gen'
 
 export const personalGroupQueryProps = {
   create: createApiPersonalGroupsOtherUserIdPostMutation,
   delete: deleteApiPersonalGroupsIdDeleteMutation,
-  getMyPersonalGroups: getMyGroupsApiPersonalGroupsMeGetOptions,
+  getMyPersonalGroups: getMyPersonalGroupsApiPersonalGroupsMeGroupsGetOptions,
   update: updateApiPersonalGroupsIdPatchMutation,
 }

@@ -43,7 +43,7 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
   return (
     <div className={clsx(cls.chat, className)}>
       <ChatNavigation />
-      <ChatGroupList className={cls.group_list} groupType={groupType} />
+      { (groupType == 'simple' || groupType == 'personal') && <ChatGroupList className={cls.group_list} groupType={groupType} />}
       <Separator orientation="vertical" />
 
       {groupId

@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { GroupIcon, PencilLineIcon, ScanSearchIcon } from 'lucide-react'
 
 import { GroupChatCard } from '@/entities/Group'
@@ -78,6 +78,8 @@ export const ChatGroupList: FC<ChatGroupListProps> = (
 ) => {
   const { className, groupType } = props
   const { data: groups, isLoading } = useQuery(groupQueryProps[groupType]())
+  const { groupId } = useParams({ from: '/group/$groupType/{-$groupId}' })
+
   return (
     <div className={className}>
       {isLoading && new Array(4).map((_, idx) => <GroupChatCardSkeleton key={idx} />)}
@@ -89,6 +91,7 @@ export const ChatGroupList: FC<ChatGroupListProps> = (
               to="."
             >
               <GroupChatCard
+                active={groupId === group.id}
                 groupChat={{ ...groupChatTest, title: group.title }}
                 key={idx}
               />

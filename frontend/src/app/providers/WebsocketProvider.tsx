@@ -41,8 +41,8 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
     let ws: null | WebSocket = null
 
     const runWebsocket = async () => {
-      const token_data = await tokenMut.mutateAsync({ credentials: 'include' })
-      const { access_token } = token_data
+      const { access_token } = await tokenMut.mutateAsync({ credentials: 'include' })
+
       ws = new WebSocket(
         `${settings.VITE_BACKEND_WS_URL}/api/ws?access_token=${access_token}`,
       )
@@ -67,9 +67,7 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
         setIsConnected(false)
       }
 
-      if (wsRef.current) {
-        wsRef.current.close()
-      }
+      wsRef.current?.close()
 
       wsRef.current = ws
     }

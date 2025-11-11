@@ -2,7 +2,7 @@ import type { Dispatch, FC, SetStateAction } from 'react'
 
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { clsx } from 'clsx'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 
 import type { ReadMessageSchema, WsOutDataSchema } from '@/shared/api/generated'
 
@@ -44,24 +44,6 @@ export const MessageList: FC<MessageListProps> = memo(
       scrollToBottom()
     }, [scrollContainerRef, scrollToBottom])
 
-    const unknowbUsers = useMemo(() => {
-      if (
-        !infinityDataMessages
-        || infinityDataMessages.pages[0].messages.length == 0
-      )
-        return new Set<string>()
-
-      return new Set(
-        infinityDataMessages.pages.flatMap(page =>
-          page.messages
-            .filter(
-              message => message.user_id && !knownUsers[message.user_id],
-            )
-            .map(message => message.user_id),
-        ),
-      )
-    }, [infinityDataMessages, knownUsers])
-
     const { mutateAsync: usernamesMut } = useMutation({
       ...userQueryProps.getUsernamesByIdMut(),
     })
@@ -100,17 +82,34 @@ export const MessageList: FC<MessageListProps> = memo(
     }, [initOnMessage, queryClient, getCursorMessagesQuery.queryKey])
 
     useEffect(() => {
-      if (unknowbUsers.size === 0) return
+      if (!infinityDataMessages) return
 
+      // collect list of unknown users
+      const unknownUsersSet = new Set<string>()
+
+      infinityDataMessages.pages.forEach((page) => {
+        page.messages.forEach((message) => {
+          if (message.user_id && !knownUsers[message.user_id]) {
+            unknownUsersSet.add(message.user_id)
+          }
+        })
+      })
+
+      if (unknownUsersSet.size === 0) return
+      // fetch unknown users
       const fetchUsername = async () => {
         const idToUsername = await usernamesMut({
-          body: Array.from(unknowbUsers),
+          body: Array.from(unknownUsersSet),
         })
-        setKnownUsers(idToUsername)
+
+        setKnownUsers(prev => ({
+          ...prev,
+          ...idToUsername,
+        }))
       }
 
       fetchUsername()
-    }, [unknowbUsers, usernamesMut])
+    }, [infinityDataMessages, knownUsers, usernamesMut])
 
     return (
       <div
@@ -122,8 +121,6 @@ export const MessageList: FC<MessageListProps> = memo(
           && infinityDataMessages.pages.map((page, idx) =>
             page.messages.map(message => (
               <GroupMessage
-                // if there are multiple messages in a row from the wrong user,
-                // then only the first message will have a name.
                 author={knownUsers[message.user_id]}
                 key={message.id}
                 message={message}
