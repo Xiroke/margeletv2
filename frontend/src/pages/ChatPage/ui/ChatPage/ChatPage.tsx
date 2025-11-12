@@ -23,7 +23,7 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
   const { className } = props
   const { groupId, groupType: _groupType } = useParams({ from: '/group/$groupType/{-$groupId}' })
   const ws = useWS()
-  const groupType = _groupType as 'personal' | 'simple'
+  const groupType = _groupType as 'personal_group' | 'simple_group'
   const [onMessage, setOnMessage] = useState<(data: WsOutDataSchema) => void>(() => {})
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
   return (
     <div className={clsx(cls.chat, className)}>
       <ChatNavigation />
-      { (groupType == 'simple' || groupType == 'personal') && <ChatGroupList className={cls.group_list} groupType={groupType} />}
+      { (groupType == 'simple_group' || groupType == 'personal_group') && <ChatGroupList className={cls.group_list} groupType={groupType} />}
       <Separator orientation="vertical" />
 
       {groupId

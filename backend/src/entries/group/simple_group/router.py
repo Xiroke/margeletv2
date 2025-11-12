@@ -24,12 +24,12 @@ async def create(
     return await service.create(obj, user.id)
 
 
-@router.get("/me")
-async def get_my_simple_groups(
-    user: CurrentUserDep,
-    service: SimpleGroupServiceDep,
+@router.get("/search")
+async def search_groups(
+    query: str,
+    group_service: SimpleGroupServiceDep,
 ) -> list[ReadSimpleGroupSchema]:
-    return await service.get_groups_by_user(user.id)
+    return await group_service.search(query)
 
 
 router_crud(
@@ -38,5 +38,5 @@ router_crud(
     UUID,
     CreateSimpleGroupSchema,
     UpdateSimpleGroupSchema,
-    excepted_router=["create"],
+    excepted_router=["get", "delete", "create"],
 )

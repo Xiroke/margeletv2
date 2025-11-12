@@ -14,7 +14,7 @@ export const useIsAuth = (inverse: boolean = false) => {
 
   useEffect(() => {
     if (!isLoading && !isError && !inverse) {
-      navigate({ params: { groupType: 'simple' }, to: '/group/$groupType/{-$groupId}' })
+      navigate({ params: { groupType: 'simple_group' }, to: '/group/$groupType/{-$groupId}' })
     }
     else if (!isLoading && isError && inverse) {
       navigate({ to: '/' })

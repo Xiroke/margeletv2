@@ -25,6 +25,7 @@ class UserDaoProtocol(
     Protocol,
 ):
     async def get_user_by_email(self, email: str) -> ReadUserSchema: ...
+    async def get_user_by_account_name(self, account_name: str) -> ReadUserSchema: ...
     async def get_user_for_check_password(self, email: str) -> UserModel: ...
     async def get_user_by_token(self, token: str) -> ReadUserSchema: ...
     async def set_is_verified(self, user_id: UUID, value: bool): ...
@@ -43,6 +44,18 @@ class UserSqlDao(
 ):
     async def get_user_by_email(self, email: str) -> ReadUserSchema:
         smtp = select(self.model_type).filter_by(email=email)
+
+        result = await self.session.execute(smtp)
+
+        record = result.scalar_one_or_none()
+
+        if record is None:
+            raise ModelNotFoundException(self.model_type.__name__, str(id))
+
+        return self.read_schema_type.model_validate(record)
+
+    async def get_user_by_account_name(self, account_name: str) -> ReadUserSchema:
+        smtp = select(self.model_type).filter_by(account_name=account_name)
 
         result = await self.session.execute(smtp)
 

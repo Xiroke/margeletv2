@@ -2,7 +2,7 @@ from ..group.schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchem
 
 
 class ReadPersonalGroupSchema(ReadGroupSchema):
-    title: str
+    pass
 
 
 class CreatePersonalGroupSchema(CreateGroupSchema):

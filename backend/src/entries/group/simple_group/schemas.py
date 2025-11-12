@@ -4,7 +4,7 @@ from ..group.schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchem
 
 
 class ReadSimpleGroupSchema(ReadGroupSchema):
-    title: str
+    pass
 
 
 class CreateSimpleGroupSchema(CreateGroupSchema):

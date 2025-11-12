@@ -4,11 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
 import { GroupIcon, PencilLineIcon, ScanSearchIcon } from 'lucide-react'
 
+import { autoGroupQueryProps } from '@/entities/AutoGroup/api'
 import { GroupChatCard } from '@/entities/Group'
 import { groupChatTest } from '@/entities/Group/model/test'
 import { GroupChatCardSkeleton } from '@/entities/Group/ui/GroupChatCard/GroupChatCard'
-import { personalGroupQueryProps } from '@/entities/PersonalGroup/api'
-import { simpleGroupQueryProps } from '@/entities/SimpleGroup/api'
 import { Button } from '@/shared/ui/button'
 import {
   Empty,
@@ -19,14 +18,9 @@ import {
   EmptyTitle,
 } from '@/shared/ui/empty'
 
-const groupQueryProps = {
-  personal: personalGroupQueryProps.getMyPersonalGroups,
-  simple: simpleGroupQueryProps.getMySimpleGroups,
-}
-
 interface ChatGroupListProps {
   className?: string
-  groupType: 'personal' | 'simple'
+  groupType: 'personal_group' | 'simple_group'
 }
 
 const EmptySimpleGroupList = () => (
@@ -77,7 +71,9 @@ export const ChatGroupList: FC<ChatGroupListProps> = (
   props: ChatGroupListProps,
 ) => {
   const { className, groupType } = props
-  const { data: groups, isLoading } = useQuery(groupQueryProps[groupType]())
+  const { data, isLoading } = useQuery(autoGroupQueryProps.getMyGroupsWithLastMessage({ query: { group_type: groupType } }))
+  const groups = data?.groups
+  const messages = data?.messages
   const { groupId } = useParams({ from: '/group/$groupType/{-$groupId}' })
 
   return (
@@ -92,12 +88,12 @@ export const ChatGroupList: FC<ChatGroupListProps> = (
             >
               <GroupChatCard
                 active={groupId === group.id}
-                groupChat={{ ...groupChatTest, title: group.title }}
+                groupChat={{ ...groupChatTest, title: group.title ?? '' }}
                 key={idx}
               />
             </Link>
           ))
-        : groupType === 'simple' ? <EmptySimpleGroupList /> : <EmptyPersonallGroupList />)}
+        : groupType === 'simple_group' ? <EmptySimpleGroupList /> : <EmptyPersonallGroupList />)}
     </div>
   )
 }

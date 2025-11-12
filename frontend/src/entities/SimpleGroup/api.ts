@@ -1,15 +1,11 @@
 import {
   createApiSimpleGroupsPostMutation,
-  deleteApiSimpleGroupsIdDeleteMutation,
-  getApiSimpleGroupsIdGetOptions,
-  getMySimpleGroupsApiSimpleGroupsMeGetOptions,
+  searchGroupsApiSimpleGroupsSearchGetOptions,
   updateApiSimpleGroupsIdPatchMutation,
 } from '@/shared/api/generated/@tanstack/react-query.gen'
 
 export const simpleGroupQueryProps = {
   create: createApiSimpleGroupsPostMutation,
-  delete: deleteApiSimpleGroupsIdDeleteMutation,
-  get: getApiSimpleGroupsIdGetOptions,
-  getMySimpleGroups: getMySimpleGroupsApiSimpleGroupsMeGetOptions,
+  search: searchGroupsApiSimpleGroupsSearchGetOptions,
   update: updateApiSimpleGroupsIdPatchMutation,
 }

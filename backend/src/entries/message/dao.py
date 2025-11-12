@@ -36,6 +36,10 @@ class MessageDaoProtocol(
         self, group_id: UUID, amount: int
     ) -> list[ReadMessageSchema]: ...
 
+    async def get_last_message_in_groups(
+        self, group_ids: list[UUID]
+    ) -> list[ReadMessageSchema]: ...
+
 
 class MessageMongoDao(
     MongoDaoImpl[
@@ -75,5 +79,15 @@ class MessageMongoDao(
             MessageModel.find_many({"to_group_id": group_id})
             .sort(-MessageModel.created_at)
             .limit(amount)
+        )
+        return [ReadMessageSchema.model_validate(i) for i in await query.to_list()]
+
+    async def get_last_message_in_groups(
+        self, group_ids: list[UUID]
+    ) -> list[ReadMessageSchema]:
+        query = (
+            MessageModel.find_many({"to_group_id": {"$in": group_ids}})
+            .sort(-MessageModel.created_at)
+            .limit(1)
         )
         return [ReadMessageSchema.model_validate(i) for i in await query.to_list()]

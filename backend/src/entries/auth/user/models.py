@@ -8,7 +8,7 @@ from src.core.db.mixins import CreatedAtMixin, UUIDIdMixin
 
 if TYPE_CHECKING:
     from src.entries.auth.refresh_token.models import RefreshTokenModel
-    from src.entries.group.models import GroupModel
+    from src.entries.group.group.models import GroupModel
 
 
 class UserModel(UUIDIdMixin, CreatedAtMixin, Base):

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Body, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 from src.entries.auth.depends import CurrentUserDep
-from src.entries.auth.user.schemas import UpdateUserSchema
+from src.entries.auth.user.schemas import ReadUserSchema, UpdateUserSchema
 
 from .depends import UserServiceDep
 
@@ -41,3 +41,17 @@ async def get_usernames_by_id(
 ) -> dict[str, str]:
     """Returns user names by id"""
     return await user_service.get_usernames_by_id(user_ids)
+
+
+@router.get("/search")
+async def search_users(
+    user_service: UserServiceDep, account_name: str
+) -> ReadUserSchema:
+    """Returns user names by id"""
+    return await user_service.get_user_by_account_name(account_name)
+
+
+@router.get("/me")
+async def get_me(user: CurrentUserDep):
+    """Get current user information"""
+    return user

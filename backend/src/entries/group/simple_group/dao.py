@@ -1,7 +1,7 @@
 from typing import Protocol, override
 from uuid import UUID
 
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 
 from src.core.abstract.dao import DaoProtocol
 from src.core.abstract.dao.sql_impl import SqlDaoImpl
@@ -126,3 +126,9 @@ class SimpleGroupSqlDao(
 
         await self.session.flush()
         return role_creator_id
+
+    async def search(self, query: str) -> list[ReadSimpleGroupSchema]:
+        smtp = select(SimpleGroupModel).filter(SimpleGroupModel.title.contains(query))
+        raw = await self.session.execute(smtp)
+        result = raw.scalars().all()
+        return [ReadSimpleGroupSchema.model_validate(item) for item in result]

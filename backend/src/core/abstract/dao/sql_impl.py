@@ -44,6 +44,17 @@ class SqlDaoImpl(
 
         return self.read_schema_type.model_validate(record)
 
+    async def _get_by(self, **kwargs) -> ReadSchemaType:
+        stmt = select(self.model_type).filter_by(**kwargs)
+        result = await self.session.execute(stmt)
+
+        record = result.scalar_one_or_none()
+
+        if record is None:
+            raise ModelNotFoundException(self.model_type.__name__, str(id))
+
+        return self.read_schema_type.model_validate(record)
+
     async def get_many(self, ids) -> list[ReadSchemaType]:
         stmt = select(self.model_type).filter(self.model_type.id.in_(ids))
         result = await self.session.execute(stmt)
@@ -67,7 +78,6 @@ class SqlDaoImpl(
         await self.session.flush()
         return self.read_schema_type.model_validate(result.scalar_one())
 
-    async def delete(self, id: IDType) -> bool:
+    async def delete(self, id: IDType) -> None:
         await self.session.execute(delete(self.model_type).filter_by(id=id))  # type: ignore
         await self.session.flush()
-        return True

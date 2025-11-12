@@ -1,6 +1,15 @@
 import logging
+from uuid import UUID
 
 from fastapi import APIRouter
+
+from src.entries.auth.depends import CurrentUserDep
+from src.entries.group.depends import AutoGroupDep
+from src.entries.group.schemas import (
+    ReadAutoGroupsAndMessagesSchema,
+    ReadAutoGroupSchema,
+)
+from src.entries.message.depends import MessageServiceDep
 
 logger = logging.getLogger(__name__)
 
@@ -97,3 +106,39 @@ router = APIRouter(prefix="/groups", tags=["group"])
 #     group_service: GroupServiceDep,
 # ) -> ReadGroupSchema:
 #     return await group_service.update(group_id, UpdateGroupSchema(title=group_title))
+
+
+@router.get("/{group_id}")
+async def get_group(
+    group_id: UUID,
+    group_service: AutoGroupDep,
+) -> ReadAutoGroupSchema:
+    return await group_service.get(group_id)
+
+
+@router.get("/me/groups")
+async def get_my_group(
+    user: CurrentUserDep,
+    group_service: AutoGroupDep,
+) -> list[ReadAutoGroupSchema]:
+    return await group_service.get_groups_by_user(user.id)
+
+
+@router.get("/me/with_last_message")
+async def get_my_groups_with_last_message(
+    user: CurrentUserDep,
+    service: AutoGroupDep,
+    message_service: MessageServiceDep,
+) -> ReadAutoGroupsAndMessagesSchema:
+    groups = await service.get_groups_by_user(user.id)
+    group_ids = [group.id for group in groups]
+    messages = await message_service.get_last_message_in_groups(group_ids)
+    return ReadAutoGroupsAndMessagesSchema(messages=messages, groups=groups)
+
+
+@router.delete("/{group_id}")
+async def delete_group(
+    group_id: UUID,
+    group_service: AutoGroupDep,
+):
+    return await group_service.delete(group_id)

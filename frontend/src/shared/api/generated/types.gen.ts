@@ -102,21 +102,17 @@ export type ReadAccessTokenSchema = {
 };
 
 /**
- * ReadGroupSchema
+ * ReadAutoGroupsAndMessagesSchema
  */
-export type ReadGroupSchema = {
+export type ReadAutoGroupsAndMessagesSchema = {
     /**
-     * Id
+     * Messages
      */
-    id: string;
+    messages: Array<ReadMessageSchema>;
     /**
-     * Type
+     * Groups
      */
-    type: 'simple_group' | 'personal_group';
-    /**
-     * Created At
-     */
-    created_at: string;
+    groups: Array<ReadSimpleGroupSchema | ReadPersonalGroupSchema>;
 };
 
 /**
@@ -173,39 +169,13 @@ export type ReadPersonalGroupSchema = {
      */
     type: 'simple_group' | 'personal_group';
     /**
-     * Created At
-     */
-    created_at: string;
-    /**
      * Title
      */
     title?: string | null;
-};
-
-/**
- * ReadPersonalGroupsAndMessagesSchema
- */
-export type ReadPersonalGroupsAndMessagesSchema = {
-    /**
-     * Id
-     */
-    id: string;
-    /**
-     * Type
-     */
-    type: 'simple_group' | 'personal_group';
     /**
      * Created At
      */
     created_at: string;
-    /**
-     * Messages
-     */
-    messages: Array<ReadMessageSchema>;
-    /**
-     * Groups
-     */
-    groups: Array<ReadGroupSchema>;
 };
 
 /**
@@ -221,13 +191,13 @@ export type ReadSimpleGroupSchema = {
      */
     type: 'simple_group' | 'personal_group';
     /**
+     * Title
+     */
+    title?: string | null;
+    /**
      * Created At
      */
     created_at: string;
-    /**
-     * Title
-     */
-    title: string;
 };
 
 /**
@@ -581,35 +551,35 @@ export type GetUsernamesByIdApiUsersUsernamesPostResponses = {
 
 export type GetUsernamesByIdApiUsersUsernamesPostResponse = GetUsernamesByIdApiUsersUsernamesPostResponses[keyof GetUsernamesByIdApiUsersUsernamesPostResponses];
 
-export type SearchUsersApiUsersSearchAccountNameGetData = {
+export type SearchUsersApiUsersSearchGetData = {
     body?: never;
-    path: {
+    path?: never;
+    query: {
         /**
          * Account Name
          */
         account_name: string;
     };
-    query?: never;
-    url: '/api/users/search/{account_name}';
+    url: '/api/users/search';
 };
 
-export type SearchUsersApiUsersSearchAccountNameGetErrors = {
+export type SearchUsersApiUsersSearchGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type SearchUsersApiUsersSearchAccountNameGetError = SearchUsersApiUsersSearchAccountNameGetErrors[keyof SearchUsersApiUsersSearchAccountNameGetErrors];
+export type SearchUsersApiUsersSearchGetError = SearchUsersApiUsersSearchGetErrors[keyof SearchUsersApiUsersSearchGetErrors];
 
-export type SearchUsersApiUsersSearchAccountNameGetResponses = {
+export type SearchUsersApiUsersSearchGetResponses = {
     /**
      * Successful Response
      */
     200: ReadUserSchema;
 };
 
-export type SearchUsersApiUsersSearchAccountNameGetResponse = SearchUsersApiUsersSearchAccountNameGetResponses[keyof SearchUsersApiUsersSearchAccountNameGetResponses];
+export type SearchUsersApiUsersSearchGetResponse = SearchUsersApiUsersSearchGetResponses[keyof SearchUsersApiUsersSearchGetResponses];
 
 export type GetMeApiUsersMeGetData = {
     body?: never;
@@ -624,39 +594,6 @@ export type GetMeApiUsersMeGetResponses = {
      */
     200: unknown;
 };
-
-export type GetMyPersonalGroupsWithLastMessageApiPersonalGroupsMeWithLastMessageGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/personal_groups/me/with_last_message';
-};
-
-export type GetMyPersonalGroupsWithLastMessageApiPersonalGroupsMeWithLastMessageGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: ReadPersonalGroupsAndMessagesSchema;
-};
-
-export type GetMyPersonalGroupsWithLastMessageApiPersonalGroupsMeWithLastMessageGetResponse = GetMyPersonalGroupsWithLastMessageApiPersonalGroupsMeWithLastMessageGetResponses[keyof GetMyPersonalGroupsWithLastMessageApiPersonalGroupsMeWithLastMessageGetResponses];
-
-export type GetMyPersonalGroupsApiPersonalGroupsMeGroupsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/personal_groups/me/groups';
-};
-
-export type GetMyPersonalGroupsApiPersonalGroupsMeGroupsGetResponses = {
-    /**
-     * Response Get My Personal Groups Api Personal Groups Me Groups Get
-     * Successful Response
-     */
-    200: Array<ReadPersonalGroupSchema>;
-};
-
-export type GetMyPersonalGroupsApiPersonalGroupsMeGroupsGetResponse = GetMyPersonalGroupsApiPersonalGroupsMeGroupsGetResponses[keyof GetMyPersonalGroupsApiPersonalGroupsMeGroupsGetResponses];
 
 export type CreateApiPersonalGroupsOtherUserIdPostData = {
     body?: never;
@@ -680,34 +617,6 @@ export type CreateApiPersonalGroupsOtherUserIdPostErrors = {
 export type CreateApiPersonalGroupsOtherUserIdPostError = CreateApiPersonalGroupsOtherUserIdPostErrors[keyof CreateApiPersonalGroupsOtherUserIdPostErrors];
 
 export type CreateApiPersonalGroupsOtherUserIdPostResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type DeleteApiPersonalGroupsIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/personal_groups/{id}';
-};
-
-export type DeleteApiPersonalGroupsIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteApiPersonalGroupsIdDeleteError = DeleteApiPersonalGroupsIdDeleteErrors[keyof DeleteApiPersonalGroupsIdDeleteErrors];
-
-export type DeleteApiPersonalGroupsIdDeleteResponses = {
     /**
      * Successful Response
      */
@@ -765,78 +674,36 @@ export type CreateApiSimpleGroupsPostResponses = {
     200: unknown;
 };
 
-export type GetMySimpleGroupsApiSimpleGroupsMeGetData = {
+export type SearchGroupsApiSimpleGroupsSearchGetData = {
     body?: never;
     path?: never;
-    query?: never;
-    url: '/api/simple_groups/me';
+    query: {
+        /**
+         * Query
+         */
+        query: string;
+    };
+    url: '/api/simple_groups/search';
 };
 
-export type GetMySimpleGroupsApiSimpleGroupsMeGetResponses = {
+export type SearchGroupsApiSimpleGroupsSearchGetErrors = {
     /**
-     * Response Get My Simple Groups Api Simple Groups Me Get
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SearchGroupsApiSimpleGroupsSearchGetError = SearchGroupsApiSimpleGroupsSearchGetErrors[keyof SearchGroupsApiSimpleGroupsSearchGetErrors];
+
+export type SearchGroupsApiSimpleGroupsSearchGetResponses = {
+    /**
+     * Response Search Groups Api Simple Groups Search Get
      * Successful Response
      */
     200: Array<ReadSimpleGroupSchema>;
 };
 
-export type GetMySimpleGroupsApiSimpleGroupsMeGetResponse = GetMySimpleGroupsApiSimpleGroupsMeGetResponses[keyof GetMySimpleGroupsApiSimpleGroupsMeGetResponses];
-
-export type DeleteApiSimpleGroupsIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/simple_groups/{id}';
-};
-
-export type DeleteApiSimpleGroupsIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteApiSimpleGroupsIdDeleteError = DeleteApiSimpleGroupsIdDeleteErrors[keyof DeleteApiSimpleGroupsIdDeleteErrors];
-
-export type DeleteApiSimpleGroupsIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type GetApiSimpleGroupsIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Id
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/api/simple_groups/{id}';
-};
-
-export type GetApiSimpleGroupsIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetApiSimpleGroupsIdGetError = GetApiSimpleGroupsIdGetErrors[keyof GetApiSimpleGroupsIdGetErrors];
-
-export type GetApiSimpleGroupsIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
+export type SearchGroupsApiSimpleGroupsSearchGetResponse = SearchGroupsApiSimpleGroupsSearchGetResponses[keyof SearchGroupsApiSimpleGroupsSearchGetResponses];
 
 export type UpdateApiSimpleGroupsIdPatchData = {
     body: UpdateSimpleGroupSchema;
@@ -865,6 +732,136 @@ export type UpdateApiSimpleGroupsIdPatchResponses = {
      */
     200: unknown;
 };
+
+export type DeleteGroupApiGroupsGroupIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    query: {
+        /**
+         * Group Type
+         */
+        group_type: 'simple_group' | 'personal_group';
+    };
+    url: '/api/groups/{group_id}';
+};
+
+export type DeleteGroupApiGroupsGroupIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteGroupApiGroupsGroupIdDeleteError = DeleteGroupApiGroupsGroupIdDeleteErrors[keyof DeleteGroupApiGroupsGroupIdDeleteErrors];
+
+export type DeleteGroupApiGroupsGroupIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type GetGroupApiGroupsGroupIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    query: {
+        /**
+         * Group Type
+         */
+        group_type: 'simple_group' | 'personal_group';
+    };
+    url: '/api/groups/{group_id}';
+};
+
+export type GetGroupApiGroupsGroupIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetGroupApiGroupsGroupIdGetError = GetGroupApiGroupsGroupIdGetErrors[keyof GetGroupApiGroupsGroupIdGetErrors];
+
+export type GetGroupApiGroupsGroupIdGetResponses = {
+    /**
+     * Response Get Group Api Groups  Group Id  Get
+     * Successful Response
+     */
+    200: ReadSimpleGroupSchema | ReadPersonalGroupSchema;
+};
+
+export type GetGroupApiGroupsGroupIdGetResponse = GetGroupApiGroupsGroupIdGetResponses[keyof GetGroupApiGroupsGroupIdGetResponses];
+
+export type GetMyGroupApiGroupsMeGroupsGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Group Type
+         */
+        group_type: 'simple_group' | 'personal_group';
+    };
+    url: '/api/groups/me/groups';
+};
+
+export type GetMyGroupApiGroupsMeGroupsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetMyGroupApiGroupsMeGroupsGetError = GetMyGroupApiGroupsMeGroupsGetErrors[keyof GetMyGroupApiGroupsMeGroupsGetErrors];
+
+export type GetMyGroupApiGroupsMeGroupsGetResponses = {
+    /**
+     * Response Get My Group Api Groups Me Groups Get
+     * Successful Response
+     */
+    200: Array<ReadSimpleGroupSchema | ReadPersonalGroupSchema>;
+};
+
+export type GetMyGroupApiGroupsMeGroupsGetResponse = GetMyGroupApiGroupsMeGroupsGetResponses[keyof GetMyGroupApiGroupsMeGroupsGetResponses];
+
+export type GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Group Type
+         */
+        group_type: 'simple_group' | 'personal_group';
+    };
+    url: '/api/groups/me/with_last_message';
+};
+
+export type GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetError = GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetErrors[keyof GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetErrors];
+
+export type GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ReadAutoGroupsAndMessagesSchema;
+};
+
+export type GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponse = GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponses[keyof GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponses];
 
 export type CreateMessageApiMessagesPostData = {
     body: CreateMessageNoUserSchema;

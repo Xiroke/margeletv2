@@ -43,7 +43,7 @@ export const LoginPage: FC<LoginPageProps> = (props: LoginPageProps) => {
       }
 
       navigate({
-        params: { groupType: 'simple' },
+        params: { groupType: 'simple_group' },
         to: '/group/$groupType/{-$groupId}',
       })
     },

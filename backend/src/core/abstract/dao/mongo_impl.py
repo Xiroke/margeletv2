@@ -33,6 +33,14 @@ class MongoDaoImpl(
 
         return self.read_schema_type.model_validate(result)
 
+    async def _get_by(self, **kwargs) -> ReadSchemaType:
+        result = await self.model_type.find_one(**kwargs, fetch_links=True)
+
+        if result is None:
+            raise ModelNotFoundException(self.model_type.__name__, str(id))
+
+        return self.read_schema_type.model_validate(result)
+
     async def get_many(self, ids: list[IDType]) -> list[ReadSchemaType]:
         result = await self.model_type.find(
             {"_id": {"$in": ids}}, fetch_links=True

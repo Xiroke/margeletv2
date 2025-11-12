@@ -18,6 +18,7 @@ GroupTypes = Literal["simple_group", "personal_group"]
 class BaseGroupSchema(BaseModel):
     id: UUID
     type: GroupTypes
+    title: str | None = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

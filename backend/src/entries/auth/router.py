@@ -1,10 +1,11 @@
 from typing import Annotated
 
-from config import settings
 from fastapi import Body, Response
 from fastapi.routing import APIRouter
 from pydantic import EmailStr
-from src.entries.auth.depends import AuthServiceDep, CurrentUserDep, RefreshTokenDep
+
+from config import settings
+from src.entries.auth.depends import AuthServiceDep, RefreshTokenDep
 from src.entries.auth.schemas import ReadAccessTokenSchema
 from src.entries.auth.user.schemas import CreateUserSchema, LoginUserSchema
 
@@ -58,7 +59,6 @@ async def get_access_token(
     return await auth.get_access_from_refresh(refresh_token)
 
 
-@router.get("/me")
-async def get_me(user: CurrentUserDep):
-    """Get current user information"""
-    return user
+@router.post("/logout")
+async def logout(response: Response, refresh_token: RefreshTokenDep):
+    response.delete_cookie("refresh_token")
