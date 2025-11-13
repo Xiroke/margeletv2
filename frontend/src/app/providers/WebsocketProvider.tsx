@@ -4,7 +4,7 @@ import { createContext, type PropsWithChildren, use, useEffect, useRef, useState
 import type { WsInDataSchema, WsOutDataSchema } from '@/shared/api/generated'
 import type { IWSContext } from '@/shared/types/wsProvider'
 
-import { settings, wsIgnorePaths } from '@/config'
+import { excludedAuthCheckRoutes, settings } from '@/config'
 import { authQueryProps } from '@/features/auth/api'
 import { useShouldIgnorePath } from '@/shared/hooks/useShouldIgnoredPath'
 import { useWsLoading } from '@/shared/hooks/useWsLoading'
@@ -23,7 +23,7 @@ const WSContext = createContext<IWSContext | null>(null)
  * ws disabled on the specified paths
  */
 export const BoundedWs = ({ children }: PropsWithChildren) => {
-  const isShouldIgnore = useShouldIgnorePath(wsIgnorePaths)
+  const isShouldIgnore = useShouldIgnorePath(excludedAuthCheckRoutes)
 
   return (isShouldIgnore ? <>{children}</> : <WebsocketProvider>{children}</WebsocketProvider>)
 }

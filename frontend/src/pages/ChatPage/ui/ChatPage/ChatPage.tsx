@@ -2,6 +2,7 @@ import type { FC } from 'react'
 
 import { useParams } from '@tanstack/react-router'
 import { clsx } from 'clsx'
+import { SettingsIcon, UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import type { WsInMessageSchema, WsOutDataSchema } from '@/shared/api/generated'
@@ -46,16 +47,25 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
       { (groupType == 'simple_group' || groupType == 'personal_group') && <ChatGroupList className={cls.group_list} groupType={groupType} />}
       <Separator orientation="vertical" />
 
-      {groupId
-        ? (
-            <div className={cls.selected_chat}>
-              <MessageList groupId={groupId} initOnMessage={setOnMessage} />
-              <ChatInput onSend={handleSend} placeholder="Enter message" />
-            </div>
-          )
-        : (
-            <div className={cls.unselected_chat}>Choose group</div>
-          )}
+      <div className="flex flex-col flex-1 justify-end items-end">
+
+        {groupId
+          ? (
+              <>
+                <div className="flex px-[10%] gap-6">
+                  <UserPlus />
+                  <SettingsIcon />
+                </div>
+                <div className={cls.selected_chat}>
+                  <MessageList groupId={groupId} initOnMessage={setOnMessage} />
+                  <ChatInput onSend={handleSend} placeholder="Enter message" />
+                </div>
+              </>
+            )
+          : (
+              <div className={cls.unselected_chat}>Choose group</div>
+            )}
+      </div>
     </div>
   )
 }

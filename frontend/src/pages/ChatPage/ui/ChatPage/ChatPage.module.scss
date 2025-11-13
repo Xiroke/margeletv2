@@ -30,7 +30,7 @@ body {
 .selected_chat,
 .unselected_chat {
   display: flex;
-  margin: 0 auto 40px auto;
+  margin: 0 auto;
 }
 
 .selected_chat {
@@ -39,7 +39,7 @@ body {
   width: 36%;
   align-items: start;
   gap: 12px;
-  height: 90vh;
+  flex: 1;
 }
 
 .unselected_chat {
