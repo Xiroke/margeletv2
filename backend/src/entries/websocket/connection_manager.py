@@ -10,12 +10,12 @@ from pydantic import ValidationError
 from src.core.redis.depends import redis_storage
 from src.entries.group.group.dao import GroupDaoProtocolParent
 from src.entries.message.depends import MessageServiceDep
-from src.entries.message.schemas import CreateMessageSchema
+from src.entries.message.schemas import MessageCreate
 from src.entries.websocket.enums import UserStatus
 from src.entries.websocket.schemas import (
-    WsDataEvent,
-    WsOutDataSchema,
-    WsOutMessageSchema,
+    WsEventCategoryEnum,
+    WsEventRead,
+    WsMessageRead,
 )
 
 log = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class ConnectionManager:
         """
         Subscribe current worker to redis
         """
-        await self._pubsub.subscribe(WsDataEvent.MESSAGE)
+        await self._pubsub.subscribe(WsEventCategoryEnum.MESSAGE)
 
         if not self._listener_task:
             log.info("start redis subscriber loop")
@@ -66,25 +66,27 @@ class ConnectionManager:
 
     async def broadcast_group_message(
         self,
-        obj: CreateMessageSchema,
+        obj: MessageCreate,
         message_service: MessageServiceDep,
         group_service: GroupDaoProtocolParent,  # you can pass service
     ) -> None:
-        message = await message_service.create(obj)
+        message = await message_service.create(obj, returning=True)
 
         user_ids = await group_service.get_user_ids_in_group(message.to_group_id)
 
-        ws_data = WsOutMessageSchema(
-            event=WsDataEvent.MESSAGE, data=message, to_user=uuid4()
+        ws_data = WsMessageRead(
+            category=WsEventCategoryEnum.MESSAGE, data=message, to_user=uuid4()
         )
 
         # send message to all users
         for user_id in user_ids:
             ws_data.to_user = user_id
             await self.redis.publish(
-                WsDataEvent.MESSAGE,
+                WsEventCategoryEnum.MESSAGE,
                 ws_data.model_dump_json(),
             )
+
+        log.debug("Message is broadcasted")
 
     async def redis_subscriber_loop(self):
         """
@@ -94,16 +96,16 @@ class ConnectionManager:
         # example raw_message
         # {'type': 'subscribe', 'pattern': None, 'channel': b'message', 'data': 1}
         async for raw_message in self._pubsub.listen():
-            if raw_message["type"] != WsDataEvent.MESSAGE:
+            if raw_message["type"] != WsEventCategoryEnum.MESSAGE:
                 continue
 
             try:
-                message = WsOutMessageSchema.model_validate_json(raw_message["data"])
+                message = WsMessageRead.model_validate_json(raw_message["data"])
                 await self.send_local_chat(message)
             except ValidationError as e:
                 log.error(f"Error processing message: {e}")
 
-    async def send_local_chat(self, data: WsOutDataSchema):
+    async def send_local_chat(self, data: WsEventRead):
         """
         Every worker send message to all users in current chat
         """

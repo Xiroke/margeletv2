@@ -9,7 +9,7 @@ from fastapi import APIRouter
 # from src.entries.auth.depends import CurrentUserDep
 
 # from .depends import RoleServiceDep
-# from .schemas import CreateRoleSchema, ReadRoleSchema, UpdateRoleSchema
+# from .schemas import RoleCreate, RoleRead, RoleUpdate
 
 router = APIRouter(prefix="/roles", tags=["role"])
 
@@ -17,8 +17,8 @@ router = APIRouter(prefix="/roles", tags=["role"])
 # @router.get(
 #     "/{role_id}",
 # )
-# async def get_role(role_id: int, role_service: RoleServiceDep) -> ReadRoleSchema:
-#     return ReadRoleSchema.model_validate(await role_service.get(role_id))
+# async def get_role(role_id: int, role_service: RoleServiceDep) -> RoleRead:
+#     return RoleRead.model_validate(await role_service.get(role_id))
 
 
 # @router.get("/permissions/me/{group_id}")
@@ -31,23 +31,23 @@ router = APIRouter(prefix="/roles", tags=["role"])
 # @router.post("/{group_id}", dependencies=perms(["r:can_edit_roles"]))
 # async def create_role(
 #     group_id: UUID,
-#     role: Annotated[CreateRoleSchema, Body()],
+#     role: Annotated[RoleCreate, Body()],
 #     role_service: RoleServiceDep,
-# ) -> ReadRoleSchema:
+# ) -> RoleRead:
 #     new_role = await role_service.create(role)
 
-#     return ReadRoleSchema.model_validate(new_role)
+#     return RoleRead.model_validate(new_role)
 
 
 # @router.patch("/{role_id}", dependencies=perms(["r:can_edit_roles"]))
 # async def update_role(
 #     role_id: int,
-#     role: Annotated[UpdateRoleSchema, Body()],
+#     role: Annotated[RoleUpdate, Body()],
 #     role_service: RoleServiceDep,
 # ):
 #     await role_service.update(
 #         role_id,
-#         UpdateRoleSchema(
+#         RoleUpdate(
 #             **role.model_dump(exclude_none=True),
 #         ),
 #     )

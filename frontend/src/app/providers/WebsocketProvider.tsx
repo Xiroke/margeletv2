@@ -1,20 +1,13 @@
 import { useMutation } from '@tanstack/react-query'
 import { createContext, type PropsWithChildren, use, useEffect, useRef, useState } from 'react'
 
-import type { WsInDataSchema, WsOutDataSchema } from '@/shared/api/generated'
+import type { WsEventCreate, WsEventRead } from '@/shared/api/generated'
 import type { IWSContext } from '@/shared/types/wsProvider'
 
 import { excludedAuthCheckRoutes, settings } from '@/config'
 import { authQueryProps } from '@/features/auth/api'
 import { useShouldIgnorePath } from '@/shared/hooks/useShouldIgnoredPath'
 import { useWsLoading } from '@/shared/hooks/useWsLoading'
-
-interface SendDataI {
-  data: any
-  event: WsEvent
-}
-
-type WsEvent = 'message'
 
 const WSContext = createContext<IWSContext | null>(null)
 
@@ -53,13 +46,13 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
       }
 
       ws.onmessage = (event) => {
-        const data: WsOutDataSchema = JSON.parse(event.data)
+        const wsEvent: WsEventRead = JSON.parse(event.data)
 
-        if (data.event != 'message') {
+        if (wsEvent.category != 'message') {
           return
         }
 
-        onMessageFuncRef.current(data)
+        onMessageFuncRef.current(wsEvent)
       }
 
       ws.onclose = () => {
@@ -82,7 +75,7 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
     }
   }, [])
 
-  const send = async (data: WsInDataSchema) => {
+  const send = async (data: WsEventCreate) => {
     // if the wasync ebsocket is not connected, then launch it
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(data))
@@ -92,7 +85,7 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
     }
   }
 
-  const onMessage = (callback: (data: WsOutDataSchema) => void) => {
+  const onMessage = (callback: (data: WsEventRead) => void) => {
     // add listener on message,
     // use in your component in useEffect
     onMessageFuncRef.current = callback

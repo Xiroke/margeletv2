@@ -1,9 +1,9 @@
 import {
-  useChatServiceDeleteApiChatsByChatId,
-  useChatServiceGetApiChatsGroupChatsByGroupId,
-  useChatServicePatchApiChatsByChatId,
-  useChatServicePostApiChatsByGroupId,
-  useChatServiceGetApiChatsGroupChatsByGroupIdKey,
+    useChatServiceDeleteApiChatsByChatId,
+    useChatServiceGetApiChatsGroupChatsByGroupId,
+    useChatServiceGetApiChatsGroupChatsByGroupIdKey,
+    useChatServicePatchApiChatsByChatId,
+    useChatServicePostApiChatsByGroupId,
 } from "@/shared/api/queries";
 
 export const apiChat = {
@@ -14,8 +14,5 @@ export const apiChat = {
   getGroupChatsKey: useChatServiceGetApiChatsGroupChatsByGroupIdKey,
 };
 
-export type {
-  ReadChatSchema,
-  UpdateChatSchema,
-  CreateChatSchema,
-} from "@/shared/api/requests";
+export type { ChatCreate, ChatRead, ChatUpdate } from "@/shared/api/requests";
+

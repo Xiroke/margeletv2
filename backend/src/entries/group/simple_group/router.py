@@ -6,11 +6,7 @@ from src.entries.auth.depends import CurrentUserDep
 from src.utils.router_crud import router_crud
 
 from .depends import SimpleGroupServiceDep
-from .schemas import (
-    CreateSimpleGroupSchema,
-    ReadSimpleGroupSchema,
-    UpdateSimpleGroupSchema,
-)
+from .schemas import SimpleGroupCreate, SimpleGroupRead, SimpleGroupUpdate
 
 router = APIRouter(prefix="/simple_groups", tags=["simple_group"])
 
@@ -18,7 +14,7 @@ router = APIRouter(prefix="/simple_groups", tags=["simple_group"])
 @router.post("/")
 async def create(
     user: CurrentUserDep,
-    obj: CreateSimpleGroupSchema,
+    obj: SimpleGroupCreate,
     service: SimpleGroupServiceDep,
 ):
     return await service.create(obj, user.id)
@@ -28,7 +24,7 @@ async def create(
 async def search_groups(
     query: str,
     group_service: SimpleGroupServiceDep,
-) -> list[ReadSimpleGroupSchema]:
+) -> list[SimpleGroupRead]:
     return await group_service.search(query)
 
 
@@ -36,7 +32,7 @@ router_crud(
     router,
     SimpleGroupServiceDep,
     UUID,
-    CreateSimpleGroupSchema,
-    UpdateSimpleGroupSchema,
+    SimpleGroupCreate,
+    SimpleGroupUpdate,
     excepted_router=["get", "delete", "create"],
 )

@@ -1,6 +1,7 @@
 from abc import ABC
+from typing import Any
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.database import Base
@@ -26,58 +27,76 @@ class SqlDaoImpl(
     ],
     ABC,
 ):
-    """Sql implementation of Dao with default crud methods"""
+    """SQL DAO implementation with fully generic CRUD methods."""
 
     model_type: type[Base]
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, id: IDType) -> ReadSchemaType:
-        stmt = select(self.model_type).filter_by(id=id)
+    async def get(self, **filters) -> ReadSchemaType:
+        stmt = select(self.model_type).filter_by(**filters)
+        return await self._execute_and_return_one(stmt)
+
+    async def get_many(self, **filters) -> list[ReadSchemaType]:
+        stmt = select(self.model_type)
+        stmt = self._handle_filters(stmt, filters)
         result = await self.session.execute(stmt)
+        return self._models_to_read_schemas(result.scalars().all())
+
+    async def create(
+        self, obj: CreateSchemaType, returning: bool = False
+    ) -> ReadSchemaType | None:
+        stmt = insert(self.model_type).values(**obj.model_dump())
+
+        if returning:
+            stmt = stmt.returning(self.model_type)
+            return await self._execute_and_return_one(stmt, flush=True)
+
+        await self.session.execute(stmt)
+
+    async def update(
+        self, filters: dict[str, Any], obj: UpdateSchemaType, returning: bool = False
+    ) -> ReadSchemaType | None:
+        values = obj.model_dump(exclude_unset=True)
+        stmt = update(self.model_type).filter_by(**filters).values(**values)
+
+        if returning:
+            stmt = stmt.returning(self.model_type)
+            return await self._execute_and_return_one(stmt, flush=True)
+
+        await self.session.execute(stmt)
+
+    async def delete(self, **filters) -> None:
+        stmt = delete(self.model_type).filter_by(**filters)
+        await self.session.execute(stmt)
+
+    async def _execute_and_return_one(
+        self, stmt, flush: bool = False
+    ) -> ReadSchemaType:
+        result = await self.session.execute(stmt)
+
+        if flush:
+            await self.session.flush()
 
         record = result.scalar_one_or_none()
 
         if record is None:
-            raise ModelNotFoundException(self.model_type.__name__, id)
+            raise ModelNotFoundException(self.model_type.__name__, "No record found")
 
-        return self.read_schema_type.model_validate(record)
+        return self._model_to_read_schema(record)
 
-    async def _get_by(self, **kwargs) -> ReadSchemaType:
-        stmt = select(self.model_type).filter_by(**kwargs)
-        result = await self.session.execute(stmt)
+    def _model_to_read_schema(self, model) -> ReadSchemaType:
+        return self.read_schema_type.model_validate(model)
 
-        record = result.scalar_one_or_none()
+    def _models_to_read_schemas(self, models) -> list[ReadSchemaType]:
+        return [self.read_schema_type.model_validate(m) for m in models]
 
-        if record is None:
-            raise ModelNotFoundException(self.model_type.__name__, str(id))
-
-        return self.read_schema_type.model_validate(record)
-
-    async def get_many(self, ids) -> list[ReadSchemaType]:
-        stmt = select(self.model_type).filter(self.model_type.id.in_(ids))
-        result = await self.session.execute(stmt)
-        return [self.read_schema_type.model_validate(i) for i in result.scalars().all()]
-
-    async def create(self, obj: CreateSchemaType) -> ReadSchemaType:
-        obj_model = self.model_type(**obj.model_dump())
-        self.session.add(obj_model)
-        await self.session.flush()
-        await self.session.refresh(obj_model)
-        return self.read_schema_type.model_validate(obj_model)
-
-    async def update(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
-        smtp = (
-            update(self.model_type)
-            .filter_by(id=id)
-            .values(obj.model_dump(exclude_unset=True))
-            .returning(self.model_type)
-        )
-        result = await self.session.execute(smtp)
-        await self.session.flush()
-        return self.read_schema_type.model_validate(result.scalar_one())
-
-    async def delete(self, id: IDType) -> None:
-        await self.session.execute(delete(self.model_type).filter_by(id=id))  # type: ignore
-        await self.session.flush()
+    def _handle_filters(self, stmt, filters: dict[str, Any]):
+        for key, value in filters.items():
+            column = getattr(self.model_type, key)
+            if isinstance(value, (list, tuple, set)):
+                stmt = stmt.filter(column.in_(value))
+            else:
+                stmt = stmt.filter(column == value)
+        return stmt

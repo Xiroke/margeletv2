@@ -15,7 +15,7 @@ class GroupTypeEnum(str):
 GroupTypes = Literal["simple_group", "personal_group"]
 
 
-class BaseGroupSchema(BaseModel):
+class GroupBase(BaseModel):
     id: UUID
     type: GroupTypes
     title: str | None = None
@@ -24,13 +24,13 @@ class BaseGroupSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ReadGroupSchema(BaseGroupSchema):
+class GroupRead(GroupBase):
     pass
 
 
-class CreateGroupSchema(BaseModel):
+class GroupCreate(BaseModel):
     pass
 
 
-class UpdateGroupSchema(BaseModel):
+class GroupUpdate(BaseModel):
     pass

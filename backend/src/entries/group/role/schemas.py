@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 
-class BaseRoleSchema(BaseModel):
+class RoleBase(BaseModel):
     id: int
     title: str
     user_group_id: UUID
@@ -15,14 +15,14 @@ class BaseRoleSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ReadRoleSchema(BaseRoleSchema):
+class RoleRead(RoleBase):
     pass
 
 
-class CreateRoleSchema(BaseModel):
+class RoleCreate(BaseModel):
     title: str
     user_group_id: UUID
 
 
-class UpdateRoleSchema(BaseModel):
+class RoleUpdate(BaseModel):
     title: str | None = None

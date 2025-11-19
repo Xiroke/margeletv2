@@ -7,9 +7,7 @@ from src.core.db.database import Base
 
 ModelType = TypeVar("ModelType", bound=Base | Document, covariant=True)
 
-IDType = TypeVar(
-    "IDType",
-)
+IDType = TypeVar("IDType", covariant=True)
 
 BaseSchemaType = TypeVar("BaseSchemaType", bound=BaseModel, covariant=True)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)

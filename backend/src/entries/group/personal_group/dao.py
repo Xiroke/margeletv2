@@ -11,28 +11,24 @@ from src.utils.exceptions import UniqueViolationError
 
 from ..group.dao import GroupDaoProtocolParent, GroupSqlDaoParent
 from .models import PersonalGroupModel
-from .schemas import (
-    CreatePersonalGroupSchema,
-    ReadPersonalGroupSchema,
-    UpdatePersonalGroupSchema,
-)
+from .schemas import PersonalGroupCreate, PersonalGroupRead, PersonalGroupUpdate
 
 
 class PersonalGroupDaoProtocol(
     DaoProtocol[
         PersonalGroupModel,
         UUID,
-        ReadPersonalGroupSchema,
-        CreatePersonalGroupSchema,
-        UpdatePersonalGroupSchema,
+        PersonalGroupRead,
+        PersonalGroupCreate,
+        PersonalGroupUpdate,
     ],
     GroupDaoProtocolParent,
     Protocol,
 ):
     @override
     async def create(
-        self, obj: CreatePersonalGroupSchema, user_id: UUID
-    ) -> ReadPersonalGroupSchema: ...
+        self, obj: PersonalGroupCreate, user_id: UUID
+    ) -> PersonalGroupRead: ...
     async def get_groups_by_user(self, user_id: UUID): ...
     async def is_exist_personal_group(
         self, user_id: UUID, other_user_id: UUID
@@ -45,16 +41,16 @@ class PersonalGroupSqlDao(
     SqlDaoImpl[
         PersonalGroupModel,
         UUID,
-        ReadPersonalGroupSchema,
-        CreatePersonalGroupSchema,
-        UpdatePersonalGroupSchema,
+        PersonalGroupRead,
+        PersonalGroupCreate,
+        PersonalGroupUpdate,
     ],
     GroupSqlDaoParent,
 ):
     @override
     async def create(
-        self, obj: CreatePersonalGroupSchema, user_id: UUID, other_user_id: UUID
-    ) -> ReadPersonalGroupSchema:
+        self, obj: PersonalGroupCreate, user_id: UUID, other_user_id: UUID
+    ) -> PersonalGroupRead:
         # prevent dublication group
         status = await self.is_exist_personal_group(user_id, other_user_id)
 
@@ -67,7 +63,7 @@ class PersonalGroupSqlDao(
         await self.session.refresh(group)
         await self.add_user_to_group(group.id, user_id)
         await self.add_user_to_group(group.id, other_user_id)
-        return ReadPersonalGroupSchema.model_validate(group)
+        return PersonalGroupRead.model_validate(group)
 
     async def get_groups_by_user(self, user_id: UUID):
         data: list[PersonalGroupModel] = await self._get_groups_by_user(
@@ -76,7 +72,7 @@ class PersonalGroupSqlDao(
 
         groups = []
         for item in data:
-            validated = ReadPersonalGroupSchema(
+            validated = PersonalGroupRead(
                 id=item.id,
                 type=item.type,
                 created_at=item.created_at,

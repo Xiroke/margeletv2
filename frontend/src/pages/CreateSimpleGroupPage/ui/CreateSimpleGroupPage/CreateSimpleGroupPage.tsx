@@ -8,7 +8,7 @@ import { ResultAsync } from 'neverthrow'
 import { memo } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 
-import type { CreateSimpleGroupSchema } from '@/shared/api/generated'
+import type { SimpleGroupCreate } from '@/shared/api/generated'
 
 import { simpleGroupQueryProps } from '@/entities/SimpleGroup/api'
 import { BackButton } from '@/shared/ui/BackButton'
@@ -36,7 +36,7 @@ export const CreateSimpleGroupPage: FC<CreateSimpleGroupPageProps> = memo(
       },
 
       onSubmit: async (data) => {
-        const payload = data.value as CreateSimpleGroupSchema
+        const payload = data.value as SimpleGroupCreate
         const result = await ResultAsync.fromPromise(
           createGroup.mutateAsync({ body: payload }),
           error => error as { detail: string },

@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 from beanie import Document
 
 from src.core.types import (
@@ -21,53 +23,72 @@ class MongoDaoImpl(
         UpdateSchemaType,
     ],
 ):
-    """Mongo implementation of Dao with default crud methods"""
+    """MongoDB (Beanie) implementation of Dao with fully generic CRUD methods."""
 
     model_type: type[Document]
 
-    async def get(self, id: IDType) -> ReadSchemaType:
-        result = await self.model_type.get(id, fetch_links=True)
+    async def get(self, **filters) -> ReadSchemaType:
+        result = await self.model_type.find_one(**filters, fetch_links=True)
+        self._raise_if_none(result, filters)
+        return self._model_to_read_schema(result)
 
-        if result is None:
-            raise ModelNotFoundException(self.model_type.__name__, id)
+    async def get_many(self, **filters) -> list[ReadSchemaType]:
+        query = self._handle_filters(filters)
+        cursor = self.model_type.find(query, fetch_links=True)
+        results = await cursor.to_list()
+        return self._models_to_read_schemas(results)
 
-        return self.read_schema_type.model_validate(result)
-
-    async def _get_by(self, **kwargs) -> ReadSchemaType:
-        result = await self.model_type.find_one(**kwargs, fetch_links=True)
-
-        if result is None:
-            raise ModelNotFoundException(self.model_type.__name__, str(id))
-
-        return self.read_schema_type.model_validate(result)
-
-    async def get_many(self, ids: list[IDType]) -> list[ReadSchemaType]:
-        result = await self.model_type.find(
-            {"_id": {"$in": ids}}, fetch_links=True
-        ).to_list()
-        return [self.read_schema_type.model_validate(i) for i in result]
-
-    async def create(self, obj: CreateSchemaType) -> ReadSchemaType:
+    async def create(
+        self, obj: CreateSchemaType, returning: bool = False
+    ) -> ReadSchemaType | None:
         obj_model = self.model_type(**obj.model_dump())
+
         result = await obj_model.insert()
-        return self.read_schema_type.model_validate(result)
 
-    async def update(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
-        obj_model = await self.model_type.find_one(self.model_type.id == id)
+        if not returning:
+            return
 
-        if obj_model is None:
-            raise ModelNotFoundException(self.model_type.__name__, id)
+        return self._model_to_read_schema(result)
 
-        result = await obj_model.update(obj.model_dump(exclude_unset=True))
+    async def update(
+        self, filters: dict[str, Any], obj: UpdateSchemaType, returning: bool = False
+    ) -> ReadSchemaType | None:
+        existing = await self.model_type.find_one(**filters)
+        self._raise_if_none(existing, filters)
 
-        return self.read_schema_type.model_validate(result)
+        existing = cast(Document, existing)
 
-    async def delete(self, id: IDType) -> bool:
-        result = await self.model_type.get(id)
+        update_data = obj.model_dump(exclude_unset=True)
+        await existing.update({"$set": update_data})
 
-        if result is None:
-            raise ModelNotFoundException(self.model_type.__name__, id)
+        if not returning:
+            return
 
-        await result.delete()
+        updated = await self.model_type.get(existing.id, fetch_links=True)
+        return self._model_to_read_schema(updated)
 
-        return True
+    async def delete(self, **filters) -> None:
+        delete_result = await self.model_type.find(**filters).delete()
+        if not delete_result or delete_result.deleted_count == 0:
+            raise ModelNotFoundException(self.model_type.__name__, str(filters))
+
+    def _handle_filters(self, filters: dict[str, Any]) -> dict:
+        query = {}
+        for key, value in filters.items():
+            if isinstance(value, (list, tuple, set)):
+                query[key] = {"$in": list(value)}
+            else:
+                query[key] = value
+        return query
+
+    def _model_to_read_schema(self, model) -> ReadSchemaType:
+        return self.read_schema_type.model_validate(model)
+
+    def _models_to_read_schemas(self, models) -> list[ReadSchemaType]:
+        return [self.read_schema_type.model_validate(m) for m in models]
+
+    def _raise_if_none(self, record, filters: Any = None) -> None:
+        if record is None:
+            raise ModelNotFoundException(
+                self.model_type.__name__, str(filters or "No filters")
+            )

@@ -8,7 +8,7 @@ from src.core.abstract.dao.sql_impl import SqlDaoImpl
 from src.entries.group.role.models import RoleToUserGroup
 
 from .models import GroupModel, UserToGroupModel
-from .schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
+from .schemas import GroupCreate, GroupRead, GroupUpdate
 
 
 class GroupDaoProtocol(Protocol):
@@ -76,7 +76,7 @@ class GroupSqlDaoBase:
 
 
 class GroupSqlDao(
-    SqlDaoImpl[GroupModel, UUID, ReadGroupSchema, CreateGroupSchema, UpdateGroupSchema],
+    SqlDaoImpl[GroupModel, UUID, GroupRead, GroupCreate, GroupUpdate],
     GroupSqlDaoBase,
 ):
     """A group class that can be used independently"""
@@ -88,7 +88,7 @@ class GroupDaoProtocolParent(
     GroupDaoProtocol,
     Protocol,
 ):
-    async def get_groups_by_user(self, user_id: UUID) -> list[ReadGroupSchema]: ...
+    async def get_groups_by_user(self, user_id: UUID) -> list[GroupRead]: ...
     async def _get_groups_by_user(
         self, group_model: type[GroupModel], user_id: UUID
     ) -> list[GroupModel]: ...
@@ -98,7 +98,7 @@ class GroupSqlDaoParent(GroupSqlDaoBase, ABC):
     """A class for heirs only"""
 
     @abstractmethod
-    async def get_groups_by_user(self, user_id: UUID) -> list[ReadGroupSchema]:
+    async def get_groups_by_user(self, user_id: UUID) -> list[GroupRead]:
         pass
 
     async def _get_groups_by_user(

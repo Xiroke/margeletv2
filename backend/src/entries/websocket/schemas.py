@@ -6,27 +6,27 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from src.entries.message.schemas import CreateMessageNoUserSchema, ReadMessageSchema
+from src.entries.message.schemas import MessageNoUserCreate, MessageRead
 
 
-class WsDataEvent(StrEnum):
+class WsEventCategoryEnum(StrEnum):
     MESSAGE = "message"
 
 
-class WsInDataSchema(BaseModel):
-    event: WsDataEvent = Field(default=WsDataEvent.MESSAGE)
+class WsEventCreate(BaseModel):
+    category: WsEventCategoryEnum = Field(default=WsEventCategoryEnum.MESSAGE)
     data: Any
 
 
-class WsOutDataSchema(BaseModel):
-    event: WsDataEvent = Field(default=WsDataEvent.MESSAGE)
+class WsEventRead(BaseModel):
+    category: WsEventCategoryEnum = Field(default=WsEventCategoryEnum.MESSAGE)
     data: Any
     to_user: UUID
 
 
-class WsInMessageSchema(WsInDataSchema):
-    data: CreateMessageNoUserSchema
+class WsMessageCreate(WsEventCreate):
+    data: MessageNoUserCreate
 
 
-class WsOutMessageSchema(WsOutDataSchema):
-    data: ReadMessageSchema
+class WsMessageRead(WsEventRead):
+    data: MessageRead

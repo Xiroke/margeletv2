@@ -6,18 +6,18 @@ from pydantic import EmailStr
 
 from config import settings
 from src.entries.auth.depends import AuthServiceDep, RefreshTokenDep
-from src.entries.auth.schemas import ReadAccessTokenSchema
-from src.entries.auth.user.schemas import CreateUserSchema, LoginUserSchema
+from src.entries.auth.schemas import AccessTokenRead
+from src.entries.auth.user.schemas import UserCreate, UserLogin
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/login")
 async def login(
-    data: LoginUserSchema,
+    data: UserLogin,
     auth: AuthServiceDep,
     response: Response,
-):
+) -> AccessTokenRead:
     refresh_token = await auth.login(data)
     response.set_cookie(
         "refresh_token",
@@ -28,10 +28,11 @@ async def login(
         secure=settings.COOKIE_SECURE,
         # path="/api/auth",
     )
+    return await auth.get_access_from_refresh(refresh_token.value)
 
 
 @router.post("/register")
-async def register(data: CreateUserSchema, auth: AuthServiceDep):
+async def register(data: UserCreate, auth: AuthServiceDep):
     """Create user and send verification token"""
     await auth.register(data)
     return "The token has been sent to your email", 201
@@ -55,7 +56,7 @@ async def verify(verification_token: Annotated[str, Body()], auth: AuthServiceDe
 @router.post("/token")
 async def get_access_token(
     refresh_token: RefreshTokenDep, auth: AuthServiceDep
-) -> ReadAccessTokenSchema:
+) -> AccessTokenRead:
     return await auth.get_access_from_refresh(refresh_token)
 
 

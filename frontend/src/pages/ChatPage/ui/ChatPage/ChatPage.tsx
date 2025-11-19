@@ -5,10 +5,11 @@ import { clsx } from 'clsx'
 import { SettingsIcon, UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import type { WsInMessageSchema, WsOutDataSchema } from '@/shared/api/generated'
+import type { WsEventRead, WsMessageCreate } from '@/shared/api/generated'
 
 import { useWS } from '@/app/providers/WebsocketProvider'
 import { MessageList } from '@/entities/Message/ui/MessageList/MessageList'
+import { cn } from '@/shared/lib/utils'
 import { Separator } from '@/shared/ui/separator'
 
 import { ChatGroupList } from '../ChatGroupList/ChatGroupList'
@@ -25,7 +26,7 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
   const { groupId, groupType: _groupType } = useParams({ from: '/group/$groupType/{-$groupId}' })
   const ws = useWS()
   const groupType = _groupType as 'personal_group' | 'simple_group'
-  const [onMessage, setOnMessage] = useState<(data: WsOutDataSchema) => void>(() => {})
+  const [onMessage, setOnMessage] = useState<(data: WsEventRead) => void>(() => {})
 
   useEffect(() => {
     if (ws.isConnected) {
@@ -34,9 +35,9 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
   }, [ws, onMessage])
 
   const handleSend = (value: string) => {
-    const ws_data: WsInMessageSchema = {
+    const ws_data: WsMessageCreate = {
+      category: 'message',
       data: { message: value, to_group_id: groupId! },
-      event: 'message',
     }
     ws.send(ws_data)
   }
@@ -47,16 +48,16 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
       { (groupType == 'simple_group' || groupType == 'personal_group') && <ChatGroupList className={cls.group_list} groupType={groupType} />}
       <Separator orientation="vertical" />
 
-      <div className="flex flex-col flex-1 justify-end items-end">
+      <div className="flex flex-col flex-1 justify-end items-end relative">
 
         {groupId
           ? (
               <>
-                <div className="flex px-[10%] gap-6">
+                <div className="flex justify-end items-center shrink-0 px-[10%] gap-6 sticky bg-background z-10 top-0 h-12 w-full border-border border-b -mt-10">
                   <UserPlus />
                   <SettingsIcon />
                 </div>
-                <div className={cls.selected_chat}>
+                <div className={cn(cls.selected_chat, 'overflow-y-hidden')}>
                   <MessageList groupId={groupId} initOnMessage={setOnMessage} />
                   <ChatInput onSend={handleSend} placeholder="Enter message" />
                 </div>

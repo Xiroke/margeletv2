@@ -1,45 +1,50 @@
 from typing import Annotated
 
 from fastapi import Depends, Request
+from fastapi.security import OAuth2PasswordBearer
 
 from config import settings
 from src.entries.auth.refresh_token.depends import RefreshTokenDaoDep
-from src.entries.auth.schemas import AccessTokenJWTSchema, VerificationTokenJWTSchema
+from src.entries.auth.schemas import AccessTokenJWT, VerificationTokenJWT
 from src.entries.auth.service import AuthService
 from src.entries.auth.user.depends import UserDaoDep
 from src.entries.auth.user.models import UserModel
 from src.infrastructure.smtp.depends import SmtpDep
 from src.security.jwt import JWTManager
 from src.security.password_helper import PasswordHelperDep
-from src.utils.depends import Oauth2SchemeDep
 from src.utils.exceptions import HTTPAuthenticationException
 
+Oauth2Scheme = OAuth2PasswordBearer(
+    tokenUrl="/api/auth/token",
+    scheme_name="access_token",
+)
 
-def get_jwt_manager_access() -> JWTManager[AccessTokenJWTSchema]:
+
+def get_jwt_manager_access() -> JWTManager[AccessTokenJWT]:
     return JWTManager(
         settings.JWT_ACCESS_TOKEN_SECRET_KEY,
-        AccessTokenJWTSchema,
+        AccessTokenJWT,
         settings.JWT_ALGORITHM,
         settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
     )
 
 
 JwtManagerAccess = Annotated[
-    JWTManager[AccessTokenJWTSchema], Depends(get_jwt_manager_access)
+    JWTManager[AccessTokenJWT], Depends(get_jwt_manager_access)
 ]
 
 
-def get_jwt_manager_verification() -> JWTManager[VerificationTokenJWTSchema]:
+def get_jwt_manager_verification() -> JWTManager[VerificationTokenJWT]:
     return JWTManager(
         settings.JWT_ACCESS_TOKEN_SECRET_KEY,
-        VerificationTokenJWTSchema,
+        VerificationTokenJWT,
         settings.JWT_ALGORITHM,
         5,
     )
 
 
 JwtManagerVerification = Annotated[
-    JWTManager[VerificationTokenJWTSchema], Depends(get_jwt_manager_verification)
+    JWTManager[VerificationTokenJWT], Depends(get_jwt_manager_verification)
 ]
 
 
@@ -73,7 +78,7 @@ def get_refresh_token(request: Request) -> str:
 
 RefreshTokenDep = Annotated[str, Depends(get_refresh_token)]
 
-AccessTokenDep = Annotated[str, Depends(Oauth2SchemeDep)]
+AccessTokenDep = Annotated[str, Depends(Oauth2Scheme)]
 
 
 async def get_current_user_from_access(
@@ -99,4 +104,5 @@ __all__ = [
     "CurrentUserDep",
     "get_current_user_from_access",
     "JwtManagerAccess",
+    "Oauth2SchemeDep",
 ]

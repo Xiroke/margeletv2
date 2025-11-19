@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 
 from src.entries.websocket.schemas import (
-    WsInDataSchema,
-    WsInMessageSchema,
-    WsOutDataSchema,
-    WsOutMessageSchema,
+    WsEventCreate,
+    WsEventRead,
+    WsMessageCreate,
+    WsMessageRead,
 )
 
-schemas = WsInDataSchema | WsOutDataSchema | WsInMessageSchema | WsOutMessageSchema
+schemas = WsEventCreate | WsEventRead | WsMessageCreate | WsMessageRead
 
 
 def register_schemas(app: FastAPI):

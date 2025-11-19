@@ -4,7 +4,7 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import { clsx } from 'clsx'
 import { memo, useEffect, useState } from 'react'
 
-import type { ReadMessageSchema, WsOutDataSchema } from '@/shared/api/generated'
+import type { MessageRead, WsEventRead } from '@/shared/api/generated'
 
 import { userQueryProps } from '@/entities/User/api'
 import { useChatScroll } from '@/pages/ChatPage/hooks/useChatScroll'
@@ -17,7 +17,7 @@ import cls from './MessageList.module.scss'
 interface MessageListProps {
   className?: string
   groupId: string
-  initOnMessage?: Dispatch<SetStateAction<((data: WsOutDataSchema) => void)>>
+  initOnMessage?: Dispatch<SetStateAction<((data: WsEventRead) => void)>>
 }
 
 export const MessageList: FC<MessageListProps> = memo(
@@ -50,9 +50,9 @@ export const MessageList: FC<MessageListProps> = memo(
     useEffect(() => {
       if (!initOnMessage) return
 
-      const onMessageCallback = (data: WsOutDataSchema) => {
-        if (data.event === 'message') {
-          const ws_inner_data = data.data as ReadMessageSchema
+      const onMessageCallback = (data: WsEventRead) => {
+        if (data.category === 'message') {
+          const ws_inner_data = data.data as MessageRead
 
           queryClient.setQueryData(
             getCursorMessagesQuery.queryKey,
@@ -78,7 +78,7 @@ export const MessageList: FC<MessageListProps> = memo(
         scrollToBottom()
       }
 
-      initOnMessage(() => (data: WsOutDataSchema) => { onMessageCallback(data); scrollToBottom() })
+      initOnMessage(() => (data: WsEventRead) => { onMessageCallback(data); scrollToBottom() })
     }, [initOnMessage, queryClient, getCursorMessagesQuery.queryKey])
 
     useEffect(() => {

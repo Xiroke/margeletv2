@@ -3,14 +3,14 @@ from typing import Literal
 from pydantic import BaseModel
 
 
-class ReadAccessTokenSchema(BaseModel):
+class AccessTokenRead(BaseModel):
     access_token: str
     token_type: Literal["bearer"]
 
 
-class AccessTokenJWTSchema(BaseModel):
+class AccessTokenJWT(BaseModel):
     user_id: str  # UUID must be converted
 
 
-class VerificationTokenJWTSchema(BaseModel):
+class VerificationTokenJWT(BaseModel):
     user_id: str  # UUID must be converted

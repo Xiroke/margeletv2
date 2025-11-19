@@ -5,10 +5,7 @@ from fastapi import APIRouter
 
 from src.entries.auth.depends import CurrentUserDep
 from src.entries.group.depends import AutoGroupDep
-from src.entries.group.schemas import (
-    ReadAutoGroupsAndMessagesSchema,
-    ReadAutoGroupSchema,
-)
+from src.entries.group.schemas import AutoGroupRead, AutoGroupsAndMessagesRead
 from src.entries.message.depends import MessageServiceDep
 
 logger = logging.getLogger(__name__)
@@ -20,7 +17,7 @@ router = APIRouter(prefix="/groups", tags=["group"])
 # async def get_groups_by_user(
 #     user: CurrentUserDep,
 #     group_service: GroupServiceDep,
-# ) -> list[ReadGroupSchema]:
+# ) -> list[GroupRead]:
 #     return await group_service.get_groups_by_user(user.id)
 
 
@@ -42,7 +39,7 @@ router = APIRouter(prefix="/groups", tags=["group"])
 # ):
 #     path = f"groups/{str(group_id)}_avatar.jpg"
 #     await group_service.upload_avatar(path, image)
-#     await group_service.update(group_id, UpdateGroupSchema(avatar_path=path))
+#     await group_service.update(group_id, GroupUpdate(avatar_path=path))
 #     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
@@ -95,7 +92,7 @@ router = APIRouter(prefix="/groups", tags=["group"])
 # @router.get("/user_groups/me")
 # async def get_my_groups(
 #     user: CurrentUserDep, group_service: GroupServiceDep
-# ) -> list[ReadGroupSchema]:
+# ) -> list[GroupRead]:
 #     return await group_service.get_groups_by_user(user.id)
 
 
@@ -104,15 +101,15 @@ router = APIRouter(prefix="/groups", tags=["group"])
 #     group_id: UUID,
 #     group_title: Annotated[str, Body()],
 #     group_service: GroupServiceDep,
-# ) -> ReadGroupSchema:
-#     return await group_service.update(group_id, UpdateGroupSchema(title=group_title))
+# ) -> GroupRead:
+#     return await group_service.update(group_id, GroupUpdate(title=group_title))
 
 
 @router.get("/{group_id}")
 async def get_group(
     group_id: UUID,
     group_service: AutoGroupDep,
-) -> ReadAutoGroupSchema:
+) -> AutoGroupRead:
     return await group_service.get(group_id)
 
 
@@ -120,7 +117,7 @@ async def get_group(
 async def get_my_group(
     user: CurrentUserDep,
     group_service: AutoGroupDep,
-) -> list[ReadAutoGroupSchema]:
+) -> list[AutoGroupRead]:
     return await group_service.get_groups_by_user(user.id)
 
 
@@ -129,11 +126,11 @@ async def get_my_groups_with_last_message(
     user: CurrentUserDep,
     service: AutoGroupDep,
     message_service: MessageServiceDep,
-) -> ReadAutoGroupsAndMessagesSchema:
+) -> AutoGroupsAndMessagesRead:
     groups = await service.get_groups_by_user(user.id)
     group_ids = [group.id for group in groups]
     messages = await message_service.get_last_message_in_groups(group_ids)
-    return ReadAutoGroupsAndMessagesSchema(messages=messages, groups=groups)
+    return AutoGroupsAndMessagesRead(messages=messages, groups=groups)
 
 
 @router.delete("/{group_id}")

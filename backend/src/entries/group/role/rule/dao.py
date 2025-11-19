@@ -8,11 +8,11 @@ from src.entries.group.group.models import UserToGroupModel
 from src.entries.group.role.models import RoleModel, RoleToUserGroup
 
 from .models import RoleToRuleModel, RuleModel
-from .schemas import CreateRuleSchema, ReadRuleSchema
+from .schemas import RuleCreate, RuleRead
 
 
 class RuleDaoProtocol(
-    DaoProtocol[RuleModel, str, ReadRuleSchema, CreateRuleSchema, Any],
+    DaoProtocol[RuleModel, str, RuleRead, RuleCreate, Any],
     Protocol,
 ):
     async def get_user_rules_in_group(
@@ -24,7 +24,7 @@ class RuleDaoProtocol(
     async def get_rules_by_id_raw(self, ids: list[str]) -> list[RuleModel]: ...
 
 
-class RuleSqlDao(SqlDaoImpl[RuleModel, str, ReadRuleSchema, CreateRuleSchema, Any]):
+class RuleSqlDao(SqlDaoImpl[RuleModel, str, RuleRead, RuleCreate, Any]):
     async def get_user_rules_in_group(self, user_id: UUID, group_id: UUID) -> list[str]:
         smtp = (
             select(RuleModel.id)

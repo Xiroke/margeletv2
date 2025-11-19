@@ -1,13 +1,13 @@
-from ..group.schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
+from ..group.schemas import GroupCreate, GroupRead, GroupUpdate
 
 
-class ReadPersonalGroupSchema(ReadGroupSchema):
+class PersonalGroupRead(GroupRead):
     pass
 
 
-class CreatePersonalGroupSchema(CreateGroupSchema):
+class PersonalGroupCreate(GroupCreate):
     pass
 
 
-class UpdatePersonalGroupSchema(UpdateGroupSchema):
+class PersonalGroupUpdate(GroupUpdate):
     pass

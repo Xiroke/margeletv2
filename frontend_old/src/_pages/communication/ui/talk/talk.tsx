@@ -1,16 +1,16 @@
 "use client";
 import clsx from "clsx";
 import {
-  HTMLAttributes,
-  KeyboardEventHandler,
-  useEffect,
-  useRef,
-  useState,
+    HTMLAttributes,
+    KeyboardEventHandler,
+    useEffect,
+    useRef,
+    useState,
 } from "react";
 
-import { ReadMessageSchema, useApiMessage } from "@/entities/message/model";
+import { MessageRead, useApiMessage } from "@/entities/message/model";
 import Message from "@/entities/message/ui";
-import { ReadMessagePaginatedSchema } from "@/shared/api/requests";
+import { MessagePaginatedRead } from "@/shared/api/requests";
 import { useIntersectionObserver } from "@/shared/lib/hooks/use_intersection_observer";
 import useMediaQuery from "@/shared/lib/hooks/use_media_query";
 import { useToastStatus } from "@/shared/lib/hooks/use_toast";
@@ -91,12 +91,12 @@ export const Talk = ({ className, chatId }: TalkProps) => {
     }
   }, [messages]);
 
-  const updateMessage = (newMessage: ReadMessageSchema) => {
+  const updateMessage = (newMessage: MessageRead) => {
     // add new message to messages
     queryClient.setQueryData(
       [useApiMessage.getAllMessageChatKey, { amount, chatId }],
       (
-        oldData: InfiniteData<ReadMessagePaginatedSchema, unknown> | undefined
+        oldData: InfiniteData<MessagePaginatedRead, unknown> | undefined
       ) => {
         console.log(oldData);
         if (!oldData) return oldData;

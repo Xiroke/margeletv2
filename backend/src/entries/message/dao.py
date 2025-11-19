@@ -8,10 +8,10 @@ from src.core.abstract.dao import DaoProtocol, MongoDaoImpl
 
 from .models import MessageModel
 from .schemas import (
-    CreateMessageSchema,
-    ReadMessageCursorPaginatedSchema,
-    ReadMessageSchema,
-    UpdateMessageSchema,
+    MessageCreate,
+    MessageCursorPaginatedRead,
+    MessageRead,
+    MessageUpdate,
 )
 
 
@@ -19,9 +19,9 @@ class MessageDaoProtocol(
     DaoProtocol[
         MessageModel,
         PydanticObjectId,
-        ReadMessageSchema,
-        CreateMessageSchema,
-        UpdateMessageSchema,
+        MessageRead,
+        MessageCreate,
+        MessageUpdate,
     ],
     Protocol,
 ):
@@ -30,29 +30,29 @@ class MessageDaoProtocol(
         group_id: UUID,
         amount: int,
         cursor: datetime | None = None,
-    ) -> ReadMessageCursorPaginatedSchema: ...
+    ) -> MessageCursorPaginatedRead: ...
 
     async def get_last_messages_by_group(
         self, group_id: UUID, amount: int
-    ) -> list[ReadMessageSchema]: ...
+    ) -> list[MessageRead]: ...
 
     async def get_last_message_in_groups(
         self, group_ids: list[UUID]
-    ) -> list[ReadMessageSchema]: ...
+    ) -> list[MessageRead]: ...
 
 
 class MessageMongoDao(
     MongoDaoImpl[
         MessageModel,
         PydanticObjectId,
-        ReadMessageSchema,
-        CreateMessageSchema,
-        UpdateMessageSchema,
+        MessageRead,
+        MessageCreate,
+        MessageUpdate,
     ]
 ):
     async def get_cursor_messages_by_group(
         self, group_id: UUID, amount: int, cursor: datetime | None = None
-    ) -> ReadMessageCursorPaginatedSchema:
+    ) -> MessageCursorPaginatedRead:
         if cursor:
             query = MessageModel.find_many(
                 MessageModel.created_at < cursor, {"to_group_id": group_id}
@@ -63,31 +63,29 @@ class MessageMongoDao(
         query = query.sort(-MessageModel.created_at).limit(amount + 1)
         result = await query.to_list()  # type: ignore
         if not result:
-            return ReadMessageCursorPaginatedSchema(
-                messages=[], has_more=False, cursor=None
-            )
+            return MessageCursorPaginatedRead(messages=[], has_more=False, cursor=None)
         has_more = len(result) > amount
-        messages = [ReadMessageSchema.model_validate(i) for i in result]
-        return ReadMessageCursorPaginatedSchema(
+        messages = [MessageRead.model_validate(i) for i in result]
+        return MessageCursorPaginatedRead(
             messages=messages, has_more=has_more, cursor=messages[-1].created_at
         )
 
     async def get_last_messages_by_group(
         self, group_id: UUID, amount: int
-    ) -> list[ReadMessageSchema]:
+    ) -> list[MessageRead]:
         query = (
             MessageModel.find_many({"to_group_id": group_id})
             .sort(-MessageModel.created_at)
             .limit(amount)
         )
-        return [ReadMessageSchema.model_validate(i) for i in await query.to_list()]
+        return [MessageRead.model_validate(i) for i in await query.to_list()]
 
     async def get_last_message_in_groups(
         self, group_ids: list[UUID]
-    ) -> list[ReadMessageSchema]:
+    ) -> list[MessageRead]:
         query = (
             MessageModel.find_many({"to_group_id": {"$in": group_ids}})
             .sort(-MessageModel.created_at)
             .limit(1)
         )
-        return [ReadMessageSchema.model_validate(i) for i in await query.to_list()]
+        return [MessageRead.model_validate(i) for i in await query.to_list()]

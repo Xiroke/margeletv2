@@ -2,7 +2,7 @@
 
 import { UseMutationOptions, UseQueryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { AuthService, ChatService, DefaultService, GroupService, MessagesService, RoleService, UsersService } from "../requests/services.gen";
-import { Body_auth_db_cookie_login_api_auth_jwt_login_post, Body_reset_forgot_password_api_auth_forgot_password_post, Body_reset_reset_password_api_auth_reset_password_post, Body_upload_avatar_api_groups_avatar__group_id__post, Body_upload_avatar_api_users_avatar_me_post, Body_upload_panorama_api_groups_panorama__group_id__post, Body_verify_request_token_api_auth_request_verify_token_post, Body_verify_verify_api_auth_verify_post, CreateChatSchema, CreateGroupSchema, CreateRoleSchema, UpdateChatSchema, UpdateGroupSchema, UpdateRoleSchema, UserCreate, UserUpdate } from "../requests/types.gen";
+import { Body_auth_db_cookie_login_api_auth_jwt_login_post, Body_reset_forgot_password_api_auth_forgot_password_post, Body_reset_reset_password_api_auth_reset_password_post, Body_upload_avatar_api_groups_avatar__group_id__post, Body_upload_avatar_api_users_avatar_me_post, Body_upload_panorama_api_groups_panorama__group_id__post, Body_verify_request_token_api_auth_request_verify_token_post, Body_verify_verify_api_auth_verify_post, ChatCreate, ChatUpdate, GroupCreate, GroupUpdate, RoleCreate, RoleUpdate, UserCreate, UserUpdate } from "../requests/types.gen";
 import * as Common from "./common";
 export const useAuthServiceGetApiAuthMe = <TData = Common.AuthServiceGetApiAuthMeDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseAuthServiceGetApiAuthMeKeyFn(queryKey), queryFn: () => AuthService.getApiAuthMe() as TData, ...options });
 export const useAuthServiceGetApiAuthMeAlterntive = <TData = Common.AuthServiceGetApiAuthMeAlterntiveDefaultResponse, TError = unknown, TQueryKey extends Array<unknown> = unknown[]>(queryKey?: TQueryKey, options?: Omit<UseQueryOptions<TData, TError>, "queryKey" | "queryFn">) => useQuery<TData, TError>({ queryKey: Common.UseAuthServiceGetApiAuthMeAlterntiveKeyFn(queryKey), queryFn: () => AuthService.getApiAuthMeAlterntive() as TData, ...options });
@@ -101,23 +101,23 @@ export const useGroupServicePostApiGroupsLeaveByGroupId = <TData = Common.GroupS
   groupId: string;
 }, TContext>({ mutationFn: ({ groupId }) => GroupService.postApiGroupsLeaveByGroupId({ groupId }) as unknown as Promise<TData>, ...options });
 export const useGroupServicePostApiGroups = <TData = Common.GroupServicePostApiGroupsMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
-  requestBody: CreateGroupSchema;
+  requestBody: GroupCreate;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
-  requestBody: CreateGroupSchema;
+  requestBody: GroupCreate;
 }, TContext>({ mutationFn: ({ requestBody }) => GroupService.postApiGroups({ requestBody }) as unknown as Promise<TData>, ...options });
 export const useChatServicePostApiChatsByGroupId = <TData = Common.ChatServicePostApiChatsByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   groupId: string;
-  requestBody: CreateChatSchema;
+  requestBody: ChatCreate;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   groupId: string;
-  requestBody: CreateChatSchema;
+  requestBody: ChatCreate;
 }, TContext>({ mutationFn: ({ groupId, requestBody }) => ChatService.postApiChatsByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useRoleServicePostApiRolesGroupByGroupId = <TData = Common.RoleServicePostApiRolesGroupByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   groupId: string;
-  requestBody: CreateRoleSchema;
+  requestBody: RoleCreate;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   groupId: string;
-  requestBody: CreateRoleSchema;
+  requestBody: RoleCreate;
 }, TContext>({ mutationFn: ({ groupId, requestBody }) => RoleService.postApiRolesGroupByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useUsersServicePatchApiUsersMe = <TData = Common.UsersServicePatchApiUsersMeMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   requestBody: UserUpdate;
@@ -140,25 +140,25 @@ export const useGroupServicePatchApiGroupsTitleByGroupId = <TData = Common.Group
 }, TContext>({ mutationFn: ({ groupId, requestBody }) => GroupService.patchApiGroupsTitleByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useGroupServicePatchApiGroupsByGroupId = <TData = Common.GroupServicePatchApiGroupsByGroupIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   groupId: string;
-  requestBody: UpdateGroupSchema;
+  requestBody: GroupUpdate;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   groupId: string;
-  requestBody: UpdateGroupSchema;
+  requestBody: GroupUpdate;
 }, TContext>({ mutationFn: ({ groupId, requestBody }) => GroupService.patchApiGroupsByGroupId({ groupId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useChatServicePatchApiChatsByChatId = <TData = Common.ChatServicePatchApiChatsByChatIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   chatId: string;
-  requestBody: UpdateChatSchema;
+  requestBody: ChatUpdate;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   chatId: string;
-  requestBody: UpdateChatSchema;
+  requestBody: ChatUpdate;
 }, TContext>({ mutationFn: ({ chatId, requestBody }) => ChatService.patchApiChatsByChatId({ chatId, requestBody }) as unknown as Promise<TData>, ...options });
 export const useRoleServicePatchApiRolesGroupByGroupIdByRoleId = <TData = Common.RoleServicePatchApiRolesGroupByGroupIdByRoleIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {
   groupId: string;
-  requestBody: UpdateRoleSchema;
+  requestBody: RoleUpdate;
   roleId: string;
 }, TContext>, "mutationFn">) => useMutation<TData, TError, {
   groupId: string;
-  requestBody: UpdateRoleSchema;
+  requestBody: RoleUpdate;
   roleId: string;
 }, TContext>({ mutationFn: ({ groupId, requestBody, roleId }) => RoleService.patchApiRolesGroupByGroupIdByRoleId({ groupId, requestBody, roleId }) as unknown as Promise<TData>, ...options });
 export const useUsersServiceDeleteApiUsersById = <TData = Common.UsersServiceDeleteApiUsersByIdMutationResult, TError = unknown, TContext = unknown>(options?: Omit<UseMutationOptions<TData, TError, {

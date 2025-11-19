@@ -1,10 +1,10 @@
-import type { ReadMessageSchema } from '@/shared/api/generated'
+import type { MessageRead } from '@/shared/api/generated'
 import type { CachedCursorMessage } from '@/shared/db'
 
 import { db } from '@/shared/db'
 
 export const saveCachedMessages = async (
-  messages: Array<ReadMessageSchema>,
+  messages: Array<MessageRead>,
   cursor: CachedCursorMessage,
 ) => {
   await db.messages.bulkPut(messages)
@@ -39,7 +39,7 @@ export const getCachedMessages = async (groupId: string) => {
 
 export const saveMessages = async (
   groupId: string,
-  messages: Array<ReadMessageSchema>,
+  messages: Array<MessageRead>,
   cursor: null | string,
   has_more: boolean = true,
 ) => {

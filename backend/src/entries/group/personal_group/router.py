@@ -6,7 +6,7 @@ from src.entries.auth.depends import CurrentUserDep
 from src.entries.group.personal_group.depends import PersonalGroupServiceDep
 from src.utils.router_crud import router_crud
 
-from .schemas import CreatePersonalGroupSchema, UpdatePersonalGroupSchema
+from .schemas import PersonalGroupCreate, PersonalGroupUpdate
 
 router = APIRouter(prefix="/personal_groups", tags=["personal_groups"])
 
@@ -18,14 +18,14 @@ async def create(
     service: PersonalGroupServiceDep,
 ):
     """Creates a personal group between the current user and another"""
-    return await service.create(CreatePersonalGroupSchema(), user.id, other_user_id)
+    return await service.create(PersonalGroupCreate(), user.id, other_user_id)
 
 
 router_crud(
     router,
     PersonalGroupServiceDep,
     UUID,
-    CreatePersonalGroupSchema,
-    UpdatePersonalGroupSchema,
+    PersonalGroupCreate,
+    PersonalGroupUpdate,
     excepted_router=["create", "get", "delete"],
 )

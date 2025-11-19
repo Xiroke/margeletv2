@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, GetApiAuthMeResponse, GetApiAuthMeAlterntiveResponse, PostApiAuthAccessTokenResponse, GetApiUsersMeResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, GetApiUsersAvatarMeResponse, PostApiUsersAvatarMeData, PostApiUsersAvatarMeResponse, GetApiGroupsUserGroupsMeResponse, GetApiGroupsAvatarByGroupIdData, GetApiGroupsAvatarByGroupIdResponse, PostApiGroupsAvatarByGroupIdData, PostApiGroupsAvatarByGroupIdResponse, GetApiGroupsPanoramaByGroupIdData, GetApiGroupsPanoramaByGroupIdResponse, PostApiGroupsPanoramaByGroupIdData, PostApiGroupsPanoramaByGroupIdResponse, GetApiGroupsInviteByGroupIdData, GetApiGroupsInviteByGroupIdResponse, PostApiGroupsInviteData, PostApiGroupsInviteResponse, PostApiGroupsLeaveByGroupIdData, PostApiGroupsLeaveByGroupIdResponse, PatchApiGroupsTitleByGroupIdData, PatchApiGroupsTitleByGroupIdResponse, GetApiGroupsByGroupIdData, GetApiGroupsByGroupIdResponse, PatchApiGroupsByGroupIdData, PatchApiGroupsByGroupIdResponse, DeleteApiGroupsByGroupIdData, DeleteApiGroupsByGroupIdResponse, PostApiGroupsData, PostApiGroupsResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, PostApiChatsByGroupIdData, PostApiChatsByGroupIdResponse, PatchApiChatsByChatIdData, PatchApiChatsByChatIdResponse, DeleteApiChatsByChatIdData, DeleteApiChatsByChatIdResponse, GetApiRolesGroupByRoleIdData, GetApiRolesGroupByRoleIdResponse, DeleteApiRolesGroupByRoleIdData, DeleteApiRolesGroupByRoleIdResponse, GetApiRolesGroupPermissionsMeByGroupIdData, GetApiRolesGroupPermissionsMeByGroupIdResponse, PostApiRolesGroupByGroupIdData, PostApiRolesGroupByGroupIdResponse, PatchApiRolesGroupByGroupIdByRoleIdData, PatchApiRolesGroupByGroupIdByRoleIdResponse, GetApiMessagesChatByChatIdData, GetApiMessagesChatByChatIdResponse, GetApiResponse } from './types.gen';
+import type { DeleteApiChatsByChatIdData, DeleteApiChatsByChatIdResponse, DeleteApiGroupsByGroupIdData, DeleteApiGroupsByGroupIdResponse, DeleteApiRolesGroupByRoleIdData, DeleteApiRolesGroupByRoleIdResponse, DeleteApiUsersByIdData, DeleteApiUsersByIdResponse, GetApiAuthMeAlterntiveResponse, GetApiAuthMeResponse, GetApiChatsGroupChatsByGroupIdData, GetApiChatsGroupChatsByGroupIdResponse, GetApiGroupsAvatarByGroupIdData, GetApiGroupsAvatarByGroupIdResponse, GetApiGroupsByGroupIdData, GetApiGroupsByGroupIdResponse, GetApiGroupsInviteByGroupIdData, GetApiGroupsInviteByGroupIdResponse, GetApiGroupsPanoramaByGroupIdData, GetApiGroupsPanoramaByGroupIdResponse, GetApiGroupsUserGroupsMeResponse, GetApiMessagesChatByChatIdData, GetApiMessagesChatByChatIdResponse, GetApiResponse, GetApiRolesGroupByRoleIdData, GetApiRolesGroupByRoleIdResponse, GetApiRolesGroupPermissionsMeByGroupIdData, GetApiRolesGroupPermissionsMeByGroupIdResponse, GetApiUsersAvatarMeResponse, GetApiUsersByIdData, GetApiUsersByIdResponse, GetApiUsersMeResponse, PatchApiChatsByChatIdData, PatchApiChatsByChatIdResponse, PatchApiGroupsByGroupIdData, PatchApiGroupsByGroupIdResponse, PatchApiGroupsTitleByGroupIdData, PatchApiGroupsTitleByGroupIdResponse, PatchApiRolesGroupByGroupIdByRoleIdData, PatchApiRolesGroupByGroupIdByRoleIdResponse, PatchApiUsersByIdData, PatchApiUsersByIdResponse, PatchApiUsersMeData, PatchApiUsersMeResponse, PostApiAuthAccessTokenResponse, PostApiAuthForgotPasswordData, PostApiAuthForgotPasswordResponse, PostApiAuthJwtLoginData, PostApiAuthJwtLoginResponse, PostApiAuthJwtLogoutResponse, PostApiAuthRegisterData, PostApiAuthRegisterResponse, PostApiAuthRequestVerifyTokenData, PostApiAuthRequestVerifyTokenResponse, PostApiAuthResetPasswordData, PostApiAuthResetPasswordResponse, PostApiAuthVerifyData, PostApiAuthVerifyResponse, PostApiChatsByGroupIdData, PostApiChatsByGroupIdResponse, PostApiGroupsAvatarByGroupIdData, PostApiGroupsAvatarByGroupIdResponse, PostApiGroupsData, PostApiGroupsInviteData, PostApiGroupsInviteResponse, PostApiGroupsLeaveByGroupIdData, PostApiGroupsLeaveByGroupIdResponse, PostApiGroupsPanoramaByGroupIdData, PostApiGroupsPanoramaByGroupIdResponse, PostApiGroupsResponse, PostApiRolesGroupByGroupIdData, PostApiRolesGroupByGroupIdResponse, PostApiUsersAvatarMeData, PostApiUsersAvatarMeResponse } from './types.gen';
 
 export class AuthService {
     /**
@@ -326,7 +326,7 @@ export class UsersService {
 export class GroupService {
     /**
      * Get My Groups
-     * @returns ReadGroupSchema Successful Response
+     * @returns GroupRead Successful Response
      * @throws ApiError
      */
     public static getApiGroupsUserGroupsMe(): CancelablePromise<GetApiGroupsUserGroupsMeResponse> {
@@ -486,7 +486,7 @@ export class GroupService {
      * @param data The data for the request.
      * @param data.groupId
      * @param data.requestBody
-     * @returns ReadGroupSchema Successful Response
+     * @returns GroupRead Successful Response
      * @throws ApiError
      */
     public static patchApiGroupsTitleByGroupId(data: PatchApiGroupsTitleByGroupIdData): CancelablePromise<PatchApiGroupsTitleByGroupIdResponse> {
@@ -508,7 +508,7 @@ export class GroupService {
      * Get Group
      * @param data The data for the request.
      * @param data.groupId
-     * @returns ReadGroupSchema Successful Response
+     * @returns GroupRead Successful Response
      * @throws ApiError
      */
     public static getApiGroupsByGroupId(data: GetApiGroupsByGroupIdData): CancelablePromise<GetApiGroupsByGroupIdResponse> {
@@ -529,7 +529,7 @@ export class GroupService {
      * @param data The data for the request.
      * @param data.groupId
      * @param data.requestBody
-     * @returns ReadGroupSchema Successful Response
+     * @returns GroupRead Successful Response
      * @throws ApiError
      */
     public static patchApiGroupsByGroupId(data: PatchApiGroupsByGroupIdData): CancelablePromise<PatchApiGroupsByGroupIdResponse> {
@@ -571,7 +571,7 @@ export class GroupService {
      * Create Group
      * @param data The data for the request.
      * @param data.requestBody
-     * @returns ReadGroupSchema Successful Response
+     * @returns GroupRead Successful Response
      * @throws ApiError
      */
     public static postApiGroups(data: PostApiGroupsData): CancelablePromise<PostApiGroupsResponse> {
@@ -593,7 +593,7 @@ export class ChatService {
      * Get Group Chats
      * @param data The data for the request.
      * @param data.groupId
-     * @returns ReadChatSchema Successful Response
+     * @returns ChatRead Successful Response
      * @throws ApiError
      */
     public static getApiChatsGroupChatsByGroupId(data: GetApiChatsGroupChatsByGroupIdData): CancelablePromise<GetApiChatsGroupChatsByGroupIdResponse> {
@@ -682,7 +682,7 @@ export class RoleService {
      * Get Role
      * @param data The data for the request.
      * @param data.roleId
-     * @returns ReadRoleSchema Successful Response
+     * @returns RoleRead Successful Response
      * @throws ApiError
      */
     public static getApiRolesGroupByRoleId(data: GetApiRolesGroupByRoleIdData): CancelablePromise<GetApiRolesGroupByRoleIdResponse> {
@@ -743,7 +743,7 @@ export class RoleService {
      * @param data The data for the request.
      * @param data.groupId
      * @param data.requestBody
-     * @returns ReadRoleSchema Successful Response
+     * @returns RoleRead Successful Response
      * @throws ApiError
      */
     public static postApiRolesGroupByGroupId(data: PostApiRolesGroupByGroupIdData): CancelablePromise<PostApiRolesGroupByGroupIdResponse> {
@@ -795,7 +795,7 @@ export class MessagesService {
      * @param data.chatId
      * @param data.amount
      * @param data.page Page mean how many messages skip it equal amount * (page - 1)
-     * @returns ReadMessagePaginatedSchema Successful Response
+     * @returns MessagePaginatedRead Successful Response
      * @throws ApiError
      */
     public static getApiMessagesChatByChatId(data: GetApiMessagesChatByChatIdData): CancelablePromise<GetApiMessagesChatByChatIdResponse> {

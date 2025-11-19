@@ -5,9 +5,9 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketExceptio
 from src.entries.auth.depends import AuthServiceDep, get_current_user_from_access
 from src.entries.group.group.depends import GroupServiceDep
 from src.entries.message.depends import MessageServiceDep
-from src.entries.message.schemas import CreateMessageSchema
+from src.entries.message.schemas import MessageCreate
 from src.entries.websocket.connection_manager import ConnectionManagerDep
-from src.entries.websocket.schemas import WsDataEvent, WsInDataSchema
+from src.entries.websocket.schemas import WsEventCategoryEnum, WsEventCreate
 
 log = getLogger(__name__)
 
@@ -34,14 +34,12 @@ async def websocket_endpoint(
     try:
         while True:
             json_websocket_data = await websocket.receive_json()
-            log.debug("ws accepted data :%s", json_websocket_data)
-            websocket_data = WsInDataSchema.model_validate(json_websocket_data)
+            log.debug("ws accepted data %s", json_websocket_data)
+            websocket_data = WsEventCreate.model_validate(json_websocket_data)
 
-            match websocket_data.event:
-                case WsDataEvent.MESSAGE:
-                    message = CreateMessageSchema(
-                        **websocket_data.data, user_id=user.id
-                    )
+            match websocket_data.category:
+                case WsEventCategoryEnum.MESSAGE:
+                    message = MessageCreate(**websocket_data.data, user_id=user.id)
 
                     await connection_manager.broadcast_group_message(
                         message, message_service, group_service

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Body, UploadFile
 from fastapi.responses import JSONResponse, Response
 
 from src.entries.auth.depends import CurrentUserDep
-from src.entries.auth.user.schemas import ReadUserSchema, UpdateUserSchema
+from src.entries.auth.user.schemas import UserRead, UserUpdate
 
 from .depends import UserServiceDep
 
@@ -31,7 +31,7 @@ async def upload_avatar(
 ):
     path = f"users/{str(user.id)}.jpg"
     await user_service.upload_avatar(path, image)
-    await user_service.update(user.id, UpdateUserSchema(avatar_path=path))
+    await user_service.update(user.id, UserUpdate(avatar_path=path))
     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
@@ -44,9 +44,7 @@ async def get_usernames_by_id(
 
 
 @router.get("/search")
-async def search_users(
-    user_service: UserServiceDep, account_name: str
-) -> ReadUserSchema:
+async def search_users(user_service: UserServiceDep, account_name: str) -> UserRead:
     """Returns user names by id"""
     return await user_service.get_user_by_account_name(account_name)
 

@@ -1,18 +1,18 @@
 from pydantic import Field
 
-from ..group.schemas import CreateGroupSchema, ReadGroupSchema, UpdateGroupSchema
+from ..group.schemas import GroupCreate, GroupRead, GroupUpdate
 
 
-class ReadSimpleGroupSchema(ReadGroupSchema):
+class SimpleGroupRead(GroupRead):
     pass
 
 
-class CreateSimpleGroupSchema(CreateGroupSchema):
+class SimpleGroupCreate(GroupCreate):
     title: str = Field(min_length=3, max_length=20)
     description: str
 
 
-class UpdateSimpleGroupSchema(UpdateGroupSchema):
+class SimpleGroupUpdate(GroupUpdate):
     title: str | None = None
     description: str | None = None
     avatar_path: str | None = None

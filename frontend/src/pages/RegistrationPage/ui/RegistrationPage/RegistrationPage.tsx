@@ -23,7 +23,7 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
   const navigate = useNavigate()
   const register = useMutation({ ...authQueryProps.registerMut() })
 
-  // CreateUserSchema
+  // UserCreate
   const form = useForm({
     defaultValues: {
       account_name: '',

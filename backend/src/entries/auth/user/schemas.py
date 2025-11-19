@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 
-class BaseUserSchema(BaseModel):
+class UserBase(BaseModel):
     id: UUID
     name: str
     account_name: str
@@ -19,22 +19,26 @@ class BaseUserSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ReadUserSchema(BaseUserSchema):
+class UserRead(UserBase):
     pass
 
 
-class CreateUserSchema(BaseModel):
+class UserCreate(BaseModel):
     name: str
     account_name: str
     email: EmailStr
     password: str
 
 
-class UpdateUserSchema(BaseModel):
+class UserUpdate(BaseModel):
     name: str | None = None
     avatar_path: str | None = None
 
 
-class LoginUserSchema(BaseModel):
+class UserUpdateInternal(UserUpdate):
+    pass
+
+
+class UserLogin(BaseModel):
     email: EmailStr
     password: str

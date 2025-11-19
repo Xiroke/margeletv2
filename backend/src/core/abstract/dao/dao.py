@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Generic, Protocol, cast, get_args
+from typing import Any, Generic, Literal, Protocol, cast, get_args, overload
 
 from src.core.types import (
     CreateSchemaType,
@@ -19,23 +19,43 @@ class DaoProtocol(
         UpdateSchemaType,
     ]
 ):
-    """Abstract class for Dao"""
+    """Protocol for DAO with flexible filter-based methods."""
 
-    async def get(self, id: IDType) -> ReadSchemaType: ...
+    async def get(self, **filters: Any) -> ReadSchemaType: ...
 
-    async def get_many(self, ids: list[IDType]) -> list[ReadSchemaType]:
-        """You should pass filter as Model.id == id"""
-        ...
+    async def get_many(self, **filters: Any) -> list[ReadSchemaType]: ...
 
-    async def _get_by(self, **kwargs) -> ReadSchemaType: ...
+    @overload
+    async def create(
+        self, obj: CreateSchemaType, returning: Literal[True]
+    ) -> ReadSchemaType: ...
+    @overload
+    async def create(
+        self, obj: CreateSchemaType, returning: Literal[False] = ...
+    ) -> None: ...
+    async def create(
+        self, obj: CreateSchemaType, returning: bool = False
+    ) -> ReadSchemaType | None: ...
 
-    async def create(self, obj: CreateSchemaType) -> ReadSchemaType: ...
+    @overload
+    async def update(
+        self,
+        filters: dict[str, Any],
+        obj: UpdateSchemaType,
+        returning: Literal[True],
+    ) -> ReadSchemaType: ...
+    @overload
+    async def update(
+        self,
+        filters: dict[str, Any],
+        obj: UpdateSchemaType,
+        returning: Literal[False] = ...,
+    ) -> None: ...
+    async def update(
+        self, filters: dict[str, Any], obj: UpdateSchemaType, returning: bool = False
+    ) -> ReadSchemaType | None: ...
 
-    async def update(self, id: IDType, obj: UpdateSchemaType) -> ReadSchemaType:
-        """Pass id in values, You should pass filter as Model.id == id"""
-        ...
-
-    async def delete(self, id: IDType) -> bool: ...
+    async def delete(self, **filters: Any) -> None: ...
 
 
 class Dao(
@@ -48,42 +68,38 @@ class Dao(
     ],
     ABC,
 ):
-    """Use for dao logic, also used for dao service"""
+    """Base generic DAO class for extracting type parameters. Does not define method implementations."""
 
     model_type: Any
     id_type: type[IDType]
     read_schema_type: type[ReadSchemaType]
 
     def __init_subclass__(cls) -> None:
-        """
-        Gets from generics
-        read_schema for validation and
-        model_type for building queries in the heirs
-        """
-        # used in sublass of DAO
-        # __init_subclass__ is called when subclass is initialized
-        # __orig_bases__ return all class inheritance
-        # if we not pass type in generic we will get error
         if not hasattr(cls, "__orig_bases__"):
-            raise ValueError("Repository must be implements")
-        # get first generic class
-        # (SqlDaoImpl[
-        # ModelType,
-        # IDType,
-        # ReadSchemaType,
-        # CreateSchemaType,
-        # UpdateSchemaType,
-        # ])
-        base_dao_generic, *_ = cls.__orig_bases__  # type: ignore
-        # we garant that types in generic are correct
-        cls.model_type, cls.id_type, cls.read_schema_type, *_ = cast(
-            tuple[
-                type[ModelType],
-                type[IDType],
-                type[ReadSchemaType],
-                type[CreateSchemaType],
-                type[UpdateSchemaType],
-            ],
-            get_args(base_dao_generic),
-        )
-        return super().__init_subclass__()
+            raise TypeError("DAO subclass must be generic and inherit from Dao[...]")
+
+        # Get the first base that is parameterized with generics (i.e., Dao[...])
+        for base in cls.__orig_bases__:
+            args = get_args(base)
+            if len(args) == 5:  # Dao has 5 type parameters
+                (
+                    cls.model_type,
+                    cls.id_type,
+                    cls.read_schema_type,
+                    _,
+                    _,
+                ) = cast(
+                    tuple[
+                        type[ModelType],
+                        type[IDType],
+                        type[ReadSchemaType],
+                        type[CreateSchemaType],
+                        type[UpdateSchemaType],
+                    ],
+                    args,
+                )
+                break
+        else:
+            raise TypeError("DAO subclass must specify all generic type parameters")
+
+        super().__init_subclass__()

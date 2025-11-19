@@ -5,7 +5,7 @@ from fastapi import UploadFile
 from src.core.abstract.service_proxy_dao import ProxyServiceToDao
 from src.core.abstract.storage_base import StorageBase
 from src.entries.group.role.rule.dao import RuleDaoProtocol
-from src.entries.group.simple_group.schemas import CreateSimpleGroupSchema
+from src.entries.group.simple_group.schemas import SimpleGroupCreate
 
 from .dao import SimpleGroupDaoProtocol
 
@@ -21,8 +21,8 @@ class SimpleGroupService(ProxyServiceToDao):
         self.storage_service = storage_service
         self.rule_dao = rule_dao
 
-    async def create(self, obj: CreateSimpleGroupSchema, user_id: UUID):
-        group = await self.dao.create(obj)
+    async def create(self, obj: SimpleGroupCreate, user_id: UUID):
+        group = await self.dao.create(obj, returning=True)
         role_creator_id = await self.dao.generate_basic_roles()
         await self.dao.set_creator_group(group.id, user_id, role_creator_id)
 

@@ -1,23 +1,23 @@
 import {
-  useEffect,
   PropsWithChildren,
   createContext,
-  useRef,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 
-import config from "@/shared/config";
 import { apiAuth } from "@/features/auth/model";
-import { useRouter } from "next/navigation";
+import config from "@/shared/config";
 
 type WebsocketEvent = "message";
 
 interface SendDataI {
-  event: WebsocketEvent;
+  categpry: WebsocketEvent;
   chat_id: string;
   data: any;
 }
+
 interface WebsocketProviderProps extends PropsWithChildren {}
 
 interface IWSContext {
@@ -50,7 +50,7 @@ const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
     ws.onmessage = (event) => {
       const data: SendDataI = JSON.parse(event.data);
 
-      if (data.event != "message") {
+      if (data.categpry != "message") {
         return;
       }
 

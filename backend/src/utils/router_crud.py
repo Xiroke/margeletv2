@@ -22,7 +22,7 @@ def router_crud(
 
         @router.get("/{id}", dependencies=dependencies.get("get", None))
         async def get(id: Annotated[id_type, Path()], service: service_dep):
-            return service.get(id)
+            return service.get(id=id)
 
     if "create" not in excepted_router:
 

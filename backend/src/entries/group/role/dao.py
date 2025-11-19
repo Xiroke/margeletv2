@@ -3,17 +3,15 @@ from typing import Protocol
 from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 
 from .models import RoleModel
-from .schemas import CreateRoleSchema, ReadRoleSchema, UpdateRoleSchema
+from .schemas import RoleCreate, RoleRead, RoleUpdate
 
 
 class RoleDaoProtocol(
-    DaoProtocol[RoleModel, int, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema],
+    DaoProtocol[RoleModel, int, RoleRead, RoleCreate, RoleUpdate],
     Protocol,
 ):
     pass
 
 
-class RoleSqlDao(
-    SqlDaoImpl[RoleModel, int, ReadRoleSchema, CreateRoleSchema, UpdateRoleSchema]
-):
+class RoleSqlDao(SqlDaoImpl[RoleModel, int, RoleRead, RoleCreate, RoleUpdate]):
     pass

@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 
-class BaseRefreshTokenSchema(BaseModel):
+class RefreshTokenBase(BaseModel):
     id: UUID
     value: str
     user_id: UUID
@@ -16,11 +16,11 @@ class BaseRefreshTokenSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ReadRefreshTokenSchema(BaseRefreshTokenSchema):
+class RefreshTokenRead(RefreshTokenBase):
     pass
 
 
-class CreateRefreshTokenSchema(BaseModel):
+class RefreshTokenCreate(BaseModel):
     value: str
     user_id: str
     expired_at: datetime

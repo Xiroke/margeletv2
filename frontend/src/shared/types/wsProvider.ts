@@ -1,7 +1,7 @@
-import type { WsInDataSchema, WsOutDataSchema } from '../api/generated'
+import type { WsEventCreate, WsEventRead } from '../api/generated'
 
 export interface IWSContext {
   isConnected: boolean
-  onMessage: (callback: (data: WsOutDataSchema) => void) => void
-  send: (data: WsInDataSchema) => void
+  onMessage: (callback: (data: WsEventRead) => void) => void
+  send: (data: WsEventCreate) => void
 }

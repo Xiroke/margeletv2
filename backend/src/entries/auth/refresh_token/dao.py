@@ -4,14 +4,14 @@ from uuid import UUID
 from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 
 from .models import RefreshTokenModel
-from .schemas import ReadRefreshTokenSchema
+from .schemas import RefreshTokenRead
 
 
 class RefreshTokenDaoProtocol(
     DaoProtocol[
         RefreshTokenModel,
         UUID,
-        ReadRefreshTokenSchema,
+        RefreshTokenRead,
         Any,
         Any,
     ],
@@ -21,6 +21,6 @@ class RefreshTokenDaoProtocol(
 
 
 class RefreshTokenSqlDao(
-    SqlDaoImpl[RefreshTokenModel, UUID, ReadRefreshTokenSchema, Any, Any]
+    SqlDaoImpl[RefreshTokenModel, UUID, RefreshTokenRead, Any, Any]
 ):
     pass

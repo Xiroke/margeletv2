@@ -1,15 +1,15 @@
 import {
-  useGroupServiceGetApiGroupsByGroupId,
-  useGroupServicePostApiGroupsInvite,
-  useGroupServiceDeleteApiGroupsByGroupId,
-  useGroupServicePostApiGroups,
-  useGroupServicePostApiGroupsAvatarByGroupId,
-  useGroupServicePostApiGroupsPanoramaByGroupId,
-  useGroupServiceGetApiGroupsInviteByGroupId,
-  useGroupServiceGetApiGroupsUserGroupsMe,
-  useGroupServiceGetApiGroupsUserGroupsMeKey,
-  useGroupServicePostApiGroupsLeaveByGroupId,
-  useGroupServicePatchApiGroupsTitleByGroupId,
+    useGroupServiceDeleteApiGroupsByGroupId,
+    useGroupServiceGetApiGroupsByGroupId,
+    useGroupServiceGetApiGroupsInviteByGroupId,
+    useGroupServiceGetApiGroupsUserGroupsMe,
+    useGroupServiceGetApiGroupsUserGroupsMeKey,
+    useGroupServicePatchApiGroupsTitleByGroupId,
+    useGroupServicePostApiGroups,
+    useGroupServicePostApiGroupsAvatarByGroupId,
+    useGroupServicePostApiGroupsInvite,
+    useGroupServicePostApiGroupsLeaveByGroupId,
+    useGroupServicePostApiGroupsPanoramaByGroupId,
 } from "@/shared/api/queries";
 import settings from "@/shared/config";
 
@@ -43,7 +43,6 @@ export const apiGroup = {
 };
 
 export type {
-  ReadGroupSchema,
-  CreateGroupSchema,
-  UpdateGroupSchema,
+    GroupCreate, GroupRead, GroupUpdate
 } from "@/shared/api/requests";
+

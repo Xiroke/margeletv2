@@ -7,7 +7,7 @@ from beanie import PydanticObjectId
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class BaseMessageSchema(BaseModel):
+class MessageBase(BaseModel):
     id: PydanticObjectId
     message: str
     user_id: UUID
@@ -17,11 +17,11 @@ class BaseMessageSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ReadMessageSchema(BaseMessageSchema):
+class MessageRead(MessageBase):
     pass
 
 
-class CreateMessageNoUserSchema(BaseModel):
+class MessageNoUserCreate(BaseModel):
     message: str = Field(
         min_length=1,
         max_length=2000,
@@ -30,11 +30,11 @@ class CreateMessageNoUserSchema(BaseModel):
     to_group_id: UUID
 
 
-class CreateMessageSchema(CreateMessageNoUserSchema):
+class MessageCreate(MessageNoUserCreate):
     user_id: UUID
 
 
-class UpdateMessageSchema(BaseModel):
+class MessageUpdate(BaseModel):
     message: str | None = Field(
         min_length=1,
         max_length=2000,
@@ -42,11 +42,11 @@ class UpdateMessageSchema(BaseModel):
     )
 
 
-class ReadMessageCursorPaginatedSchema(BaseModel):
-    messages: list[ReadMessageSchema]
+class MessageCursorPaginatedRead(BaseModel):
+    messages: list[MessageRead]
     has_more: bool
     cursor: datetime | None
 
 
-class ReciveDataDTO(CreateMessageSchema):
+class ReciveDataDTO(MessageCreate):
     pass

@@ -1,14 +1,14 @@
 "use client";
-import { HTMLAttributes, MouseEventHandler, useEffect, useState } from "react";
 import Image from "next/image";
+import { HTMLAttributes, MouseEventHandler, useEffect, useState } from "react";
 
-import styles from "./group_card.module.scss";
-import { apiGroup, ReadGroupSchema } from "../model";
 import { useAppDispatch } from "@/shared/lib/hooks";
+import { apiGroup, GroupRead } from "../model";
 import { setPanoramaPath } from "../model/slice";
+import styles from "./group_card.module.scss";
 
 export interface GroupCardProps extends HTMLAttributes<HTMLDivElement> {
-  data: ReadGroupSchema;
+  data: GroupRead;
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 

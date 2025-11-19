@@ -1,5 +1,5 @@
-import { useMessagesServiceGetApiMessagesChatByChatIdInfinite } from "@/shared/api/queries/infiniteQueries";
 import { useMessagesServiceGetApiMessagesChatByChatIdKey } from "@/shared/api/queries";
+import { useMessagesServiceGetApiMessagesChatByChatIdInfinite } from "@/shared/api/queries/infiniteQueries";
 
 export const useApiMessage = {
   getMessagesByChatPaginated:
@@ -7,4 +7,4 @@ export const useApiMessage = {
   getAllMessageChatKey: useMessagesServiceGetApiMessagesChatByChatIdKey,
 };
 
-export type { ReadMessageSchema } from "@/shared/api/requests";
+export type { MessageRead } from "@/shared/api/requests";

@@ -1,4 +1,4 @@
-from typing import Protocol, override
+from typing import Protocol
 from uuid import UUID
 
 from sqlalchemy import insert, select
@@ -12,11 +12,7 @@ from src.entries.group.role.models import RoleModel, RoleToUserGroup
 from src.entries.group.role.rule.models import RoleToRuleModel
 
 from .models import SimpleGroupModel
-from .schemas import (
-    CreateSimpleGroupSchema,
-    ReadSimpleGroupSchema,
-    UpdateSimpleGroupSchema,
-)
+from .schemas import SimpleGroupCreate, SimpleGroupRead, SimpleGroupUpdate
 
 
 class SimpleGroupDaoProtocol(
@@ -24,42 +20,38 @@ class SimpleGroupDaoProtocol(
     DaoProtocol[
         SimpleGroupModel,
         UUID,
-        ReadSimpleGroupSchema,
-        CreateSimpleGroupSchema,
-        UpdateSimpleGroupSchema,
+        SimpleGroupRead,
+        SimpleGroupCreate,
+        SimpleGroupUpdate,
     ],
     Protocol,
 ):
-    async def create(self, obj: CreateSimpleGroupSchema) -> ReadSimpleGroupSchema: ...
+    async def create(
+        self, obj: SimpleGroupCreate, returning=True
+    ) -> SimpleGroupRead: ...
     async def set_creator_group(
         self, group_id: UUID, user_id: UUID, creator_role_id
     ) -> None: ...
     async def generate_basic_roles(self) -> int: ...
-    async def get_groups_by_user(
-        self, user_id: UUID
-    ) -> list[ReadSimpleGroupSchema]: ...
+    async def get_groups_by_user(self, user_id: UUID) -> list[SimpleGroupRead]: ...
 
 
 class SimpleGroupSqlDao(
     SqlDaoImpl[
         SimpleGroupModel,
         UUID,
-        ReadSimpleGroupSchema,
-        CreateSimpleGroupSchema,
-        UpdateSimpleGroupSchema,
+        SimpleGroupRead,
+        SimpleGroupCreate,
+        SimpleGroupUpdate,
     ],
     GroupSqlDaoParent,
 ):
-    @override
-    async def create(self, obj: CreateSimpleGroupSchema) -> ReadSimpleGroupSchema:
-        group = SimpleGroupModel(**obj.model_dump())
-        self.session.add(group)
-        await self.session.flush()
-        return ReadSimpleGroupSchema.model_validate(group)
+    async def create(self, obj: SimpleGroupCreate, returning=False) -> SimpleGroupRead:
+        return await self.create(obj, returning=returning)
 
-    async def get_groups_by_user(self, user_id: UUID) -> list[ReadSimpleGroupSchema]:
+    async def get_groups_by_user(self, user_id: UUID) -> list[SimpleGroupRead]:
         data = await self._get_groups_by_user(SimpleGroupModel, user_id)
-        return [ReadSimpleGroupSchema.model_validate(item) for item in data]
+        return [SimpleGroupRead.model_validate(item) for item in data]
 
     async def set_creator_group(
         self, group_id: UUID, user_id: UUID, creator_role_id
@@ -127,8 +119,8 @@ class SimpleGroupSqlDao(
         await self.session.flush()
         return role_creator_id
 
-    async def search(self, query: str) -> list[ReadSimpleGroupSchema]:
+    async def search(self, query: str) -> list[SimpleGroupRead]:
         smtp = select(SimpleGroupModel).filter(SimpleGroupModel.title.contains(query))
         raw = await self.session.execute(smtp)
         result = raw.scalars().all()
-        return [ReadSimpleGroupSchema.model_validate(item) for item in result]
+        return [SimpleGroupRead.model_validate(item) for item in result]

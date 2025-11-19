@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import { clsx } from 'clsx'
 import { memo } from 'react'
 
-import type { ReadMessageSchema } from '@/shared/api/generated'
+import type { MessageRead } from '@/shared/api/generated'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 
@@ -12,7 +12,7 @@ import cls from './GroupMessage.module.scss'
 interface GroupMessageProps {
   author: string | undefined
   className?: string
-  message: ReadMessageSchema
+  message: MessageRead
 }
 
 export const GroupMessage: FC<GroupMessageProps> = memo(
