@@ -1,18 +1,19 @@
 import type { ReactNode } from 'react'
 
-import { ServiceWorkerProvider } from './ServiceWorkerProvider'
+import { useLocation } from '@tanstack/react-router'
+
 import { BoundedWs } from './WebsocketProvider'
 
 const disabledPathnameWs = ['/', '/registration']
 
 export const AllProviders = (props: { children: ReactNode | undefined }) => {
   const { children = null } = props
-  const pathname = window.location.pathname
+  const location = useLocation()
 
-  const isDisabledWs = disabledPathnameWs.some(i => pathname === i)
+  const isDisabledWs = disabledPathnameWs.some(i => location.pathname === i)
 
   return (
-    <ServiceWorkerProvider>
+    <>
       {isDisabledWs
         ? (
             <>{children}</>
@@ -20,6 +21,6 @@ export const AllProviders = (props: { children: ReactNode | undefined }) => {
         : (
             <BoundedWs>{children}</BoundedWs>
           )}
-    </ServiceWorkerProvider>
+    </>
   )
 }

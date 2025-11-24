@@ -39,7 +39,7 @@ export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
       category: 'message',
       data: { message: value, to_group_id: groupId! },
     }
-    ws.send(ws_data)
+    ws.send(JSON.stringify(ws_data))
   }
 
   return (

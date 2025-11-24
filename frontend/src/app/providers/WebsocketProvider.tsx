@@ -1,122 +1,95 @@
 import { useMutation } from '@tanstack/react-query'
-import { createContext, type PropsWithChildren, use, useEffect, useRef, useState } from 'react'
+import { createContext, type PropsWithChildren, useContext, useEffect, useRef, useState } from 'react'
+import useWebSocket, { ReadyState } from 'react-use-websocket'
 
-import type { WsEventCreate, WsEventRead } from '@/shared/api/generated'
+import type { WsEventRead } from '@/shared/api/generated'
 import type { IWSContext } from '@/shared/types/wsProvider'
 
-import { excludedAuthCheckRoutes, settings } from '@/config'
+import { excludedAuthCheckRoutes } from '@/config'
 import { authQueryProps } from '@/features/auth/api'
 import { useShouldIgnorePath } from '@/shared/hooks/useShouldIgnoredPath'
 import { useWsLoading } from '@/shared/hooks/useWsLoading'
 
 const WSContext = createContext<IWSContext | null>(null)
 
-/**
- *
- * ws disabled on the specified paths
- */
 export const BoundedWs = ({ children }: PropsWithChildren) => {
   const isShouldIgnore = useShouldIgnorePath(excludedAuthCheckRoutes)
-
-  return (isShouldIgnore ? <>{children}</> : <WebsocketProvider>{children}</WebsocketProvider>)
+  return isShouldIgnore ? <>{children}</> : <WebsocketProvider>{children}</WebsocketProvider>
 }
 
 export const WebsocketProvider = ({ children }: PropsWithChildren) => {
-  const wsRef = useRef<null | WebSocket>(null)
-  const [isConnected, setIsConnected] = useState(false)
-  useWsLoading(isConnected)
-
-  // request acceess token
+  const [isTokenFetched, setIsTokenFetched] = useState(false)
+  const [accessToken, setAccessToken] = useState<null | string>(null)
   const tokenMut = useMutation(authQueryProps.tokenMut())
-  const onMessageFuncRef = useRef<(data: any) => void>((data: any) => {})
 
   useEffect(() => {
-    let ws: null | WebSocket = null
+    if (isTokenFetched || tokenMut.isPending) return
 
-    const runWebsocket = async () => {
-      const { access_token } = await tokenMut.mutateAsync({ credentials: 'include' })
-
-      ws = new WebSocket(
-        `${settings.VITE_BACKEND_WS_URL}/api/ws?access_token=${access_token}`,
-      )
-
-      ws.onopen = () => {
-        console.log('connect')
-        setIsConnected(true)
+    const fetchToken = async () => {
+      try {
+        const { access_token } = await tokenMut.mutateAsync({ credentials: 'include' })
+        setAccessToken(access_token)
+        setIsTokenFetched(true)
       }
-
-      ws.onmessage = (event) => {
-        const wsEvent: WsEventRead = JSON.parse(event.data)
-
-        if (wsEvent.category != 'message') {
-          return
-        }
-
-        onMessageFuncRef.current(wsEvent)
+      catch (error) {
+        console.error('Failed to fetch WS token', error)
       }
-
-      ws.onclose = () => {
-        console.log('disconnect')
-        setIsConnected(false)
-      }
-
-      wsRef.current?.close()
-
-      wsRef.current = ws
     }
 
-    runWebsocket()
+    fetchToken()
+  }, [isTokenFetched, tokenMut])
 
-    return () => {
-      if (ws) {
-        ws.close()
-      }
-      wsRef.current = null
-    }
-  }, [])
+  const socketUrl = accessToken
+    ? `${import.meta.env.VITE_BACKEND_WS_URL}/api/ws?access_token=${accessToken}`
+    : null
 
-  const send = async (data: WsEventCreate) => {
-    // if the wasync ebsocket is not connected, then launch it
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify(data))
-    }
-    else {
-      console.warn('WebSocket is not connected')
-    }
-  }
+  const { lastMessage, readyState, sendMessage } = useWebSocket(socketUrl, {
+    retryOnError: false,
+    share: false,
+    shouldReconnect: () => true,
+  })
 
+  useWsLoading(readyState === ReadyState.OPEN)
+
+  const onMessageRef = useRef<(data: WsEventRead) => void>(null)
   const onMessage = (callback: (data: WsEventRead) => void) => {
-    // add listener on message,
-    // use in your component in useEffect
-    onMessageFuncRef.current = callback
+    onMessageRef.current = callback
   }
+
+  useEffect(() => {
+    if (!lastMessage?.data || !onMessageRef.current) return
+
+    try {
+      const parsedData: WsEventRead = JSON.parse(lastMessage.data)
+      onMessageRef.current(parsedData)
+    }
+    catch (error) {
+      console.error('Failed to parse WebSocket message:', error)
+    }
+  }, [lastMessage])
 
   return (
-    <WSContext
+    <WSContext.Provider
       value={{
-        isConnected,
+        isConnected: readyState === ReadyState.OPEN,
         onMessage,
-        send,
+        send: sendMessage,
       }}
     >
       {children}
-    </WSContext>
+    </WSContext.Provider>
   )
 }
 
 export const useWS = () => {
-  const context = use(WSContext)
-
+  const context = useContext(WSContext)
   if (!context) {
-    console.warn(
-      'WebsocketProvider not found - returning dummy implementation',
-    )
+    console.warn('WebsocketProvider not found')
     return {
       isConnected: false,
       onMessage: () => {},
       send: () => console.warn('WebSocket not available'),
     }
   }
-
   return context
 }

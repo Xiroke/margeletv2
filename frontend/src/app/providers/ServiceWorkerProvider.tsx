@@ -1,38 +1,49 @@
-import type { ReactNode } from 'react'
-
-import { useEffect } from 'react'
+// ServiceWorkerProvider.tsx
+import { useEffect, useState } from 'react'
 
 import { settings } from '@/config'
 
-export const ServiceWorkerProvider = ({
-  children,
-}: {
-  children: ReactNode
-}) => {
+export const ServiceWorkerProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isSWReady, setIsSWReady] = useState(false)
+
   useEffect(() => {
-    if (typeof window == 'undefined') {
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+      setIsSWReady(true)
       return
     }
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then(() => console.log('Service Worker registered'))
-        .catch(() => console.error('Service Worker registration failed'))
+    const initSW = async () => {
+      try {
+        await navigator.serviceWorker.register('/service-worker.js')
+        console.log('Service Worker registered')
 
-      navigator.serviceWorker.ready.then((registration) => {
-        if (!registration.active) {
-          return
+        const registration = await navigator.serviceWorker.ready
+        console.log('Service Worker ready')
+
+        if (registration.active) {
+          registration.active.postMessage({
+            payload: {
+              ALLOWED_CACHED_PATHS: [], // ваши пути
+              BACKEND_URL: settings.VITE_BACKEND_URL,
+            },
+            type: 'SET_PARAMS',
+          })
         }
 
-        registration.active.postMessage({
-          payload: {
-            BACKEND_URL: settings.VITE_BACKEND_URL,
-          },
-          type: 'SET_PARAMS',
-        })
-      })
+        setIsSWReady(true)
+      }
+      catch (err) {
+        console.error('Service Worker init failed:', err)
+        setIsSWReady(true)
+      }
     }
+
+    initSW()
   }, [])
+
+  if (!isSWReady) {
+    return null
+  }
+
   return <>{children}</>
 }
