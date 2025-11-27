@@ -6,15 +6,21 @@ captured by openapi-ts which parses the api and extracts schemas
 from fastapi import FastAPI
 
 from src.entries.websocket.schemas import (
+    WsBaseEvent,
+    WsEventCategoryEnum,
     WsEventCreate,
-    WsEventRead,
     WsMessageCreate,
     WsMessageRead,
     WsMessageUpdate,
 )
 
 schemas = (
-    WsEventCreate | WsEventRead | WsMessageCreate | WsMessageRead | WsMessageUpdate
+    WsEventCreate
+    | WsMessageCreate
+    | WsMessageRead
+    | WsMessageUpdate
+    | WsEventCategoryEnum
+    | WsBaseEvent
 )
 
 

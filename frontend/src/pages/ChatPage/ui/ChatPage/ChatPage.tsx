@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { PhoneIcon, Settings2Icon, UserPlus } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'usehooks-ts'
 
@@ -12,11 +11,11 @@ import { MessageList } from '@/entities/Message/ui/MessageList/MessageList'
 import { cn } from '@/shared/lib/utils'
 import { Separator } from '@/shared/ui/separator'
 
+import { ChatGroupHeader } from '../ChatGroupHeader'
 import { ChatGroupList } from '../ChatGroupList/ChatGroupList'
 import { ChatInput } from '../ChatInput/ChatInput'
 import { ChatNavigation } from '../ChatNavigation'
 import { SettingsProfileDialog } from '../Dialogs/SettingsProfileDialog'
-import { GroupSettingsDropdown } from '../Dropdowns/GroupSettingsDropdown'
 import cls from './ChatPage.module.scss'
 
 export const ChatPage = () => {
@@ -38,7 +37,6 @@ export const ChatPage = () => {
 
   const myGroupIds = useMemo(() => groups?.map(g => g.id) ?? [], [groups])
 
-  // WebSocket subscription
   useEffect(() => {
     if (ws.isConnected) ws.onMessage(onMessage)
   }, [ws, onMessage])
@@ -46,11 +44,19 @@ export const ChatPage = () => {
   // Sending message
   const send = (message: string) => {
     const packet: WsMessageCreate = {
-      category: 'message',
+      category: 'message_create',
       data: { message, to_group_id: groupId! },
     }
     ws.send(JSON.stringify(packet))
   }
+
+  // const update = () => {
+  //   const packet: WsMessageCreate = {
+  //     category: 'message_update',
+  //     data: { message, to_group_id: groupId! },
+  //   }
+  //   ws.send(JSON.stringify(packet))
+  // }
 
   const chatInputProps
     = groupId && myGroupIds.includes(groupId)
@@ -69,25 +75,23 @@ export const ChatPage = () => {
       )}
 
       {((!groupId && isTablet) || !isTablet) && (
-        <ChatGroupList
-          className={cn(cls.group_list, 'py-10 min-w-[300px] w-1/4 max-w-[360px]')}
-          groupType={groupType}
-        />
+        <>
+          <ChatGroupList
+            className={cn(cls.group_list, 'py-10 min-w-[300px] w-1/4 max-w-[360px]')}
+            groupType={groupType}
+          />
+          {!isPhone && <Separator orientation="vertical" />}
+        </>
       )}
 
       <div className="flex flex-col flex-1 justify-end items-end relative">
         {groupId
           ? (
               <>
-                {!isPhone && <Separator className="absolute left-0" orientation="vertical" />}
-
-                <div className="flex justify-end items-center shrink-0 px-[10%] gap-6 sticky top-0 bg-background z-10 border-b h-12 w-full">
-                  <PhoneIcon />
-                  <UserPlus />
-                  <GroupSettingsDropdown groupId={groupId}>
-                    <Settings2Icon />
-                  </GroupSettingsDropdown>
-                </div>
+                <ChatGroupHeader
+                  className="top-0 z-10 shrink-0 sticky"
+                  groupId={groupId}
+                />
 
                 <div className={cn(cls.selected_chat, 'overflow-y-hidden w-1/2 min-w-[450px] p-1')}>
                   <MessageList groupId={groupId} initOnMessage={setOnMessage} />

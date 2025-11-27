@@ -45,7 +45,7 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
     if (!initOnMessage) return
 
     const handleWsMessage = (event: WsEventRead) => {
-      if (event.category !== 'message') return
+      if (event.category !== 'message_create') return
 
       const newMessage = event.data as MessageRead
 

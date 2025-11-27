@@ -23,24 +23,18 @@ async def websocket_endpoint(
     connection_manager: ConnectionManagerDep,
 ):
     user = await auth.get_user_from_ws(ws_token)
-
-    if user is None:
+    if not user:
         raise WebSocketException(401, "Unauthorized")
 
     await connection_manager.connect(websocket, user.id)
 
-    log.debug("WS connected user %s", user.id)
     try:
         while True:
             json_websocket_data = await websocket.receive_json()
-            log.debug("ws accepted data %s", json_websocket_data)
-            websocket_data = WsEventCreate.model_validate(json_websocket_data)
+            event = WsEventCreate.model_validate(json_websocket_data)
 
             await connection_manager.broadcast_group_message(
-                websocket_data,
-                user.id,
-                message_service,
-                group_service,
+                event, user.id, message_service, group_service
             )
 
     except WebSocketDisconnect:

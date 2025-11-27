@@ -2,7 +2,7 @@ import type { FC } from 'react'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { clsx } from 'clsx'
-import { CopyIcon, TrashIcon } from 'lucide-react'
+import { CopyIcon, EditIcon, TrashIcon } from 'lucide-react'
 import { memo } from 'react'
 import { useCopyToClipboard } from 'usehooks-ts'
 
@@ -43,6 +43,10 @@ export const GroupMessage = (props: GroupMessageProps) => {
         <GroupMessageContent {...props} />
       </ContextMenuTrigger>
       <ContextMenuContent className="w-52">
+        <ContextMenuItem onClick={() => setInputState(props.message)}>
+          <EditIcon />
+          Edit
+        </ContextMenuItem>
         <ContextMenuItem onClick={() => copyToClipboard(props.message.message)}>
           <CopyIcon />
           Copy

@@ -49,6 +49,21 @@ export type HttpValidationError = {
 };
 
 /**
+ * MessageCreate
+ */
+export type MessageCreate = {
+    /**
+     * Message
+     * Message must be less than 2000 characters and more than 1 character
+     */
+    message: string;
+    /**
+     * To Group Id
+     */
+    to_group_id: string;
+};
+
+/**
  * MessageCursorPaginatedRead
  */
 export type MessageCursorPaginatedRead = {
@@ -64,21 +79,6 @@ export type MessageCursorPaginatedRead = {
      * Cursor
      */
     cursor: string | null;
-};
-
-/**
- * MessageNoUserCreate
- */
-export type MessageNoUserCreate = {
-    /**
-     * Message
-     * Message must be less than 2000 characters and more than 1 character
-     */
-    message: string;
-    /**
-     * To Group Id
-     */
-    to_group_id: string;
 };
 
 /**
@@ -102,6 +102,17 @@ export type MessageRead = {
      * Created At
      */
     created_at: string;
+};
+
+/**
+ * MessageUpdate
+ */
+export type MessageUpdate = {
+    /**
+     * Message
+     * Message must be less than 2000 characters and more than 1 character
+     */
+    message: string | null;
 };
 
 /**
@@ -296,34 +307,32 @@ export type ValidationError = {
 };
 
 /**
+ * WsBaseEvent
+ */
+export type WsBaseEvent = {
+    category: WsEventCategoryEnum;
+};
+
+/**
  * WsEventCategoryEnum
  */
-export type WsEventCategoryEnum = 'message';
+export type WsEventCategoryEnum = 'message_update' | 'message_create';
 
 /**
  * WsEventCreate
  */
 export type WsEventCreate = {
-    category?: WsEventCategoryEnum;
+    category: WsEventCategoryEnum;
     /**
      * Data
      */
-    data: unknown;
-};
-
-/**
- * WsEventRead
- */
-export type WsEventRead = {
-    category?: WsEventCategoryEnum;
+    data?: {
+        [key: string]: unknown;
+    } | MessageCreate | MessageUpdate | null;
     /**
-     * Data
+     * Id
      */
-    data: unknown;
-    /**
-     * To User
-     */
-    to_user: string;
+    id?: string | null;
 };
 
 /**
@@ -331,14 +340,14 @@ export type WsEventRead = {
  */
 export type WsMessageCreate = {
     category?: WsEventCategoryEnum;
-    data: MessageNoUserCreate;
+    data: MessageCreate;
 };
 
 /**
  * WsMessageRead
  */
 export type WsMessageReadInput = {
-    category?: WsEventCategoryEnum;
+    category: WsEventCategoryEnum;
     data: MessageRead;
     /**
      * To User
@@ -350,12 +359,24 @@ export type WsMessageReadInput = {
  * WsMessageRead
  */
 export type WsMessageReadOutput = {
-    category?: WsEventCategoryEnum;
+    category: WsEventCategoryEnum;
     data: MessageRead;
     /**
      * To User
      */
     to_user: string;
+};
+
+/**
+ * WsMessageUpdate
+ */
+export type WsMessageUpdate = {
+    category?: WsEventCategoryEnum;
+    /**
+     * Id
+     */
+    id: string;
+    data: MessageUpdate;
 };
 
 export type LoginApiAuthLoginPostData = {
@@ -997,7 +1018,7 @@ export type GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponses = {
 export type GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponse = GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponses[keyof GetMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetResponses];
 
 export type CreateMessageApiMessagesPostData = {
-    body: MessageNoUserCreate;
+    body: MessageCreate;
     path?: never;
     query?: never;
     url: '/api/messages/';
@@ -1119,6 +1140,31 @@ export type DeleteMessagesApiMessagesMessageIdDeleteResponses = {
     200: unknown;
 };
 
+export type UpdateMessageApiMessagesMessageIdPatchData = {
+    body: MessageUpdate;
+    path: {
+        message_id: PydanticObjectId;
+    };
+    query?: never;
+    url: '/api/messages/{message_id}';
+};
+
+export type UpdateMessageApiMessagesMessageIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateMessageApiMessagesMessageIdPatchError = UpdateMessageApiMessagesMessageIdPatchErrors[keyof UpdateMessageApiMessagesMessageIdPatchErrors];
+
+export type UpdateMessageApiMessagesMessageIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
 export type RegisterSchemasRouteRegisterSchemasGetData = {
     body?: never;
     path?: never;
@@ -1131,7 +1177,7 @@ export type RegisterSchemasRouteRegisterSchemasGetResponses = {
      * Response Register Schemas Route Register Schemas Get
      * Successful Response
      */
-    200: WsEventCreate | WsEventRead | WsMessageCreate | WsMessageReadOutput;
+    200: WsEventCreate | WsMessageCreate | WsMessageReadOutput | WsMessageUpdate | WsEventCategoryEnum | WsBaseEvent;
 };
 
 export type RegisterSchemasRouteRegisterSchemasGetResponse = RegisterSchemasRouteRegisterSchemasGetResponses[keyof RegisterSchemasRouteRegisterSchemasGetResponses];
