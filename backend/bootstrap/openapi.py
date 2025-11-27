@@ -1,3 +1,8 @@
+"""
+This module registers schemas with OpenAPI as they should be
+captured by openapi-ts which parses the api and extracts schemas
+"""
+
 from fastapi import FastAPI
 
 from src.entries.websocket.schemas import (
@@ -5,9 +10,12 @@ from src.entries.websocket.schemas import (
     WsEventRead,
     WsMessageCreate,
     WsMessageRead,
+    WsMessageUpdate,
 )
 
-schemas = WsEventCreate | WsEventRead | WsMessageCreate | WsMessageRead
+schemas = (
+    WsEventCreate | WsEventRead | WsMessageCreate | WsMessageRead | WsMessageUpdate
+)
 
 
 def register_schemas(app: FastAPI):

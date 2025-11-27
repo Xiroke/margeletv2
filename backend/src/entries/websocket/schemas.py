@@ -4,29 +4,34 @@ from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from src.entries.message.schemas import MessageNoUserCreate, MessageRead
+from src.entries.message.schemas import MessageCreate, MessageRead, MessageUpdate
 
 
 class WsEventCategoryEnum(StrEnum):
     MESSAGE = "message"
+    MESSAGE_UPDATE = "message_update"
 
 
 class WsEventCreate(BaseModel):
-    category: WsEventCategoryEnum = Field(default=WsEventCategoryEnum.MESSAGE)
-    data: Any
+    category: WsEventCategoryEnum
+    data: dict | BaseModel
 
 
 class WsEventRead(BaseModel):
-    category: WsEventCategoryEnum = Field(default=WsEventCategoryEnum.MESSAGE)
+    category: WsEventCategoryEnum
     data: Any
     to_user: UUID
 
 
 class WsMessageCreate(WsEventCreate):
-    data: MessageNoUserCreate
+    data: MessageCreate
 
 
 class WsMessageRead(WsEventRead):
     data: MessageRead
+
+
+class WsMessageUpdate(WsEventCreate):
+    data: MessageUpdate

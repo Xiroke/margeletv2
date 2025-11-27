@@ -21,7 +21,7 @@ class MessageRead(MessageBase):
     pass
 
 
-class MessageNoUserCreate(BaseModel):
+class MessageCreate(BaseModel):
     message: str = Field(
         min_length=1,
         max_length=2000,
@@ -30,7 +30,7 @@ class MessageNoUserCreate(BaseModel):
     to_group_id: UUID
 
 
-class MessageCreate(MessageNoUserCreate):
+class MessageInternalCreate(MessageCreate):
     user_id: UUID
 
 
@@ -48,5 +48,5 @@ class MessageCursorPaginatedRead(BaseModel):
     cursor: datetime | None
 
 
-class ReciveDataDTO(MessageCreate):
+class ReciveDataDTO(MessageInternalCreate):
     pass

@@ -10,6 +10,7 @@ class MessageModel(Document):
     message: str
     user_id: UUID
     to_group_id: UUID
+    is_edited: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:

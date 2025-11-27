@@ -13,3 +13,5 @@ BaseSchemaType = TypeVar("BaseSchemaType", bound=BaseModel, covariant=True)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel, contravariant=True)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel, contravariant=True)
+
+AnyBaseModel = TypeVar("AnyBaseModel", bound=BaseModel)

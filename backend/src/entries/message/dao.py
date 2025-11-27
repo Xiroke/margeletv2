@@ -8,8 +8,8 @@ from src.core.abstract.dao import DaoProtocol, MongoDaoImpl
 
 from .models import MessageModel
 from .schemas import (
-    MessageCreate,
     MessageCursorPaginatedRead,
+    MessageInternalCreate,
     MessageRead,
     MessageUpdate,
 )
@@ -20,7 +20,7 @@ class MessageDaoProtocol(
         MessageModel,
         PydanticObjectId,
         MessageRead,
-        MessageCreate,
+        MessageInternalCreate,
         MessageUpdate,
     ],
     Protocol,
@@ -46,7 +46,7 @@ class MessageMongoDao(
         MessageModel,
         PydanticObjectId,
         MessageRead,
-        MessageCreate,
+        MessageInternalCreate,
         MessageUpdate,
     ]
 ):

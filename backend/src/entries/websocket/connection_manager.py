@@ -8,13 +8,15 @@ from fastapi import Depends, WebSocket
 from pydantic import ValidationError
 
 from src.core.redis.depends import redis_storage
-from src.entries.group.group.dao import GroupDaoProtocolParent
+from src.entries.group.group.dao import GroupDaoProtocol
 from src.entries.message.depends import MessageServiceDep
-from src.entries.message.schemas import MessageCreate
+from src.entries.message.schemas import MessageInternalCreate
 from src.entries.websocket.enums import UserStatus
 from src.entries.websocket.schemas import (
     WsEventCategoryEnum,
+    WsEventCreate,
     WsEventRead,
+    WsMessageCreate,
     WsMessageRead,
 )
 
@@ -66,23 +68,40 @@ class ConnectionManager:
 
     async def broadcast_group_message(
         self,
-        obj: MessageCreate,
+        obj: WsEventCreate,
+        user_id: UUID,
         message_service: MessageServiceDep,
-        group_service: GroupDaoProtocolParent,
+        group_service: GroupDaoProtocol,
     ) -> None:
-        message = await message_service.create(obj, returning=True)
+        ws_data = None
+        user_ids = None
 
-        user_ids = await group_service.get_user_ids_in_group(message.to_group_id)
+        log.debug("Broadcasting message: %s", obj)
 
-        ws_data = WsMessageRead(
-            category=WsEventCategoryEnum.MESSAGE, data=message, to_user=uuid4()
-        )
+        if obj.category == WsEventCategoryEnum.MESSAGE:
+            obj = WsMessageCreate.model_validate(obj.model_dump())
+            data = MessageInternalCreate(**obj.data.model_dump(), user_id=user_id)
+
+            message = await message_service.create(data, returning=True)
+            user_ids = await group_service.get_user_ids_in_group(message.to_group_id)
+
+            ws_data = WsMessageRead(
+                category=WsEventCategoryEnum.MESSAGE, data=message, to_user=uuid4()
+            )
+
+        if not ws_data:
+            log.warning("No data to broadcast")
+            return
+
+        if not user_ids:
+            log.warning("No users to broadcast")
+            return
 
         # send message to all users
         for user_id in user_ids:
             ws_data.to_user = user_id
             await self.redis.publish(
-                WsEventCategoryEnum.MESSAGE,
+                obj.category,
                 ws_data.model_dump_json(),
             )
 
