@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { useLocation } from '@tanstack/react-router'
+import { HotkeysProvider } from 'react-hotkeys-hook'
 
 import { BoundedWs } from './WebsocketProvider'
 
@@ -13,7 +14,7 @@ export const AllProviders = (props: { children: ReactNode | undefined }) => {
   const isDisabledWs = disabledPathnameWs.some(i => location.pathname === i)
 
   return (
-    <>
+    <HotkeysProvider initiallyActiveScopes={['settings']}>
       {isDisabledWs
         ? (
             <>{children}</>
@@ -21,6 +22,6 @@ export const AllProviders = (props: { children: ReactNode | undefined }) => {
         : (
             <BoundedWs>{children}</BoundedWs>
           )}
-    </>
+    </HotkeysProvider>
   )
 }

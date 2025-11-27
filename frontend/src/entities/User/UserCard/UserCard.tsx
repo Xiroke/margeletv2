@@ -43,7 +43,7 @@ export const UserCard: FC<UserCardProps> = memo(
         <div className="flex gap-2 items-center">
           <Avatar className="w-14 h-14">
             <AvatarImage src="#" />
-            <AvatarFallback className="w-14 h-14 bg-muted rounded-full flex items-center justify-center">{username?.slice(0, 2)}</AvatarFallback>
+            <AvatarFallback>{username?.slice(0, 2)}</AvatarFallback>
           </Avatar>
           <div className="ml-4">
             <p className="text-sm font-medium leading-none">{username}</p>

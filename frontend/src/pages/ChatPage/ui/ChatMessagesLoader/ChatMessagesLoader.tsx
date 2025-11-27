@@ -24,6 +24,7 @@ export const ChatMessagesLoader: FC<ChatMessagesLoaderProps> = memo(
         onIntersect()
       }
     }, [isIntersecting])
+
     return (
       <div className={clsx(cls.chat_messages_loader, className)} ref={ref}>
         <Loader2 className={cls.animate_spin} size={24} />

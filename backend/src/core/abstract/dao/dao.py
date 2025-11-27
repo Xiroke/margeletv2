@@ -19,10 +19,7 @@ class DaoProtocol(
         UpdateSchemaType,
     ]
 ):
-    """Protocol for DAO with flexible filter-based methods."""
-
     async def get(self, **filters: Any) -> ReadSchemaType: ...
-
     async def get_many(self, **filters: Any) -> list[ReadSchemaType]: ...
 
     @overload
@@ -40,22 +37,28 @@ class DaoProtocol(
     @overload
     async def update(
         self,
-        filters: dict[str, Any],
         obj: UpdateSchemaType,
         returning: Literal[True],
+        is_many: bool = False,
+        **filters: Any,
     ) -> ReadSchemaType: ...
     @overload
     async def update(
         self,
-        filters: dict[str, Any],
         obj: UpdateSchemaType,
         returning: Literal[False] = ...,
+        is_many: bool = False,
+        **filters: Any,
     ) -> None: ...
     async def update(
-        self, filters: dict[str, Any], obj: UpdateSchemaType, returning: bool = False
+        self,
+        obj: UpdateSchemaType,
+        returning: bool = False,
+        is_many: bool = False,
+        **filters: Any,
     ) -> ReadSchemaType | None: ...
 
-    async def delete(self, **filters: Any) -> None: ...
+    async def delete(self, is_many: bool = False, **filters: Any) -> None: ...
 
 
 class Dao(

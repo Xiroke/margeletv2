@@ -16,7 +16,7 @@ from src.utils.exceptions import (
     HTTPAuthenticationNotVerifiedException,
 )
 
-from .schemas import AccessTokenJWT, AccessTokenRead, VerificationTokenJWT
+from .schemas import AccessTokenJWT, AccessTokenRead, VerificationTokenJWT, WsTokenJWT
 from .user.dao import UserDaoProtocol
 from .user.schemas import UserCreate, UserLogin, UserRead
 
@@ -28,6 +28,7 @@ class AuthService:
         self,
         jwt_manager_access: JWTManager[AccessTokenJWT],
         jwt_manager_verification: JWTManager[VerificationTokenJWT],
+        jwt_manager_ws: JWTManager[WsTokenJWT],
         user_dao: UserDaoProtocol,
         refresh_token_dao: RefreshTokenDaoProtocol,
         hasher: PasswordHelperDep,
@@ -35,6 +36,7 @@ class AuthService:
     ):
         self.jwt_manager_access = jwt_manager_access
         self.jwt_manager_verification = jwt_manager_verification
+        self.jwt_manager_ws = jwt_manager_ws
         self.user_dao = user_dao
         self.refresh_token_dao = refresh_token_dao
         self.hasher = hasher
@@ -135,3 +137,26 @@ class AuthService:
         payload = self.jwt_manager_verification.decode(token)
 
         await self.user_dao.set_is_verified(UUID(payload.user_id), True)
+
+    async def generate_ws_token(self, user_id: UUID) -> str:
+        payload = WsTokenJWT(user_id=str(user_id))
+        token = self.jwt_manager_ws.encode(payload)
+        return token
+
+    async def get_user_from_ws(
+        self,
+        ws_token: str,
+    ) -> UserRead:
+        try:
+            token_data = WsTokenJWT.model_validate(self.jwt_manager_ws.decode(ws_token))
+            user = await self.user_dao.get(id=UUID(token_data.user_id))
+        except Exception:
+            raise HTTPAuthenticationException
+
+        if not user.is_active:
+            raise HTTPAuthenticationBannedException
+
+        elif not user.is_verified:
+            raise HTTPAuthenticationNotVerifiedException
+
+        return user

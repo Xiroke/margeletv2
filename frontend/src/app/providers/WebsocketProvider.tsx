@@ -6,7 +6,7 @@ import type { WsEventRead } from '@/shared/api/generated'
 import type { IWSContext } from '@/shared/types/wsProvider'
 
 import { excludedAuthCheckRoutes } from '@/config'
-import { authQueryProps } from '@/features/auth/api'
+import { userQueryProps } from '@/entities/User/api'
 import { useShouldIgnorePath } from '@/shared/hooks/useShouldIgnoredPath'
 import { useWsLoading } from '@/shared/hooks/useWsLoading'
 
@@ -19,16 +19,16 @@ export const BoundedWs = ({ children }: PropsWithChildren) => {
 
 export const WebsocketProvider = ({ children }: PropsWithChildren) => {
   const [isTokenFetched, setIsTokenFetched] = useState(false)
-  const [accessToken, setAccessToken] = useState<null | string>(null)
-  const tokenMut = useMutation(authQueryProps.tokenMut())
+  const [wsToken, setWsToken] = useState<null | string>(null)
+  const wsTokenMut = useMutation(userQueryProps.wsTokenMut())
 
   useEffect(() => {
-    if (isTokenFetched || tokenMut.isPending) return
+    if (isTokenFetched || wsTokenMut.isPending) return
 
     const fetchToken = async () => {
       try {
-        const { access_token } = await tokenMut.mutateAsync({ credentials: 'include' })
-        setAccessToken(access_token)
+        const ws_token = await wsTokenMut.mutateAsync({ credentials: 'include' })
+        setWsToken(ws_token)
         setIsTokenFetched(true)
       }
       catch (error) {
@@ -37,10 +37,10 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
     }
 
     fetchToken()
-  }, [isTokenFetched, tokenMut])
+  }, [isTokenFetched, wsTokenMut])
 
-  const socketUrl = accessToken
-    ? `${import.meta.env.VITE_BACKEND_WS_URL}/api/ws?access_token=${accessToken}`
+  const socketUrl = wsToken
+    ? `${import.meta.env.VITE_BACKEND_WS_URL}/api/ws?ws_token=${wsToken}`
     : null
 
   const { lastMessage, readyState, sendMessage } = useWebSocket(socketUrl, {

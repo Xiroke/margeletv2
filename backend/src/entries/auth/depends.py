@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from config import settings
 from src.entries.auth.refresh_token.depends import RefreshTokenDaoDep
-from src.entries.auth.schemas import AccessTokenJWT, VerificationTokenJWT
+from src.entries.auth.schemas import AccessTokenJWT, VerificationTokenJWT, WsTokenJWT
 from src.entries.auth.service import AuthService
 from src.entries.auth.user.depends import UserDaoDep
 from src.entries.auth.user.models import UserModel
@@ -48,9 +48,22 @@ JwtManagerVerification = Annotated[
 ]
 
 
+def get_jwt_manager_ws() -> JWTManager[WsTokenJWT]:
+    return JWTManager(
+        settings.JWT_WS_TOKEN_SECRET_KEY,
+        WsTokenJWT,
+        settings.JWT_ALGORITHM,
+        5,
+    )
+
+
+JwtManagerWs = Annotated[JWTManager[WsTokenJWT], Depends(get_jwt_manager_ws)]
+
+
 def get_auth_service(
     jwt_manager_access: JwtManagerAccess,
     jwt_manager_verification: JwtManagerVerification,
+    jwt_manager_ws: JwtManagerWs,
     user_dao: UserDaoDep,
     refresh_token_dao: RefreshTokenDaoDep,
     hasher: PasswordHelperDep,
@@ -59,6 +72,7 @@ def get_auth_service(
     return AuthService(
         jwt_manager_access,
         jwt_manager_verification,
+        jwt_manager_ws,
         user_dao,
         refresh_token_dao,
         hasher,

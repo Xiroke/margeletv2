@@ -3,7 +3,6 @@ body {
 }
 
 .chat {
-  padding: 40px 20px;
   display: flex;
   flex-direction: row;
   gap: 20px;
@@ -17,7 +16,6 @@ body {
   overflow-y: auto;
   height: calc(100vh - 40px);
   scrollbar-width: none;
-  min-width: 360px;
   -ms-overflow-style: none;
 }
 
@@ -36,7 +34,6 @@ body {
 .selected_chat {
   justify-content: end;
   flex-direction: column;
-  width: 36%;
   align-items: start;
   gap: 12px;
   flex: 1;

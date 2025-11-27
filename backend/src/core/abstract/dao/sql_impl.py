@@ -35,12 +35,13 @@ class SqlDaoImpl(
         self.session = session
 
     async def get(self, **filters) -> ReadSchemaType:
-        stmt = select(self.model_type).filter_by(**filters)
+        stmt = select(self.model_type)
+        stmt = self._handle_filters(stmt, filters, is_many=False)
         return await self._execute_and_return_one(stmt)
 
     async def get_many(self, **filters) -> list[ReadSchemaType]:
         stmt = select(self.model_type)
-        stmt = self._handle_filters(stmt, filters)
+        stmt = self._handle_filters(stmt, filters, is_many=True)
         result = await self.session.execute(stmt)
         return self._models_to_read_schemas(result.scalars().all())
 
@@ -56,10 +57,22 @@ class SqlDaoImpl(
         await self.session.execute(stmt)
 
     async def update(
-        self, filters: dict[str, Any], obj: UpdateSchemaType, returning: bool = False
+        self,
+        obj: UpdateSchemaType,
+        returning: bool = False,
+        is_many: bool = False,
+        **filters,
     ) -> ReadSchemaType | None:
+        if not is_many:
+            existing = await self.get(**filters)
+            if existing is None:
+                raise ModelNotFoundException(self.model_type.__name__, str(filters))
+
         values = obj.model_dump(exclude_unset=True)
-        stmt = update(self.model_type).filter_by(**filters).values(**values)
+        stmt = update(self.model_type)
+        stmt = self._handle_filters(stmt, filters, is_many)
+        stmt = stmt.values(**values)
+        print("values " + str(values))
 
         if returning:
             stmt = stmt.returning(self.model_type)
@@ -67,8 +80,13 @@ class SqlDaoImpl(
 
         await self.session.execute(stmt)
 
-    async def delete(self, **filters) -> None:
-        stmt = delete(self.model_type).filter_by(**filters)
+    async def delete(
+        self,
+        is_many: bool = False,
+        **filters,
+    ) -> None:
+        stmt = delete(self.model_type)
+        stmt = self._handle_filters(stmt, filters, is_many)
         await self.session.execute(stmt)
 
     async def _execute_and_return_one(
@@ -92,11 +110,15 @@ class SqlDaoImpl(
     def _models_to_read_schemas(self, models) -> list[ReadSchemaType]:
         return [self.read_schema_type.model_validate(m) for m in models]
 
-    def _handle_filters(self, stmt, filters: dict[str, Any]):
+    def _handle_filters(self, stmt, filters: dict[str, Any], is_many: bool = False):
         for key, value in filters.items():
             column = getattr(self.model_type, key)
             if isinstance(value, (list, tuple, set)):
-                stmt = stmt.filter(column.in_(value))
+                if not is_many:
+                    raise ValueError(
+                        "List filters are not allowed for single-record operations"
+                    )
+                stmt = stmt.where(column.in_(list(value)))
             else:
-                stmt = stmt.filter(column == value)
+                stmt = stmt.where(column == value)
         return stmt

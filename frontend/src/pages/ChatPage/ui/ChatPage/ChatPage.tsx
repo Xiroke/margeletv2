@@ -1,13 +1,13 @@
-import type { FC } from 'react'
-
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { clsx } from 'clsx'
-import { SettingsIcon, UserPlus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { PhoneIcon, Settings2Icon, UserPlus } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useMediaQuery } from 'usehooks-ts'
 
 import type { WsEventRead, WsMessageCreate } from '@/shared/api/generated'
 
 import { useWS } from '@/app/providers/WebsocketProvider'
+import { autoGroupQueryProps } from '@/entities/AutoGroup/api'
 import { MessageList } from '@/entities/Message/ui/MessageList/MessageList'
 import { cn } from '@/shared/lib/utils'
 import { Separator } from '@/shared/ui/separator'
@@ -15,51 +15,83 @@ import { Separator } from '@/shared/ui/separator'
 import { ChatGroupList } from '../ChatGroupList/ChatGroupList'
 import { ChatInput } from '../ChatInput/ChatInput'
 import { ChatNavigation } from '../ChatNavigation'
+import { SettingsProfileDialog } from '../Dialogs/SettingsProfileDialog'
+import { GroupSettingsDropdown } from '../Dropdowns/GroupSettingsDropdown'
 import cls from './ChatPage.module.scss'
 
-interface ChatPageProps {
-  className?: string
-}
+export const ChatPage = () => {
+  const isTablet = useMediaQuery('(max-width: 1024px)')
+  const isPhone = useMediaQuery('(max-width: 576px)')
 
-export const ChatPage: FC<ChatPageProps> = (props: ChatPageProps) => {
-  const { className } = props
-  const { groupId, groupType: _groupType } = useParams({ from: '/group/$groupType/{-$groupId}' })
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false)
+  const [onMessage, setOnMessage] = useState<(d: WsEventRead) => void>(() => {})
+
+  const params = useParams({ from: '/group/$groupType/{-$groupId}' })
+  const groupId = params.groupId
+  const groupType = params.groupType as 'personal_group' | 'simple_group'
+
   const ws = useWS()
-  const groupType = _groupType as 'personal_group' | 'simple_group'
-  const [onMessage, setOnMessage] = useState<(data: WsEventRead) => void>(() => {})
 
+  const { data: groups } = useQuery(
+    autoGroupQueryProps.getMyGroups({ query: { group_type: groupType } }),
+  )
+
+  const myGroupIds = useMemo(() => groups?.map(g => g.id) ?? [], [groups])
+
+  // WebSocket subscription
   useEffect(() => {
-    if (ws.isConnected) {
-      ws.onMessage(onMessage)
-    }
+    if (ws.isConnected) ws.onMessage(onMessage)
   }, [ws, onMessage])
 
-  const handleSend = (value: string) => {
-    const ws_data: WsMessageCreate = {
+  // Sending message
+  const send = (message: string) => {
+    const packet: WsMessageCreate = {
       category: 'message',
-      data: { message: value, to_group_id: groupId! },
+      data: { message, to_group_id: groupId! },
     }
-    ws.send(JSON.stringify(ws_data))
+    ws.send(JSON.stringify(packet))
   }
 
+  const chatInputProps
+    = groupId && myGroupIds.includes(groupId)
+      ? { onSend: send }
+      : { placeholder: 'Join the group first', readOnly: true }
+
   return (
-    <div className={clsx(cls.chat, className)}>
-      <ChatNavigation />
-      { (groupType == 'simple_group' || groupType == 'personal_group') && <ChatGroupList className={cls.group_list} groupType={groupType} />}
-      <Separator orientation="vertical" />
+    <div className={cls.chat}>
+      <SettingsProfileDialog isOpen={profileDialogOpen} setOpenChange={setProfileDialogOpen} />
+
+      {!isPhone && (
+        <ChatNavigation
+          className="py-10 ml-5"
+          settingsProps={{ setIsProfileDialogOpen: setProfileDialogOpen }}
+        />
+      )}
+
+      {((!groupId && isTablet) || !isTablet) && (
+        <ChatGroupList
+          className={cn(cls.group_list, 'py-10 min-w-[300px] w-1/4 max-w-[360px]')}
+          groupType={groupType}
+        />
+      )}
 
       <div className="flex flex-col flex-1 justify-end items-end relative">
-
         {groupId
           ? (
               <>
-                <div className="flex justify-end items-center shrink-0 px-[10%] gap-6 sticky bg-background z-10 top-0 h-12 w-full border-border border-b -mt-10">
+                {!isPhone && <Separator className="absolute left-0" orientation="vertical" />}
+
+                <div className="flex justify-end items-center shrink-0 px-[10%] gap-6 sticky top-0 bg-background z-10 border-b h-12 w-full">
+                  <PhoneIcon />
                   <UserPlus />
-                  <SettingsIcon />
+                  <GroupSettingsDropdown groupId={groupId}>
+                    <Settings2Icon />
+                  </GroupSettingsDropdown>
                 </div>
-                <div className={cn(cls.selected_chat, 'overflow-y-hidden')}>
+
+                <div className={cn(cls.selected_chat, 'overflow-y-hidden w-1/2 min-w-[450px] p-1')}>
                   <MessageList groupId={groupId} initOnMessage={setOnMessage} />
-                  <ChatInput onSend={handleSend} placeholder="Enter message" />
+                  <ChatInput {...chatInputProps} className="mb-5" />
                 </div>
               </>
             )

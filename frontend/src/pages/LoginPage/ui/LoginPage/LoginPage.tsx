@@ -1,9 +1,6 @@
-import type { FC } from 'react'
-
 import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { clsx } from 'clsx'
 import { ResultAsync } from 'neverthrow'
 import { toast } from 'sonner'
 
@@ -14,12 +11,7 @@ import { Input } from '@/shared/ui/input'
 
 import cls from './LoginPage.module.scss'
 
-interface LoginPageProps {
-  className?: string
-}
-
-export const LoginPage: FC<LoginPageProps> = (props: LoginPageProps) => {
-  const { className } = props
+export const LoginPage = () => {
   const navigate = useNavigate()
   const login = useMutation({ ...authQueryProps.loginMut() })
 
@@ -49,7 +41,7 @@ export const LoginPage: FC<LoginPageProps> = (props: LoginPageProps) => {
 
   return (
     <form
-      className={clsx(cls.form, className)}
+      className={cls.form}
       onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()

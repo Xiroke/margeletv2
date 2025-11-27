@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { SearchIcon } from 'lucide-react'
 import { ResultAsync } from 'neverthrow'
 import { useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { toast } from 'sonner'
 
 import { GroupCard } from '@/entities/Group/ui/GroupCard'
@@ -101,19 +103,7 @@ export const SheetSearchGroupsContent = ({ className, query }: SheetSearchGroups
     retry: false,
   })
 
-  const personalGroupCreate = useMutation(personalGroupQueryProps.create())
-
-  const handleClick = async (id: string) => {
-    const result = await ResultAsync.fromPromise(
-      personalGroupCreate.mutateAsync({ path: { other_user_id: id } }),
-      error => error as { detail: string },
-    )
-
-    result.match(
-      () => toast.success('Personal group created'),
-      err => toast.error(err.detail),
-    )
-  }
+  const navigate = useNavigate()
 
   return (
     <SheetSearchContent
@@ -127,7 +117,7 @@ export const SheetSearchGroupsContent = ({ className, query }: SheetSearchGroups
       {data && (
         <div className="flex flex-col gap-2">
           {data.map((group, idx) => (
-            <GroupCard key={idx} onClick={() => handleClick(group.id)} title={group.title ?? ''} />
+            <GroupCard key={idx} onClick={() => navigate({ to: `/group/simple_group/${group.id}` })} title={group.title ?? ''} />
           ))}
         </div>
       )}
@@ -137,9 +127,14 @@ export const SheetSearchGroupsContent = ({ className, query }: SheetSearchGroups
 
 export const SheetSearch = () => {
   const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+
+  useHotkeys('ctrl+alt+s', () =>
+    setOpen(true),
+  [])
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={setOpen} open={open}>
       <SheetTrigger asChild>
         <Button
           variant="ghost"
@@ -152,7 +147,7 @@ export const SheetSearch = () => {
           <SheetTitle asChild><h4>Search</h4></SheetTitle>
         </SheetHeader>
         <div className="px-4 -mt-6 flex flex-col gap-6">
-          <Input onChange={e => setQuery(e.target.value)} placeholder="Enter query" value={query} />
+          <Input autoFocus onChange={e => setQuery(e.target.value)} placeholder="Enter query" value={query} />
 
           <Tabs defaultValue="users">
             <TabsList>

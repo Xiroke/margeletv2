@@ -42,7 +42,6 @@ interface ButtonProps
   VariantProps<typeof buttonVariants> {
   asChild?: boolean
   full?: boolean
-  /** Полные параметры для навигации TanStack Router */
   navigateOptions?: NavigateOptions
 }
 

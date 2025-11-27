@@ -68,7 +68,7 @@ class ConnectionManager:
         self,
         obj: MessageCreate,
         message_service: MessageServiceDep,
-        group_service: GroupDaoProtocolParent,  # you can pass service
+        group_service: GroupDaoProtocolParent,
     ) -> None:
         message = await message_service.create(obj, returning=True)
 

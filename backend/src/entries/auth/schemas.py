@@ -14,3 +14,7 @@ class AccessTokenJWT(BaseModel):
 
 class VerificationTokenJWT(BaseModel):
     user_id: str  # UUID must be converted
+
+
+class WsTokenJWT(BaseModel):
+    user_id: str  # UUID must be converted

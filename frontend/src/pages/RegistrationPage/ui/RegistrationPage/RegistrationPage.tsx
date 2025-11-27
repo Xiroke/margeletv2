@@ -1,9 +1,6 @@
-import type { FC } from 'react'
-
 import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { clsx } from 'clsx'
 
 import { authQueryProps } from '@/features/auth/api'
 import { Button } from '@/shared/ui/button'
@@ -12,14 +9,7 @@ import { Input } from '@/shared/ui/input'
 
 import cls from './RegistrationPage.module.scss'
 
-interface RegistrationPageProps {
-  className?: string
-}
-
-export const RegistrationPage: FC<RegistrationPageProps> = (
-  props: RegistrationPageProps,
-) => {
-  const { className } = props
+export const RegistrationPage = () => {
   const navigate = useNavigate()
   const register = useMutation({ ...authQueryProps.registerMut() })
 
@@ -44,7 +34,7 @@ export const RegistrationPage: FC<RegistrationPageProps> = (
 
   return (
     <form
-      className={clsx(cls.form, className)}
+      className={cls.form}
       onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()

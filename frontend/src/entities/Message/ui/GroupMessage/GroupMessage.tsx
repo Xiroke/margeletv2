@@ -1,12 +1,17 @@
 import type { FC } from 'react'
 
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { clsx } from 'clsx'
+import { CopyIcon, TrashIcon } from 'lucide-react'
 import { memo } from 'react'
+import { useCopyToClipboard } from 'usehooks-ts'
 
 import type { MessageRead } from '@/shared/api/generated'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/shared/ui/context-menu'
 
+import { messageQueryProps } from '../../api'
 import cls from './GroupMessage.module.scss'
 
 interface GroupMessageProps {
@@ -15,7 +20,42 @@ interface GroupMessageProps {
   message: MessageRead
 }
 
-export const GroupMessage: FC<GroupMessageProps> = memo(
+export const GroupMessage = (props: GroupMessageProps) => {
+  const messageId = props.message.id
+  const groupId = props.message.to_group_id
+  const queryClient = useQueryClient()
+  const deleteMessage = useMutation(messageQueryProps.delete())
+
+  const handleDelete = () => {
+    const fetchDelete = async () => {
+      await deleteMessage.mutateAsync({ path: { message_id: messageId } })
+      queryClient.invalidateQueries({ queryKey: messageQueryProps.getCursorMessagesInfKey({ path: { group_id: groupId } }) })
+    }
+
+    fetchDelete()
+  }
+
+  const [, copyToClipboard] = useCopyToClipboard()
+
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger className="w-full">
+        <GroupMessageContent {...props} />
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-52">
+        <ContextMenuItem onClick={() => copyToClipboard(props.message.message)}>
+          <CopyIcon />
+          Copy
+        </ContextMenuItem>
+        <ContextMenuItem onClick={handleDelete}>
+          <TrashIcon />
+          Delete
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  )
+}
+export const GroupMessageContent: FC<GroupMessageProps> = memo(
   (props: GroupMessageProps) => {
     const { author, className, message } = props
 

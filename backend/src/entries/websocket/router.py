@@ -2,7 +2,7 @@ from logging import getLogger
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException
 
-from src.entries.auth.depends import AuthServiceDep, get_current_user_from_access
+from src.entries.auth.depends import AuthServiceDep
 from src.entries.group.group.depends import GroupServiceDep
 from src.entries.message.depends import MessageServiceDep
 from src.entries.message.schemas import MessageCreate
@@ -17,13 +17,13 @@ router = APIRouter()
 @router.websocket("/ws")
 async def websocket_endpoint(
     websocket: WebSocket,
-    access_token: str,
+    ws_token: str,
     message_service: MessageServiceDep,
     group_service: GroupServiceDep,
     auth: AuthServiceDep,
     connection_manager: ConnectionManagerDep,
 ):
-    user = await get_current_user_from_access(access_token, auth)
+    user = await auth.get_user_from_ws(ws_token)
 
     if user is None:
         raise WebSocketException(401, "Unauthorized")

@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Body, UploadFile
 from fastapi.responses import JSONResponse, Response
 
-from src.entries.auth.depends import CurrentUserDep
+from src.entries.auth.depends import AuthServiceDep, CurrentUserDep
 from src.entries.auth.user.schemas import UserRead, UserUpdate
 
 from .depends import UserServiceDep
@@ -50,6 +50,22 @@ async def search_users(user_service: UserServiceDep, account_name: str) -> UserR
 
 
 @router.get("/me")
-async def get_me(user: CurrentUserDep):
+async def get_me(user: CurrentUserDep) -> UserRead:
     """Get current user information"""
-    return user
+    return UserRead.model_validate(user)
+
+
+@router.patch("/me")
+async def update_me(
+    user: CurrentUserDep,
+    data: UserUpdate,
+    user_service: UserServiceDep,
+) -> UserRead:
+    return UserRead.model_validate(
+        await user_service.update(obj=data, returning=True, id=str(user.id))
+    )
+
+
+@router.post("/ws_token")
+async def generate_ws_token(user: CurrentUserDep, auth: AuthServiceDep) -> str:
+    return await auth.generate_ws_token(user.id)

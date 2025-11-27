@@ -85,6 +85,7 @@ class Settings(ConfigBase):
     JWT_ACCESS_TOKEN_SECRET_KEY: str
     JWT_ALGORITHM: str
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int
+    JWT_WS_TOKEN_SECRET_KEY: str = "SECRET"
 
     BACKEND_URL: str
     FRONTEND_URL: str

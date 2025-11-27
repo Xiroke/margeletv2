@@ -1,0 +1,1 @@
+export { ChangeNameDialog } from './ChangeNameDialog'

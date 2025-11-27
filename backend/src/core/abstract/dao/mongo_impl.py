@@ -28,13 +28,14 @@ class MongoDaoImpl(
     model_type: type[Document]
 
     async def get(self, **filters) -> ReadSchemaType:
-        result = await self.model_type.find_one(**filters, fetch_links=True)
+        conditions = self._handle_filters(filters)
+        result = await self.model_type.find_one(*conditions, fetch_links=True)
         self._raise_if_none(result, filters)
         return self._model_to_read_schema(result)
 
     async def get_many(self, **filters) -> list[ReadSchemaType]:
-        query = self._handle_filters(filters)
-        cursor = self.model_type.find(query, fetch_links=True)
+        conditions = self._handle_filters(filters, is_many=True)
+        cursor = self.model_type.find(*conditions, fetch_links=True)
         results = await cursor.to_list()
         return self._models_to_read_schemas(results)
 
@@ -51,9 +52,14 @@ class MongoDaoImpl(
         return self._model_to_read_schema(result)
 
     async def update(
-        self, filters: dict[str, Any], obj: UpdateSchemaType, returning: bool = False
+        self,
+        obj: UpdateSchemaType,
+        returning: bool = False,
+        is_many=False,
+        **filters,
     ) -> ReadSchemaType | None:
-        existing = await self.model_type.find_one(**filters)
+        conditions = self._handle_filters(filters, is_many)
+        existing = await self.model_type.find(*conditions).to_list()
         self._raise_if_none(existing, filters)
 
         existing = cast(Document, existing)
@@ -67,19 +73,27 @@ class MongoDaoImpl(
         updated = await self.model_type.get(existing.id, fetch_links=True)
         return self._model_to_read_schema(updated)
 
-    async def delete(self, **filters) -> None:
-        delete_result = await self.model_type.find(**filters).delete()
+    async def delete(
+        self,
+        is_many=False,
+        **filters,
+    ) -> None:
+        conditions = self._handle_filters(filters, is_many)
+        delete_result = await self.model_type.find(*conditions).delete()
         if not delete_result or delete_result.deleted_count == 0:
             raise ModelNotFoundException(self.model_type.__name__, str(filters))
 
-    def _handle_filters(self, filters: dict[str, Any]) -> dict:
-        query = {}
+    def _handle_filters(self, filters: dict[str, Any], is_many: bool = False) -> list:
+        conditions = []
         for key, value in filters.items():
+            field = getattr(self.model_type, key)
             if isinstance(value, (list, tuple, set)):
-                query[key] = {"$in": list(value)}
+                if not is_many:
+                    raise ValueError("List filters is not allowed here")
+                conditions.append(field.in_(list(value)))
             else:
-                query[key] = value
-        return query
+                conditions.append(field == value)
+        return conditions
 
     def _model_to_read_schema(self, model) -> ReadSchemaType:
         return self.read_schema_type.model_validate(model)

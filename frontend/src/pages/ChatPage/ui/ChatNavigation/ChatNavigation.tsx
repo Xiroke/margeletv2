@@ -1,58 +1,35 @@
 import type { FC } from 'react'
 
-import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { clsx } from 'clsx'
-import { PlusIcon, Settings, SunMoonIcon, UserIcon, UsersIcon } from 'lucide-react'
-import { memo } from 'react'
+import { PlusIcon, SunMoonIcon, UserIcon, UsersIcon } from 'lucide-react'
+import { memo, useRef } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
-import { authQueryProps } from '@/features/auth/api'
 import { switchTheme } from '@/shared/lib/switchTheme'
 import { Button } from '@/shared/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu'
+
+import type { SettingsDropdownProps } from './SettingsDropdown/SettingsDropdown'
 
 import { SheetSearch } from '../SheetSearch'
 import cls from './ChatNavigation.module.scss'
+import { SettingsDropdown } from './SettingsDropdown'
 
 interface ChatNavigationProps {
   className?: string
-}
-
-const SettingsDropdown = () => {
-  const logout = useMutation(authQueryProps.logoutMut())
-  const navigate = useNavigate()
-
-  const onClickLogout = () => {
-    logout.mutate({})
-    navigate({ to: '/' })
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-        >
-          <Settings className="size-6" size={24} strokeWidth={1.6} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56">
-        <DropdownMenuItem onClick={() => onClickLogout()}>
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
+  settingsProps: SettingsDropdownProps
 }
 
 export const ChatNavigation: FC<ChatNavigationProps> = memo(
   (props: ChatNavigationProps) => {
-    const { className } = props
+    const { className, settingsProps } = props
+
+    const simpleGroupButtonRef = useRef<HTMLButtonElement>(null)
+    const personalGroupButtonRef = useRef<HTMLButtonElement>(null)
+
+    useHotkeys('ctrl+alt+g', () => simpleGroupButtonRef.current?.click(),
+    )
+    useHotkeys('ctrl+alt+p', () => personalGroupButtonRef.current?.click(),
+    )
 
     return (
       <div className={clsx(cls.chatNavigation, className)}>
@@ -74,6 +51,7 @@ export const ChatNavigation: FC<ChatNavigationProps> = memo(
             }),
             to: '/group/$groupType/{-$groupId}',
           }}
+          ref={personalGroupButtonRef}
           variant="ghost"
         >
           <UserIcon className="size-6" size={24} strokeWidth={2} />
@@ -87,6 +65,7 @@ export const ChatNavigation: FC<ChatNavigationProps> = memo(
             }),
             to: '/group/$groupType/{-$groupId}',
           }}
+          ref={simpleGroupButtonRef}
           variant="ghost"
         >
           <UsersIcon className="size-6" size={24} strokeWidth={1.6} />
@@ -99,7 +78,7 @@ export const ChatNavigation: FC<ChatNavigationProps> = memo(
           <SunMoonIcon className="size-6" size={24} strokeWidth={1.6} />
         </Button>
 
-        <SettingsDropdown />
+        <SettingsDropdown {...settingsProps} />
       </div>
     )
   },

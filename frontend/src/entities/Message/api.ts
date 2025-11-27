@@ -1,5 +1,5 @@
 import { getCursorMessagesByGroupApiMessagesCursorGroupIdGet } from '@/shared/api/generated'
-import { getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteOptions } from '@/shared/api/generated/@tanstack/react-query.gen'
+import { deleteMessagesApiMessagesMessageIdDeleteMutation, getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteOptions, getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteQueryKey } from '@/shared/api/generated/@tanstack/react-query.gen'
 
 import { getCachedMessages, saveMessages } from './db'
 
@@ -44,7 +44,9 @@ const getCursorMessagesInfWithCache = (groupId: string) => {
 }
 
 export const messageQueryProps = {
+  delete: deleteMessagesApiMessagesMessageIdDeleteMutation,
   getCursorMessagesInf:
     getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteOptions,
+  getCursorMessagesInfKey: getCursorMessagesByGroupApiMessagesCursorGroupIdGetInfiniteQueryKey,
   getCursorMessagesInfWithCache,
 }

@@ -105,17 +105,6 @@ export type MessageRead = {
 };
 
 /**
- * MessageUpdate
- */
-export type MessageUpdate = {
-    /**
-     * Message
-     * Message must be less than 2000 characters and more than 1 character
-     */
-    message: string | null;
-};
-
-/**
  * PersonalGroupRead
  */
 export type PersonalGroupRead = {
@@ -275,6 +264,20 @@ export type UserRead = {
 };
 
 /**
+ * UserUpdate
+ */
+export type UserUpdate = {
+    /**
+     * Name
+     */
+    name?: string | null;
+    /**
+     * Avatar Path
+     */
+    avatar_path?: string | null;
+};
+
+/**
  * ValidationError
  */
 export type ValidationError = {
@@ -375,8 +378,10 @@ export type LoginApiAuthLoginPostResponses = {
     /**
      * Successful Response
      */
-    200: unknown;
+    200: AccessTokenRead;
 };
+
+export type LoginApiAuthLoginPostResponse = LoginApiAuthLoginPostResponses[keyof LoginApiAuthLoginPostResponses];
 
 export type RegisterApiAuthRegisterPostData = {
     body: UserCreate;
@@ -592,8 +597,52 @@ export type GetMeApiUsersMeGetResponses = {
     /**
      * Successful Response
      */
-    200: unknown;
+    200: UserRead;
 };
+
+export type GetMeApiUsersMeGetResponse = GetMeApiUsersMeGetResponses[keyof GetMeApiUsersMeGetResponses];
+
+export type UpdateMeApiUsersMePatchData = {
+    body: UserUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/users/me';
+};
+
+export type UpdateMeApiUsersMePatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateMeApiUsersMePatchError = UpdateMeApiUsersMePatchErrors[keyof UpdateMeApiUsersMePatchErrors];
+
+export type UpdateMeApiUsersMePatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: UserRead;
+};
+
+export type UpdateMeApiUsersMePatchResponse = UpdateMeApiUsersMePatchResponses[keyof UpdateMeApiUsersMePatchResponses];
+
+export type GenerateWsTokenApiUsersWsTokenPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/users/ws_token';
+};
+
+export type GenerateWsTokenApiUsersWsTokenPostResponses = {
+    /**
+     * Response Generate Ws Token Api Users Ws Token Post
+     * Successful Response
+     */
+    200: string;
+};
+
+export type GenerateWsTokenApiUsersWsTokenPostResponse = GenerateWsTokenApiUsersWsTokenPostResponses[keyof GenerateWsTokenApiUsersWsTokenPostResponses];
 
 export type CreateApiPersonalGroupsOtherUserIdPostData = {
     body?: never;
@@ -727,6 +776,90 @@ export type UpdateApiSimpleGroupsIdPatchErrors = {
 export type UpdateApiSimpleGroupsIdPatchError = UpdateApiSimpleGroupsIdPatchErrors[keyof UpdateApiSimpleGroupsIdPatchErrors];
 
 export type UpdateApiSimpleGroupsIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type GetInviteTokenApiGroupsInviteGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    url: '/api/groups/invite';
+};
+
+export type GetInviteTokenApiGroupsInviteGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetInviteTokenApiGroupsInviteGetError = GetInviteTokenApiGroupsInviteGetErrors[keyof GetInviteTokenApiGroupsInviteGetErrors];
+
+export type GetInviteTokenApiGroupsInviteGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type JoinGroupApiGroupsInvitePostData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Token
+         */
+        token: string;
+    };
+    url: '/api/groups/invite';
+};
+
+export type JoinGroupApiGroupsInvitePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type JoinGroupApiGroupsInvitePostError = JoinGroupApiGroupsInvitePostErrors[keyof JoinGroupApiGroupsInvitePostErrors];
+
+export type JoinGroupApiGroupsInvitePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type LeaveGroupApiGroupsLeaveGroupIdPostData = {
+    body?: never;
+    path: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    query?: never;
+    url: '/api/groups/leave/{group_id}';
+};
+
+export type LeaveGroupApiGroupsLeaveGroupIdPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type LeaveGroupApiGroupsLeaveGroupIdPostError = LeaveGroupApiGroupsLeaveGroupIdPostErrors[keyof LeaveGroupApiGroupsLeaveGroupIdPostErrors];
+
+export type LeaveGroupApiGroupsLeaveGroupIdPostResponses = {
     /**
      * Successful Response
      */
@@ -961,50 +1094,25 @@ export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses = {
 
 export type GetLastMessagesByGroupApiMessagesLastGroupIdGetResponse = GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses[keyof GetLastMessagesByGroupApiMessagesLastGroupIdGetResponses];
 
-export type DeleteApiMessagesIdDeleteData = {
+export type DeleteMessagesApiMessagesMessageIdDeleteData = {
     body?: never;
     path: {
-        id: PydanticObjectId;
+        message_id: PydanticObjectId;
     };
     query?: never;
-    url: '/api/messages/{id}';
+    url: '/api/messages/{message_id}';
 };
 
-export type DeleteApiMessagesIdDeleteErrors = {
+export type DeleteMessagesApiMessagesMessageIdDeleteErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeleteApiMessagesIdDeleteError = DeleteApiMessagesIdDeleteErrors[keyof DeleteApiMessagesIdDeleteErrors];
+export type DeleteMessagesApiMessagesMessageIdDeleteError = DeleteMessagesApiMessagesMessageIdDeleteErrors[keyof DeleteMessagesApiMessagesMessageIdDeleteErrors];
 
-export type DeleteApiMessagesIdDeleteResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type UpdateApiMessagesIdPatchData = {
-    body: MessageUpdate;
-    path: {
-        id: PydanticObjectId;
-    };
-    query?: never;
-    url: '/api/messages/{id}';
-};
-
-export type UpdateApiMessagesIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateApiMessagesIdPatchError = UpdateApiMessagesIdPatchErrors[keyof UpdateApiMessagesIdPatchErrors];
-
-export type UpdateApiMessagesIdPatchResponses = {
+export type DeleteMessagesApiMessagesMessageIdDeleteResponses = {
     /**
      * Successful Response
      */
