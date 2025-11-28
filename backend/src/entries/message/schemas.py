@@ -13,6 +13,7 @@ class MessageBase(BaseModel):
     user_id: UUID
     to_group_id: UUID
     created_at: datetime
+    is_edited: bool
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -32,6 +33,7 @@ class MessageCreate(BaseModel):
 
 class MessageInternalCreate(MessageCreate):
     user_id: UUID
+    is_edited: bool = False
 
 
 class MessageUpdate(BaseModel):
@@ -40,6 +42,10 @@ class MessageUpdate(BaseModel):
         max_length=2000,
         description="Message must be less than 2000 characters and more than 1 character",
     )
+
+
+class MessageInternalUpdate(MessageUpdate):
+    is_edited: bool = True
 
 
 class MessageCursorPaginatedRead(BaseModel):

@@ -57,21 +57,31 @@ class MongoDaoImpl(
         returning: bool = False,
         is_many=False,
         **filters,
-    ) -> ReadSchemaType | None:
-        conditions = self._handle_filters(filters, is_many)
-        existing = await self.model_type.find(*conditions).to_list()
-        self._raise_if_none(existing, filters)
-
-        existing = cast(Document, existing)
-
+    ) -> ReadSchemaType | list[ReadSchemaType] | None:
         update_data = obj.model_dump(exclude_unset=True)
-        await existing.update({"$set": update_data})
 
-        if not returning:
-            return
+        if is_many:
+            conditions = self._handle_filters(filters, is_many=True)
+            await self.model_type.find(*conditions).update({"$set": update_data})
 
-        updated = await self.model_type.get(existing.id, fetch_links=True)
-        return self._model_to_read_schema(updated)
+            if returning:
+                results = await self.model_type.find(*conditions).to_list()
+                return self._models_to_read_schemas(results)
+            return None
+
+        else:
+            conditions = self._handle_filters(filters, is_many=False)
+            doc = await self.model_type.find_one(*conditions)
+
+            self._raise_if_none(doc, filters)
+
+            doc = cast(Document, doc)
+
+            await doc.set(update_data)
+
+            if returning:
+                return self._model_to_read_schema(doc)
+            return None
 
     async def delete(
         self,

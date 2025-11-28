@@ -13,7 +13,7 @@ from src.entries.message.depends import MessageServiceDep
 from src.entries.message.schemas import (
     MessageCreate,
     MessageInternalCreate,
-    MessageUpdate,
+    MessageInternalUpdate,
 )
 from src.entries.websocket.enums import UserStatus
 from src.entries.websocket.schemas import (
@@ -132,7 +132,7 @@ class ConnectionManager:
             raise ValueError("MessageUpdate event has no data")
 
         if isinstance(raw_data, dict):
-            update_data = MessageUpdate.model_validate(raw_data)
+            update_data = MessageInternalUpdate(**raw_data, is_edited=True)
         else:
             update_data = raw_data
 

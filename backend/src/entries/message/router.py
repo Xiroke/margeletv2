@@ -10,6 +10,7 @@ from src.entries.message.schemas import (
     MessageCreate,
     MessageCursorPaginatedRead,
     MessageInternalCreate,
+    MessageInternalUpdate,
     MessageRead,
     MessageUpdate,
 )
@@ -53,6 +54,7 @@ async def update_message(
     obj: MessageUpdate,
     service: MessageServiceDep,
 ):
+    obj = MessageInternalUpdate(**obj.model_dump(), is_edited=True)
     return await service.update(obj, id=message_id)
 
 

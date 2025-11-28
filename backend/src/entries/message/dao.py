@@ -10,8 +10,8 @@ from .models import MessageModel
 from .schemas import (
     MessageCursorPaginatedRead,
     MessageInternalCreate,
+    MessageInternalUpdate,
     MessageRead,
-    MessageUpdate,
 )
 
 
@@ -21,7 +21,7 @@ class MessageDaoProtocol(
         PydanticObjectId,
         MessageRead,
         MessageInternalCreate,
-        MessageUpdate,
+        MessageInternalUpdate,
     ],
     Protocol,
 ):
@@ -47,7 +47,7 @@ class MessageMongoDao(
         PydanticObjectId,
         MessageRead,
         MessageInternalCreate,
-        MessageUpdate,
+        MessageInternalUpdate,
     ]
 ):
     async def get_cursor_messages_by_group(

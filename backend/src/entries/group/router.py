@@ -87,9 +87,18 @@ async def leave_group(
 @router.get("/{group_id}")
 async def get_group(
     group_id: UUID,
-    group_service: AutoGroupDep,
+    group_service: GroupServiceDep,
+    current_user: CurrentUserDep,
 ) -> AutoGroupRead:
-    return await group_service.get(id=group_id)
+    return await group_service.get_polymophic(id=group_id, user_id=current_user.id)
+
+
+@router.get("/{group_id}/members/count")
+async def get_group_members_count(
+    group_id: UUID,
+    group_service: GroupServiceDep,
+) -> int:
+    return await group_service.get_user_count_in_group(group_id)
 
 
 @router.get("/me/groups")

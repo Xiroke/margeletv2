@@ -1,6 +1,7 @@
 from enum import StrEnum
 from uuid import UUID
 
+from beanie import PydanticObjectId
 from pydantic import BaseModel
 
 from src.entries.message.schemas import MessageCreate, MessageRead, MessageUpdate
@@ -18,7 +19,7 @@ class WsBaseEvent(BaseModel):
 # Универсальный входящий event
 class WsEventCreate(WsBaseEvent):
     data: dict | MessageCreate | MessageUpdate | None = None
-    id: UUID | None = None
+    id: PydanticObjectId | None = None
 
 
 class WsMessageCreate(WsBaseEvent):
@@ -28,7 +29,7 @@ class WsMessageCreate(WsBaseEvent):
 
 class WsMessageUpdate(WsBaseEvent):
     category: WsEventCategoryEnum = WsEventCategoryEnum.MESSAGE_UPDATE
-    id: UUID
+    id: PydanticObjectId
     data: MessageUpdate
 
 

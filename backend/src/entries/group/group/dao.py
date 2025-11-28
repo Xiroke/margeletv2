@@ -2,10 +2,14 @@ from abc import ABC, abstractmethod
 from typing import Protocol
 from uuid import UUID
 
-from sqlalchemy import and_, delete, insert, select
+from sqlalchemy import and_, delete, func, insert, select
+from sqlalchemy.orm import with_polymorphic
 
 from src.core.abstract.dao.sql_impl import SqlDaoImpl
+from src.entries.group.personal_group.models import PersonalGroupModel
 from src.entries.group.role.models import RoleToUserGroup
+from src.entries.group.schemas import AutoGroupRead, group_model_to_schema_map
+from src.utils.exceptions import ModelNotFoundException
 
 from .models import GroupModel, UserToGroupModel
 from .schemas import GroupCreate, GroupRead, GroupUpdate
@@ -81,7 +85,33 @@ class GroupSqlDao(
 ):
     """A group class that can be used independently"""
 
-    pass
+    async def get_user_count_in_group(self, group_id: UUID) -> int:
+        result = await self.session.execute(  # pyright: ignore[reportAttributeAccessIssue]
+            select(func.count()).filter(UserToGroupModel.group_id == group_id)
+        )
+        result = result.scalar_one_or_none()
+
+        if result is None:
+            raise ModelNotFoundException(GroupModel, group_id)
+
+        return result
+
+    async def get_polymophic(self, id: UUID, user_id: UUID) -> AutoGroupRead:
+        result = await self.session.execute(  # pyright: ignore[reportAttributeAccessIssue]
+            select(with_polymorphic(self.model_type, "*")).filter(
+                self.model_type.id == id
+            )
+        )
+
+        raw_data = result.scalar_one_or_none()
+
+        if raw_data is None:
+            raise ModelNotFoundException(self.model_type, id)
+
+        if isinstance(raw_data, PersonalGroupModel):
+            raw_data = raw_data.with_context(user_id)
+
+        return group_model_to_schema_map[type(raw_data)].model_validate(raw_data)
 
 
 class GroupDaoProtocolParent(
