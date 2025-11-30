@@ -1,8 +1,9 @@
 import type { FC } from 'react'
 
+import { type NavigateOptions, useNavigate } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import { PlusIcon, SunMoonIcon, UserIcon, UsersIcon } from 'lucide-react'
-import { memo, useRef } from 'react'
+import { memo } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { switchTheme } from '@/shared/lib/switchTheme'
@@ -19,16 +20,31 @@ interface ChatNavigationProps {
   settingsProps: SettingsDropdownProps
 }
 
+const simpleGroupNavigateOptions: NavigateOptions = {
+  params: (prev) => ({
+    ...prev,
+    groupType: 'simple_group',
+  }),
+  to: '/group/$groupType/{-$groupId}',
+}
+
+const personalGroupNavigateOptions: NavigateOptions = {
+  params: (prev) => ({
+    ...prev,
+    groupType: 'personal_group',
+  }),
+  to: '/group/$groupType/{-$groupId}',
+}
+
+const IconNavigationProps = { className: 'size-6', size: 24, strokeWidth: 2 }
+
 export const ChatNavigation: FC<ChatNavigationProps> = memo(
-  (props: ChatNavigationProps) => {
-    const { className, settingsProps } = props
+  ({ className, settingsProps }: ChatNavigationProps) => {
+    const navigate = useNavigate()
 
-    const simpleGroupButtonRef = useRef<HTMLButtonElement>(null)
-    const personalGroupButtonRef = useRef<HTMLButtonElement>(null)
-
-    useHotkeys('ctrl+alt+g', () => simpleGroupButtonRef.current?.click(),
+    useHotkeys('ctrl+alt+g', () => navigate(simpleGroupNavigateOptions),
     )
-    useHotkeys('ctrl+alt+p', () => personalGroupButtonRef.current?.click(),
+    useHotkeys('ctrl+alt+p', () => navigate(personalGroupNavigateOptions),
     )
 
     return (
@@ -40,42 +56,28 @@ export const ChatNavigation: FC<ChatNavigationProps> = memo(
           }}
           variant="ghost"
         >
-          <PlusIcon className="size-6" size={24} strokeWidth={2} />
+          <PlusIcon {...IconNavigationProps} />
         </Button>
 
         <Button
-          navigateOptions={{
-            params: prev => ({
-              ...prev,
-              groupType: 'personal_group',
-            }),
-            to: '/group/$groupType/{-$groupId}',
-          }}
-          ref={personalGroupButtonRef}
+          navigateOptions={personalGroupNavigateOptions}
           variant="ghost"
         >
-          <UserIcon className="size-6" size={24} strokeWidth={2} />
+          <UserIcon {...IconNavigationProps} />
         </Button>
 
         <Button
-          navigateOptions={{
-            params: prev => ({
-              ...prev,
-              groupType: 'simple_group',
-            }),
-            to: '/group/$groupType/{-$groupId}',
-          }}
-          ref={simpleGroupButtonRef}
+          navigateOptions={simpleGroupNavigateOptions}
           variant="ghost"
         >
-          <UsersIcon className="size-6" size={24} strokeWidth={1.6} />
+          <UsersIcon {...IconNavigationProps} />
         </Button>
 
         <Button
           onClick={switchTheme}
           variant="ghost"
         >
-          <SunMoonIcon className="size-6" size={24} strokeWidth={1.6} />
+          <SunMoonIcon {...IconNavigationProps} />
         </Button>
 
         <SettingsDropdown {...settingsProps} />
@@ -83,3 +85,5 @@ export const ChatNavigation: FC<ChatNavigationProps> = memo(
     )
   },
 )
+
+export const MobileChatNavigation = memo(ChatNavigation)

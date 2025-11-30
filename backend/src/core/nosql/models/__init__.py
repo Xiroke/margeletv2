@@ -1,3 +1,3 @@
 from src.entries.message.models import MessageModel
 
-__all__ = ["MessageModel", "IdToUsernameModel"]
+__all__ = ["MessageModel"]

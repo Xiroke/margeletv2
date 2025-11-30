@@ -11,14 +11,16 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['src/shared/api/gererated/']),
-  ...storybook.configs['flat/recommended'],
-  ...tseslint.configs.recommended,
-  eslint.configs.recommended,
+  globalIgnores(['dist/', 'node_modules/', 'src/shared/api/generated/']),
 
-  // ✅ Добавляем готовые конфигурации stylistic
-  stylistic.configs['disable-legacy'], // Отключает legacy-правила
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...storybook.configs['flat/recommended'],
+  pluginReact.configs.flat.recommended,
+
   stylistic.configs.customize({
+    arrowParens: 'always',
+    braceStyle: '1tbs',
     indent: 2,
     jsx: true,
     quotes: 'single',
@@ -26,69 +28,52 @@ export default defineConfig([
   }),
 
   {
-    files: ['**/*.{ts,tsx,js,jsx}'],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-      },
-    },
-    plugins: {
-      '@stylistic': stylistic,
-      perfectionist,
-    },
-    rules: {
-      'import/no-cycle': 'off',
-      ...perfectionist.configs['recommended-natural'].rules,
-    },
-  },
-
-  {
-    extends: [pluginReact.configs.flat.recommended],
     files: ['**/*.{js,ts,jsx,tsx}'],
     languageOptions: {
-      globals: { React: 'readonly' },
-    },
-    plugins: {
-      'pluginReact': fixupPluginRules(pluginReact),
-      'react-hooks': fixupPluginRules(reactHooks),
-    },
-    rules: {
-      // === TypeScript ===
-      '@typescript-eslint/no-shadow': 'error',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-
-      'no-shadow': 'off',
-      'no-undef': 'off',
-
-      'react-hooks/exhaustive-deps': 'warn',
-      'react-hooks/rules-of-hooks': 'error',
-
-      // кастыли
-      'react/display-name': 'off',
-      'react/function-component-definition': 'off',
-      'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
-      'react/no-array-index-key': 'off',
-      'react/no-children-prop': 'off',
-      'react/no-unstable-nested-components': 'warn',
-
-      // === React ===
-      'react/prop-types': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'react/require-default-props': 'off',
-    },
-    settings: {
-      react: {
-        version: 'detect',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: 'readonly',
+      },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
-  },
-
-  {
     plugins: {
+      perfectionist,
+      'react-hooks': fixupPluginRules(reactHooks),
       'unused-imports': unusedImports,
     },
     rules: {
+      // === Import Sorting (Perfectionist) ===
+      'import/no-cycle': 'off',
+      ...perfectionist.configs['recommended-natural'].rules,
+
+      // === TypeScript ===
+      '@typescript-eslint/no-shadow': 'error',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-shadow': 'off',
+      'no-undef': 'off',
+
+      // === Unused Imports ===
       'no-unused-vars': 'off',
+      'react-hooks/exhaustive-deps': 'warn',
+
+      // === React Hooks ===
+      'react-hooks/rules-of-hooks': 'error',
+      // === React ===
+      'react/display-name': 'off',
+      'react/function-component-definition': 'off',
+      'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'] }],
+      'react/no-array-index-key': 'off',
+      'react/no-children-prop': 'off',
+      'react/no-unstable-nested-components': 'warn',
+      'react/prop-types': 'off',
+      'react/react-in-jsx-scope': 'off',
+
+      'react/require-default-props': 'off',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
@@ -99,6 +84,12 @@ export default defineConfig([
           varsIgnorePattern: '^_',
         },
       ],
+
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
     },
   },
 ])

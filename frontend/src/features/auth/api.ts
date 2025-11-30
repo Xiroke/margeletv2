@@ -1,3 +1,6 @@
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+
 import {
   getAccessTokenApiAuthTokenPostMutation,
   loginApiAuthLoginPostMutation,
@@ -15,4 +18,16 @@ export const authQueryProps = {
     resendVerificationApiAuthResendVerificationPostMutation,
   tokenMut: getAccessTokenApiAuthTokenPostMutation,
   verifyMut: verifyApiAuthVerifyPostMutation,
+}
+
+export const useLogout = () => {
+  const navigate = useNavigate()
+  const logout = useMutation(authQueryProps.logoutMut())
+
+  const onClickLogout = () => {
+    logout.mutate({})
+    navigate({ to: '/' })
+  }
+
+  return onClickLogout
 }

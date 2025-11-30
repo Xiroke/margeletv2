@@ -1,14 +1,11 @@
 import type { QueryClient } from '@tanstack/react-query'
 
 import { createRootRouteWithContext, Outlet, redirect } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Toaster } from 'sonner'
 
 import { AllProviders } from '@/app/providers/AllProviders.tsx'
 import { excludedAuthCheckRoutes } from '@/config.ts'
 import { getIsAuth } from '@/shared/lib/getIsAuth.ts'
-
-import TanStackQueryLayout from '../integrations/tanstack-query/layout.tsx'
 
 interface MyRouterContext {
   isAuth: boolean
@@ -37,8 +34,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       <AllProviders>
         <Outlet />
       </AllProviders>
-      <TanStackRouterDevtools />
-      <TanStackQueryLayout />
+      {/* <TanStackRouterDevtools />
+      <TanStackQueryLayout /> */}
     </>
   ),
 })

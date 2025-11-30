@@ -8,6 +8,7 @@ import { useCopyToClipboard } from 'usehooks-ts'
 
 import type { MessageRead } from '@/shared/api/generated'
 
+import { cn } from '@/shared/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/shared/ui/context-menu'
 
@@ -18,18 +19,20 @@ interface GroupMessageProps {
   author: string | undefined
   className?: string
   message: MessageRead
+  onEdit: () => void
 }
 
 export const GroupMessage = (props: GroupMessageProps) => {
-  const messageId = props.message.id
-  const groupId = props.message.to_group_id
+  const { author, className, message, onEdit, ...rest } = props
+
   const queryClient = useQueryClient()
+
   const deleteMessage = useMutation(messageQueryProps.delete())
 
   const handleDelete = () => {
     const fetchDelete = async () => {
-      await deleteMessage.mutateAsync({ path: { message_id: messageId } })
-      queryClient.invalidateQueries({ queryKey: messageQueryProps.getCursorMessagesInfKey({ path: { group_id: groupId } }) })
+      await deleteMessage.mutateAsync({ path: { message_id: message.id } })
+      queryClient.invalidateQueries({ queryKey: messageQueryProps.getCursorMessagesInfKey({ path: { group_id: message.to_group_id } }) })
     }
 
     fetchDelete()
@@ -40,14 +43,14 @@ export const GroupMessage = (props: GroupMessageProps) => {
   return (
     <ContextMenu>
       <ContextMenuTrigger className="w-full">
-        <GroupMessageContent {...props} />
+        <GroupMessageContent {...rest} author={author} message={message} onEdit={onEdit} />
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-52">
-        <ContextMenuItem onClick={() => setInputState(props.message)}>
+      <ContextMenuContent className={cn('w-52', className)}>
+        <ContextMenuItem onClick={() => onEdit()}>
           <EditIcon />
           Edit
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => copyToClipboard(props.message.message)}>
+        <ContextMenuItem onClick={() => copyToClipboard(message.message)}>
           <CopyIcon />
           Copy
         </ContextMenuItem>
@@ -59,6 +62,7 @@ export const GroupMessage = (props: GroupMessageProps) => {
     </ContextMenu>
   )
 }
+
 export const GroupMessageContent: FC<GroupMessageProps> = memo(
   (props: GroupMessageProps) => {
     const { author, className, message } = props
@@ -83,7 +87,11 @@ export const GroupMessageContent: FC<GroupMessageProps> = memo(
 
           <div className={cls.message_row}>
             <span className={cls.text}>{message.message}</span>
-            <span className={cls.created_at}>{timeStr}</span>
+            <span className={cn(cls.created_at, 'text-foreground/40')}>
+              {message.is_edited && '(edited)'}
+              {' '}
+              {timeStr}
+            </span>
           </div>
         </div>
       </div>

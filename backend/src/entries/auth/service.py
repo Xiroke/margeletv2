@@ -160,3 +160,6 @@ class AuthService:
             raise HTTPAuthenticationNotVerifiedException
 
         return user
+
+    async def logout(self, refresh_token: str):
+        await self.refresh_token_dao.delete(value=refresh_token)

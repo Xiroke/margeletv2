@@ -18,9 +18,10 @@ interface MessageListProps {
   className?: string
   groupId: string
   initOnMessage?: Dispatch<SetStateAction<(d: WsEventRead) => void>>
+  onEditMessage: (message: MessageRead) => void
 }
 
-export const MessageList: FC<MessageListProps> = memo(({ className, groupId, initOnMessage }) => {
+export const MessageList: FC<MessageListProps> = memo(({ className, groupId, initOnMessage, onEditMessage }) => {
   const queryClient = useQueryClient()
 
   const [knownUsers, setKnownUsers] = useState<Record<string, string>>({})
@@ -45,30 +46,45 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
     if (!initOnMessage) return
 
     const handleWsMessage = (event: WsEventRead) => {
-      if (event.category !== 'message_create') return
+      if (event.category == 'message_create') {
+        const newMessage = event.data as MessageRead
 
-      const newMessage = event.data as MessageRead
-
-      queryClient.setQueryData(queryConfig.queryKey, (old: any) => {
-        if (!old) {
-          return {
-            pageParams: [],
-            pages: [
-              { cursor: null, has_more: true, messages: [newMessage] },
-            ],
+        queryClient.setQueryData(queryConfig.queryKey, (old: any) => {
+          if (!old) {
+            return {
+              pageParams: [],
+              pages: [
+                { cursor: null, has_more: true, messages: [newMessage] },
+              ],
+            }
           }
-        }
 
-        return {
-          ...old,
-          pages: old.pages.map((p: any, index: number) =>
-            index === 0
-              ? { ...p, messages: [newMessage, ...p.messages] }
-              : p,
-          ),
-        }
-      })
+          return {
+            ...old,
+            pages: old.pages.map((p: any, index: number) =>
+              index === 0
+                ? { ...p, messages: [newMessage, ...p.messages] }
+                : p,
+            ),
+          }
+        })
+      }
 
+      else if (event.category === 'message_update') {
+        const updatedMessage = event.data as MessageRead
+        queryClient.setQueryData(queryConfig.queryKey, (old: any) => {
+          if (!old) return old
+          return {
+            ...old,
+            pages: old.pages.map((p: any) => ({
+              ...p,
+              messages: p.messages.map((m: any) =>
+                m.id === updatedMessage.id ? updatedMessage : m,
+              ),
+            })),
+          }
+        })
+      }
       scrollToBottom()
     }
 
@@ -117,6 +133,7 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
             author={knownUsers[message.user_id]}
             key={message.id}
             message={message}
+            onEdit={() => onEditMessage?.(message)}
           />
         )),
       )}

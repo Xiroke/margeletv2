@@ -17,9 +17,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Загружаем .env из корня проекта
-load_dotenv(dotenv_path=pathlib.Path(__file__).resolve().parent.parent / ".env")
+load_dotenv(
+    dotenv_path=pathlib.Path(__file__).resolve().parent.parent.parent.parent / ".env"
+)
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 if sys.platform == "win32":
     path = pathlib.Path(r"C:\Program Files\Graphviz\bin")
@@ -33,9 +35,13 @@ from src.core.db.database import Base
 from src.core.db.models import *  # noqa: F403
 
 ## Draw from SQLAlchemy base
-render_er(Base, "postgres_diagram.png")
+render_er(Base, str(Path(__file__).parent) + "/postgres_diagram.png")
 
 
-from src.core.nosql.models import IdToUsernameModel, MessageModel
+from src.core.nosql.models import MessageModel
 
-erd.draw(MessageModel, IdToUsernameModel, out="schema_mongo_db.png")
+erd.draw(MessageModel, out=str(Path(__file__).parent) + "/schema_mongo_db.png")
+
+
+### Class diagram
+### pyreverse -o png -p Margelet src

@@ -1,11 +1,9 @@
 import type { FC } from 'react'
 
-import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { Settings } from 'lucide-react'
 import { memo } from 'react'
 
-import { authQueryProps } from '@/features/auth/api'
+import { useLogout } from '@/features/auth/api'
 import { Button } from '@/shared/ui/button'
 import {
   DropdownMenu,
@@ -22,13 +20,7 @@ export interface SettingsDropdownProps {
 export const SettingsDropdown: FC<SettingsDropdownProps> = memo(
   (props: SettingsDropdownProps) => {
     const { setIsProfileDialogOpen } = props
-    const logout = useMutation(authQueryProps.logoutMut())
-    const navigate = useNavigate()
-
-    const onClickLogout = () => {
-      logout.mutate({})
-      navigate({ to: '/' })
-    }
+    const logout = useLogout()
 
     return (
       <DropdownMenu>
@@ -44,7 +36,7 @@ export const SettingsDropdown: FC<SettingsDropdownProps> = memo(
           <DropdownMenuItem onClick={() => setIsProfileDialogOpen(true)}>
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onClickLogout()}>
+          <DropdownMenuItem onClick={logout}>
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>

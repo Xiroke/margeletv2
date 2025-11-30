@@ -13,6 +13,7 @@ async function accessTokenMiddleware(request) {
   let token = await getAccessToken()
 
   if (!token) {
+    console.log('Fetch access token')
     token = await fetchAccessToken()
   }
 

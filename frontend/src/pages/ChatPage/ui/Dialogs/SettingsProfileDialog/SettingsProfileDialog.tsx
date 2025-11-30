@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { CircleUserIcon, User2Icon } from 'lucide-react'
-import { memo, useState } from 'react'
+import { type HTMLAttributes, memo, useState } from 'react'
 
 import type { DialogProps } from '@/shared/types/DialogProps'
 
 import { userQueryProps } from '@/entities/User/api'
+import { useLogout } from '@/features/auth/api'
 import { cn } from '@/shared/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Dialog, DialogContent } from '@/shared/ui/dialog'
@@ -15,6 +16,7 @@ export const SettingsProfileDialog = memo(
   ({ isOpen, setOpenChange }: DialogProps) => {
     const [isChangeNameOpen, setIsChangeNameOpen] = useState(false)
 
+    const logout = useLogout()
     const { data: meData } = useQuery(userQueryProps.getMeOpt())
 
     return meData
@@ -30,8 +32,9 @@ export const SettingsProfileDialog = memo(
                 </Avatar>
               </div>
               <div className="flex flex-col mt-6 gap-2">
-                <SettingsRow icon={<CircleUserIcon />} label="Name" onClick={() => setIsChangeNameOpen(true)} value={meData?.name} />
-                <SettingsRow icon={<User2Icon />} label="Account Name" value={'@' + meData?.account_name} />
+                <SettingsSetRow icon={<CircleUserIcon />} label="Name" onClick={() => setIsChangeNameOpen(true)} value={meData?.name} />
+                <SettingsSetRow icon={<User2Icon />} label="Account Name" value={'@' + meData?.account_name} />
+                <SettingsRow className="bg-destructive hover:bg-destructive/80 justify-center text-background font-bold" onClick={logout}>Log out</SettingsRow>
               </div>
             </DialogContent>
           </Dialog>
@@ -40,16 +43,16 @@ export const SettingsProfileDialog = memo(
   },
 )
 
-interface DataRowProps extends React.HTMLAttributes<HTMLDivElement> {
+interface DataSetRowProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string
   icon: React.ReactNode
   label: string
   value?: null | string
 }
 
-const SettingsRow = ({ className, icon, label, value, ...props }: DataRowProps) => {
+const SettingsSetRow = ({ className, icon, label, value, ...props }: DataSetRowProps) => {
   return (
-    <div {...props} className={cn('flex justify-between h-10 hover:bg-foreground/5 items-center rounded-md px-2 cursor-pointer', className)}>
+    <SettingsRow {...props} className={cn('justify-between', className)}>
       <div className="text-muted-foreground flex gap-3">
         <div>
           {icon}
@@ -57,6 +60,14 @@ const SettingsRow = ({ className, icon, label, value, ...props }: DataRowProps) 
         {label}
       </div>
       <div>{value || '-'}</div>
+    </SettingsRow>
+  )
+}
+
+const SettingsRow = ({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div {...props} className={cn('flex h-10 hover:bg-foreground/5 items-center rounded-md px-2 cursor-pointer', className)}>
+      {children}
     </div>
   )
 }

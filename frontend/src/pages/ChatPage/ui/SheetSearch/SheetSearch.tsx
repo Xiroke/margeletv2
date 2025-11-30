@@ -1,15 +1,12 @@
 import type { ReactNode } from 'react'
 
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { SearchIcon } from 'lucide-react'
-import { ResultAsync } from 'neverthrow'
 import { useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { toast } from 'sonner'
 
 import { GroupCard } from '@/entities/Group/ui/GroupCard'
-import { personalGroupQueryProps } from '@/entities/PersonalGroup/api'
 import { simpleGroupQueryProps } from '@/entities/SimpleGroup/api'
 import { userQueryProps } from '@/entities/User/api'
 import { UserCard } from '@/entities/User/UserCard'
@@ -59,20 +56,6 @@ export const SheetSearchUsersContent = ({ className, query }: SheetSearchUsersCo
     retry: false,
   })
 
-  const personalGroupCreate = useMutation(personalGroupQueryProps.create())
-
-  const handleClick = async (id: string) => {
-    const result = await ResultAsync.fromPromise(
-      personalGroupCreate.mutateAsync({ path: { other_user_id: id } }),
-      error => error as { detail: string },
-    )
-
-    result.match(
-      () => toast.success('Personal group created'),
-      err => toast.error(err.detail),
-    )
-  }
-
   return (
     <SheetSearchContent
       className={className}
@@ -84,7 +67,7 @@ export const SheetSearchUsersContent = ({ className, query }: SheetSearchUsersCo
     >
       {data && (
         <div className="flex flex-col gap-2">
-          <UserCard id={data.id} onClick={() => handleClick(data.id)} username={data.name} />
+          <UserCard id={data.id} username={data.name} />
         </div>
       )}
     </SheetSearchContent>

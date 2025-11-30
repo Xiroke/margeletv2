@@ -102,6 +102,10 @@ export type MessageRead = {
      * Created At
      */
     created_at: string;
+    /**
+     * Is Edited
+     */
+    is_edited: boolean;
 };
 
 /**
@@ -329,10 +333,7 @@ export type WsEventCreate = {
     data?: {
         [key: string]: unknown;
     } | MessageCreate | MessageUpdate | null;
-    /**
-     * Id
-     */
-    id?: string | null;
+    id?: PydanticObjectId | null;
 };
 
 /**
@@ -372,10 +373,7 @@ export type WsMessageReadOutput = {
  */
 export type WsMessageUpdate = {
     category?: WsEventCategoryEnum;
-    /**
-     * Id
-     */
-    id: string;
+    id: PydanticObjectId;
     data: MessageUpdate;
 };
 
@@ -928,12 +926,7 @@ export type GetGroupApiGroupsGroupIdGetData = {
          */
         group_id: string;
     };
-    query: {
-        /**
-         * Group Type
-         */
-        group_type: 'simple_group' | 'personal_group';
-    };
+    query?: never;
     url: '/api/groups/{group_id}';
 };
 
@@ -955,6 +948,37 @@ export type GetGroupApiGroupsGroupIdGetResponses = {
 };
 
 export type GetGroupApiGroupsGroupIdGetResponse = GetGroupApiGroupsGroupIdGetResponses[keyof GetGroupApiGroupsGroupIdGetResponses];
+
+export type GetGroupMembersCountApiGroupsGroupIdMembersCountGetData = {
+    body?: never;
+    path: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    query?: never;
+    url: '/api/groups/{group_id}/members/count';
+};
+
+export type GetGroupMembersCountApiGroupsGroupIdMembersCountGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetGroupMembersCountApiGroupsGroupIdMembersCountGetError = GetGroupMembersCountApiGroupsGroupIdMembersCountGetErrors[keyof GetGroupMembersCountApiGroupsGroupIdMembersCountGetErrors];
+
+export type GetGroupMembersCountApiGroupsGroupIdMembersCountGetResponses = {
+    /**
+     * Response Get Group Members Count Api Groups  Group Id  Members Count Get
+     * Successful Response
+     */
+    200: number;
+};
+
+export type GetGroupMembersCountApiGroupsGroupIdMembersCountGetResponse = GetGroupMembersCountApiGroupsGroupIdMembersCountGetResponses[keyof GetGroupMembersCountApiGroupsGroupIdMembersCountGetResponses];
 
 export type GetMyGroupApiGroupsMeGroupsGetData = {
     body?: never;

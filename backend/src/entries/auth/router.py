@@ -61,5 +61,8 @@ async def get_access_token(
 
 
 @router.post("/logout")
-async def logout(response: Response, refresh_token: RefreshTokenDep):
+async def logout(
+    response: Response, refresh_token: RefreshTokenDep, auth_service: AuthServiceDep
+):
+    await auth_service.logout(refresh_token)
     response.delete_cookie("refresh_token")
