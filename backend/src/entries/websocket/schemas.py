@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Any
 from uuid import UUID
 
 from beanie import PydanticObjectId
@@ -14,6 +15,7 @@ class WsEventCategoryEnum(StrEnum):
 
 class WsBaseEvent(BaseModel):
     category: WsEventCategoryEnum
+    data: Any
 
 
 # Универсальный входящий event

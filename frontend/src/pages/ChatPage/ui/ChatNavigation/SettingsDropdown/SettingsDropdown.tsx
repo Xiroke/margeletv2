@@ -1,7 +1,6 @@
-﻿import { Settings } from 'lucide-react'
+﻿import type { ReactNode } from 'react'
 
 import { useLogout } from '@/features/auth/api'
-import { Button } from '@/shared/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,22 +9,18 @@ import {
 } from '@/shared/ui/dropdown-menu'
 
 export interface SettingsDropdownProps {
+  children: ReactNode
   className?: string
   setIsProfileDialogOpen: (open: boolean) => void
 }
 
-export const SettingsDropdown = ({ setIsProfileDialogOpen, ...props }: SettingsDropdownProps) => {
+export const SettingsDropdown = ({ children, setIsProfileDialogOpen }: SettingsDropdownProps) => {
   const logout = useLogout()
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          {...props}
-          variant="ghost"
-        >
-          <Settings className="size-6" size={24} strokeWidth={1.6} />
-        </Button>
+        {children}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-56">
         <DropdownMenuItem onClick={() => setIsProfileDialogOpen(true)}>

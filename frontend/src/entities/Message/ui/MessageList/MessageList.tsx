@@ -4,7 +4,7 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import { clsx } from 'clsx'
 import { memo, useEffect, useState } from 'react'
 
-import type { MessageRead, WsEventRead } from '@/shared/api/generated'
+import type { MessageRead, WsBaseEvent } from '@/shared/api/generated'
 
 import { userQueryProps } from '@/entities/User/api'
 import { useChatScroll } from '@/pages/ChatPage/hooks/useChatScroll'
@@ -17,13 +17,12 @@ import cls from './MessageList.module.scss'
 interface MessageListProps {
   className?: string
   groupId: string
-  initOnMessage?: Dispatch<SetStateAction<(d: WsEventRead) => void>>
+  initOnMessage?: Dispatch<SetStateAction<(d: any) => void>>
   onEditMessage: (message: MessageRead) => void
 }
 
 const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage }: MessageListProps) => {
   const queryClient = useQueryClient()
-
   const [knownUsers, setKnownUsers] = useState<Record<string, string>>({})
 
   const { containerRef, onTopIntersect, scrollToBottom } = useChatScroll()
@@ -32,30 +31,25 @@ const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage
     path: { group_id: groupId },
   })
 
-  const { data: pagesData, fetchNextPage } = useInfiniteQuery({
+  const { data: pagesData, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     ...queryConfig,
     enabled: !!groupId,
     getNextPageParam: (last) => last.cursor,
+    refetchOnWindowFocus: false,
   })
-
-  useEffect(() => {
-    if (containerRef.current) scrollToBottom()
-  }, [containerRef, scrollToBottom])
 
   useEffect(() => {
     if (!initOnMessage) return
 
-    const handleWsMessage = (event: WsEventRead) => {
-      if (event.category == 'message_create') {
+    const handleWsMessage = (event: WsBaseEvent) => {
+      if (event.category === 'message_create') {
         const newMessage = event.data as MessageRead
 
         queryClient.setQueryData(queryConfig.queryKey, (old: any) => {
           if (!old) {
             return {
               pageParams: [],
-              pages: [
-                { cursor: null, has_more: true, messages: [newMessage] },
-              ],
+              pages: [{ cursor: null, has_more: true, messages: [newMessage] }],
             }
           }
 
@@ -68,6 +62,7 @@ const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage
             ),
           }
         })
+        setTimeout(scrollToBottom, 50)
       } else if (event.category === 'message_update') {
         const updatedMessage = event.data as MessageRead
         queryClient.setQueryData(queryConfig.queryKey, (old: any) => {
@@ -83,11 +78,9 @@ const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage
           }
         })
       }
-      scrollToBottom()
     }
-
     initOnMessage(() => handleWsMessage)
-  }, [queryClient, queryConfig.queryKey, scrollToBottom])
+  }, [queryClient, queryConfig.queryKey, scrollToBottom, initOnMessage])
 
   const { mutateAsync: fetchUsernames } = useMutation({
     ...userQueryProps.getUsernamesByIdMut(),
@@ -95,7 +88,6 @@ const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage
 
   useEffect(() => {
     if (!pagesData) return
-
     const missing = new Set<string>()
 
     for (const page of pagesData.pages) {
@@ -116,14 +108,11 @@ const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage
     load()
   }, [pagesData, knownUsers, fetchUsernames])
 
-  const firstPage = pagesData?.pages?.[0]
-  const lastPage = pagesData?.pages?.[pagesData.pages.length - 1]
-
-  const isEmpty = firstPage && firstPage.messages.length === 0
+  const isEmpty = pagesData?.pages?.[0]?.messages.length === 0
 
   return (
     <div className={clsx(cls.message_list, className)} ref={containerRef}>
-      {isEmpty && 'Write your first message'}
+      {isEmpty && <div className="m-auto">Write your first message</div>}
 
       {pagesData?.pages.map((page) =>
         page.messages.map((message) => (
@@ -136,9 +125,10 @@ const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage
         )),
       )}
 
-      {lastPage?.has_more && (
+      {hasNextPage && (
         <ChatMessagesLoader
           className={cls.message_list_loader}
+          isLoading={isFetchingNextPage}
           onIntersect={() => onTopIntersect(fetchNextPage)}
         />
       )}

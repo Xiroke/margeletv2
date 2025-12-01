@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { PhoneIcon, Settings2Icon, Undo2Icon, UserPlus } from 'lucide-react'
-import { useMediaQuery } from 'usehooks-ts'
 
 import type { PersonalGroupRead, SimpleGroupRead } from '@/shared/api/generated'
 
 import { autoGroupQueryProps } from '@/entities/AutoGroup/api'
+import { useIsMedium, useIsPhone } from '@/shared/hooks/platformSize'
 import { cn } from '@/shared/lib/utils'
 import { AppAvatar } from '@/shared/ui/AppAvatar'
 
@@ -17,7 +17,9 @@ interface ChatGroupHeaderProps {
 }
 
 export const ChatGroupHeader = ({ className, groupId }: ChatGroupHeaderProps) => {
-  const isTablet = useMediaQuery('(max-width: 1024px)')
+  const isMedium = useIsMedium()
+  const isPhone = useIsPhone()
+
   const navigate = useNavigate()
 
   const group = useQuery(
@@ -28,9 +30,9 @@ export const ChatGroupHeader = ({ className, groupId }: ChatGroupHeaderProps) =>
   ).data
 
   return group && (
-    <div className={cn(className, 'flex justify-between items-center px-4 bg-background border-b h-12 w-full', isTablet && 'pt-safe')}>
+    <div className={cn(className, 'flex justify-between items-center px-4 bg-background border-b h-12 w-full', isPhone && 'pt-safe')}>
       <div className="flex items-center gap-6">
-        {isTablet && <Undo2Icon onClick={() => navigate({ to: '..' })} />}
+        {isMedium && <Undo2Icon onClick={() => navigate({ to: '..' })} />}
         <div className="flex gap-3 items-center">
           <AppAvatar fallback={group.title!} />
           <div className="">
@@ -44,11 +46,21 @@ export const ChatGroupHeader = ({ className, groupId }: ChatGroupHeaderProps) =>
         </div>
       </div>
       <div className="flex gap-6">
-        <PhoneIcon />
-        <UserPlus />
-        <GroupSettingsDropdown groupId={group.id}>
-          <Settings2Icon />
-        </GroupSettingsDropdown>
+        {!isPhone
+          ? (
+              <>
+                <PhoneIcon />
+                <UserPlus />
+                <GroupSettingsDropdown groupId={group.id}>
+                  <Settings2Icon />
+                </GroupSettingsDropdown>
+              </>
+            )
+          : (
+              <>
+                <Settings2Icon />
+              </>
+            )}
       </div>
     </div>
   )

@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { SearchIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
@@ -11,7 +10,6 @@ import { simpleGroupQueryProps } from '@/entities/SimpleGroup/api'
 import { userQueryProps } from '@/entities/User/api'
 import { UserCard } from '@/entities/User/UserCard'
 import { cn } from '@/shared/lib/utils'
-import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
@@ -108,7 +106,7 @@ export const SheetSearchGroupsContent = ({ className, query }: SheetSearchGroups
   )
 }
 
-export const SheetSearch = () => {
+export const SheetSearch = ({ children}: { children: ReactNode }) => {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
 
@@ -119,18 +117,14 @@ export const SheetSearch = () => {
   return (
     <Sheet onOpenChange={setOpen} open={open}>
       <SheetTrigger asChild>
-        <Button
-          variant="ghost"
-        >
-          <SearchIcon className="size-6" size={24} strokeWidth={2} />
-        </Button>
+        {children}
       </SheetTrigger>
       <SheetContent className="w-1/4 sm:max-w-1/4" side="left">
         <SheetHeader>
           <SheetTitle asChild><h4>Search</h4></SheetTitle>
         </SheetHeader>
         <div className="px-4 -mt-6 flex flex-col gap-6">
-          <Input autoFocus onChange={e => setQuery(e.target.value)} placeholder="Enter query" value={query} />
+          <Input autoFocus onChange={(e) => setQuery(e.target.value)} placeholder="Enter query" value={query} />
 
           <Tabs defaultValue="users">
             <TabsList>

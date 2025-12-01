@@ -315,6 +315,10 @@ export type ValidationError = {
  */
 export type WsBaseEvent = {
     category: WsEventCategoryEnum;
+    /**
+     * Data
+     */
+    data: unknown;
 };
 
 /**
@@ -373,8 +377,8 @@ export type WsMessageReadOutput = {
  */
 export type WsMessageUpdate = {
     category?: WsEventCategoryEnum;
-    id: PydanticObjectId;
     data: MessageUpdate;
+    id: PydanticObjectId;
 };
 
 export type LoginApiAuthLoginPostData = {

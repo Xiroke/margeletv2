@@ -1,47 +1,18 @@
-body {
-  overflow: hidden;
-}
-
-.chat {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-}
-
 .group_list {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  overflow-y: auto;
-  height: calc(100vh - 40px);
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
 .chat_line {
-  height: inherit;
   width: 2px;
   background-color: var(--accent-primary);
 }
 
-.selected_chat,
 .unselected_chat {
   display: flex;
-  margin: 0 auto;
-}
-
-.selected_chat {
-  justify-content: end;
-  flex-direction: column;
-  align-items: start;
-  gap: 12px;
-  flex: 1;
-}
-
-.unselected_chat {
-  flex: 1;
   flex-direction: column;
   justify-content: center;
-  font-weight: 500;
   align-items: center;
+  font-weight: 500;
+  height: 100%;
 }

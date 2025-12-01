@@ -24,7 +24,7 @@ export const LoginPage = () => {
     onSubmit: async (data) => {
       const result = await ResultAsync.fromPromise(
         login.mutateAsync({ body: data.value }),
-        error => error as { detail: string },
+        (error) => error as { detail: string },
       )
 
       if (result.isErr()) {
@@ -69,7 +69,7 @@ export const LoginPage = () => {
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="example@email.com"
                   type="email"
                   value={field.state.value}
@@ -99,7 +99,7 @@ export const LoginPage = () => {
                     id={field.name}
                     name={field.name}
                     onBlur={field.handleBlur}
-                    onChange={e => field.handleChange(e.target.value)}
+                    onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="********"
                     type="password"
                     value={field.state.value}

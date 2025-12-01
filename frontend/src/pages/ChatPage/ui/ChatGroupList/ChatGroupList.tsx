@@ -4,10 +4,13 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
 import { GroupIcon, PencilLineIcon, ScanSearchIcon } from 'lucide-react'
 
+import type { GroupCategory } from '@/entities/Group/model/types'
+
 import { autoGroupQueryProps } from '@/entities/AutoGroup/api'
 import { GroupChatCard } from '@/entities/Group'
 import { groupChatTest } from '@/entities/Group/model/test'
 import { GroupChatCardSkeleton } from '@/entities/Group/ui/GroupChatCard/GroupChatCard'
+import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import {
   Empty,
@@ -20,7 +23,7 @@ import {
 
 interface ChatGroupListProps {
   className?: string
-  groupType: 'personal_group' | 'simple_group'
+  groupType: GroupCategory
 }
 
 const EmptySimpleGroupList = () => (
@@ -73,7 +76,7 @@ export const ChatGroupList: FC<ChatGroupListProps> = (
   const { groupId } = useParams({ from: '/group/$groupType/{-$groupId}' })
 
   return (
-    <div className={className}>
+    <div className={cn(className, 'flex flex-col gap-4')}>
       {isLoading && new Array(4).map((_, idx) => <GroupChatCardSkeleton key={idx} />)}
       {!isLoading && (groups && groups?.length > 0
         ? groups.map((group, idx) => (

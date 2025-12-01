@@ -3,6 +3,8 @@ export interface Group {
   title: string
 }
 
+export type GroupCategory = 'personal_group' | 'simple_group'
+
 export interface GroupChat extends Group {
   lastMessage: string
   time: string
