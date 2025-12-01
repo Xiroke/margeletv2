@@ -1,9 +1,6 @@
-import type { FC } from 'react'
-
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+﻿import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { clsx } from 'clsx'
 import { CopyIcon, EditIcon, TrashIcon } from 'lucide-react'
-import { memo } from 'react'
 import { useCopyToClipboard } from 'usehooks-ts'
 
 import type { MessageRead } from '@/shared/api/generated'
@@ -63,38 +60,34 @@ export const GroupMessage = (props: GroupMessageProps) => {
   )
 }
 
-export const GroupMessageContent: FC<GroupMessageProps> = memo(
-  (props: GroupMessageProps) => {
-    const { author, className, message } = props
+export const GroupMessageContent = ({ author, className, message }: GroupMessageProps) => {
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const time_created_at = new Date(message.created_at)
+  const timeStr = new Intl.DateTimeFormat('ru-RU', {
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+    timeZone: userTimeZone,
+  }).format(time_created_at)
 
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const time_created_at = new Date(message.created_at)
-    const timeStr = new Intl.DateTimeFormat('ru-RU', {
-      hour: '2-digit',
-      hour12: false,
-      minute: '2-digit',
-      timeZone: userTimeZone,
-    }).format(time_created_at)
+  return (
+    <div className={clsx(cls.group_message, className)}>
+      <Avatar className="size-10">
+        <AvatarImage src="/undefined" />
+        <AvatarFallback>{author?.slice(0, 2)}</AvatarFallback>
+      </Avatar>
+      <div className={cls.message}>
+        {author && <span className={cls.author}>{author}</span>}
 
-    return (
-      <div className={clsx(cls.group_message, className)}>
-        <Avatar className="size-10">
-          <AvatarImage src="/undefined" />
-          <AvatarFallback>{author?.slice(0, 2)}</AvatarFallback>
-        </Avatar>
-        <div className={cls.message}>
-          {author && <span className={cls.author}>{author}</span>}
-
-          <div className={cls.message_row}>
-            <span className={cls.text}>{message.message}</span>
-            <span className={cn(cls.created_at, 'text-foreground/40')}>
-              {message.is_edited && '(edited)'}
-              {' '}
-              {timeStr}
-            </span>
-          </div>
+        <div className={cls.message_row}>
+          <span className={cls.text}>{message.message}</span>
+          <span className={cn(cls.created_at, 'text-foreground/40')}>
+            {message.is_edited && '(edited)'}
+            {' '}
+            {timeStr}
+          </span>
         </div>
       </div>
-    )
-  },
-)
+    </div>
+  )
+}

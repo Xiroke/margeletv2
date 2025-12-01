@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SearchRouteImport } from './routes/search'
 import { Route as RegistrationRouteImport } from './routes/registration'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GroupsIndexRouteImport } from './routes/groups/index'
@@ -18,11 +17,6 @@ import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-qu
 import { Route as VerifyEmailChar123TokenChar125RouteImport } from './routes/verify.$email.{-$token}'
 import { Route as GroupGroupTypeChar123GroupIdChar125RouteImport } from './routes/group/$groupType/{-$groupId}'
 
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RegistrationRoute = RegistrationRouteImport.update({
   id: '/registration',
   path: '/registration',
@@ -64,7 +58,6 @@ const GroupGroupTypeChar123GroupIdChar125Route =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
-  '/search': typeof SearchRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/groups/createSimple': typeof GroupsCreateSimpleRoute
   '/groups': typeof GroupsIndexRoute
@@ -74,7 +67,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
-  '/search': typeof SearchRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/groups/createSimple': typeof GroupsCreateSimpleRoute
   '/groups': typeof GroupsIndexRoute
@@ -85,7 +77,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
-  '/search': typeof SearchRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/groups/createSimple': typeof GroupsCreateSimpleRoute
   '/groups/': typeof GroupsIndexRoute
@@ -97,7 +88,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/registration'
-    | '/search'
     | '/demo/tanstack-query'
     | '/groups/createSimple'
     | '/groups'
@@ -107,7 +97,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/registration'
-    | '/search'
     | '/demo/tanstack-query'
     | '/groups/createSimple'
     | '/groups'
@@ -117,7 +106,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/registration'
-    | '/search'
     | '/demo/tanstack-query'
     | '/groups/createSimple'
     | '/groups/'
@@ -128,7 +116,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RegistrationRoute: typeof RegistrationRoute
-  SearchRoute: typeof SearchRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   GroupsCreateSimpleRoute: typeof GroupsCreateSimpleRoute
   GroupsIndexRoute: typeof GroupsIndexRoute
@@ -138,13 +125,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/registration': {
       id: '/registration'
       path: '/registration'
@@ -200,7 +180,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RegistrationRoute: RegistrationRoute,
-  SearchRoute: SearchRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   GroupsCreateSimpleRoute: GroupsCreateSimpleRoute,
   GroupsIndexRoute: GroupsIndexRoute,

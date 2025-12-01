@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'usehooks-ts'
 
 import type { MessageRead, WsEventRead, WsMessageCreate, WsMessageUpdate } from '@/shared/api/generated'
@@ -31,50 +31,57 @@ export const ChatPage = () => {
   const groupId = params.groupId
   const groupType = params.groupType as 'personal_group' | 'simple_group'
 
+  const showSidebar = (!groupId && isTablet) || !isTablet
+
   const ws = useWS()
 
   const { data: groups } = useQuery(
     autoGroupQueryProps.getMyGroups({ query: { group_type: groupType } }),
   )
 
-  const myGroupIds = useMemo(() => groups?.map(g => g.id) ?? [], [groups])
+  const isMyGroup = useMemo(() =>
+    groups?.some((g) => g.id === groupId) ?? false,
+  [groups, groupId])
 
   useEffect(() => {
     if (ws.isConnected) ws.onMessage(onMessage)
-  }, [ws, onMessage])
+  }, [ws])
 
-  // Sending message
-  const send = (message: string) => {
+  const handleSend = useCallback((message: string) => {
+    if (!groupId) return
+
+    const payload = editingMessage
+      ? JSON.stringify({
+          category: 'message_update',
+          data: { message },
+          id: editingMessage.id,
+        } as WsMessageUpdate)
+      : JSON.stringify({
+          category: 'message_create',
+          data: { message, to_group_id: groupId },
+        } as WsMessageCreate)
+
+    ws.send(payload)
+
     if (editingMessage) {
-      sendUpdate(message, editingMessage.id)
       setEditingMessage(null)
     }
-    else {
-      sendCreate(message)
-    }
-  }
+  }, [ws, groupId, editingMessage])
 
-  const sendCreate = (message: string) => {
-    const packet: WsMessageCreate = {
-      category: 'message_create',
-      data: { message, to_group_id: groupId! },
+  const chatInputProps = useMemo(() => {
+    if (!groupId || !isMyGroup) {
+      return { placeholder: 'Join the group first', readOnly: true }
     }
-    ws.send(JSON.stringify(packet))
-  }
-
-  const sendUpdate = (message: string, messageId: string) => {
-    const packet: WsMessageUpdate = {
-      category: 'message_update',
-      data: { message },
-      id: messageId,
+    return {
+      editingMessage,
+      onCancelEdit: () => setEditingMessage(null),
+      onSend: handleSend,
     }
-    ws.send(JSON.stringify(packet))
-  }
+  }, [groupId, isMyGroup, editingMessage, handleSend])
 
-  const chatInputProps
-    = groupId && myGroupIds.includes(groupId)
-      ? { editingMessage, onCancelEdit: () => setEditingMessage(null), onSend: send }
-      : { placeholder: 'Join the group first', readOnly: true }
+  const settingsProps = useMemo(() => ({
+    setIsProfileDialogOpen: setProfileDialogOpen,
+  }), [])
 
   return (
     <div className={cls.chat}>
@@ -83,11 +90,11 @@ export const ChatPage = () => {
       {!isPhone && (
         <ChatNavigation
           className="py-10 ml-5"
-          settingsProps={{ setIsProfileDialogOpen: setProfileDialogOpen }}
+          settingsProps={settingsProps}
         />
       )}
 
-      {((!groupId && isTablet) || !isTablet) && (
+      {showSidebar && (
         <>
           <ChatGroupList
             className={cn(cls.group_list, 'py-10 px-5 min-w-[300px] md:w-1/4 w-full md:max-w-[360px] max-w-none')}

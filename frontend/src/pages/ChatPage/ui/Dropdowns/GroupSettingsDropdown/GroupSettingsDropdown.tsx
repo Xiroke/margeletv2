@@ -1,12 +1,11 @@
-import { useMutation } from '@tanstack/react-query'
+﻿import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { memo } from 'react'
 
 import { autoGroupQueryProps } from '@/entities/AutoGroup/api'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
 
-export const GroupSettingsDropdown = memo(
-  ({ children, groupId }: { children: React.ReactNode, groupId: string }) => {
+export const GroupSettingsDropdown
+  = ({ children, groupId }: { children: React.ReactNode, groupId: string }) => {
     const navigate = useNavigate()
 
     const leaveGroup = useMutation(autoGroupQueryProps.leave())
@@ -31,5 +30,4 @@ export const GroupSettingsDropdown = memo(
         </DropdownMenuContent>
       </DropdownMenu>
     )
-  },
-)
+  }

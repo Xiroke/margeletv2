@@ -1,4 +1,4 @@
-import type { Dispatch, FC, SetStateAction } from 'react'
+﻿import type { Dispatch, SetStateAction } from 'react'
 
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { clsx } from 'clsx'
@@ -21,7 +21,7 @@ interface MessageListProps {
   onEditMessage: (message: MessageRead) => void
 }
 
-export const MessageList: FC<MessageListProps> = memo(({ className, groupId, initOnMessage, onEditMessage }) => {
+const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage }: MessageListProps) => {
   const queryClient = useQueryClient()
 
   const [knownUsers, setKnownUsers] = useState<Record<string, string>>({})
@@ -35,7 +35,7 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
   const { data: pagesData, fetchNextPage } = useInfiniteQuery({
     ...queryConfig,
     enabled: !!groupId,
-    getNextPageParam: last => last.cursor,
+    getNextPageParam: (last) => last.cursor,
   })
 
   useEffect(() => {
@@ -68,9 +68,7 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
             ),
           }
         })
-      }
-
-      else if (event.category === 'message_update') {
+      } else if (event.category === 'message_update') {
         const updatedMessage = event.data as MessageRead
         queryClient.setQueryData(queryConfig.queryKey, (old: any) => {
           if (!old) return old
@@ -89,7 +87,7 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
     }
 
     initOnMessage(() => handleWsMessage)
-  }, [initOnMessage, queryClient, queryConfig.queryKey, scrollToBottom])
+  }, [queryClient, queryConfig.queryKey, scrollToBottom])
 
   const { mutateAsync: fetchUsernames } = useMutation({
     ...userQueryProps.getUsernamesByIdMut(),
@@ -112,7 +110,7 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
 
     const load = async () => {
       const result = await fetchUsernames({ body: Array.from(missing) })
-      setKnownUsers(prev => ({ ...prev, ...result }))
+      setKnownUsers((prev) => ({ ...prev, ...result }))
     }
 
     load()
@@ -127,8 +125,8 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
     <div className={clsx(cls.message_list, className)} ref={containerRef}>
       {isEmpty && 'Write your first message'}
 
-      {pagesData?.pages.map(page =>
-        page.messages.map(message => (
+      {pagesData?.pages.map((page) =>
+        page.messages.map((message) => (
           <GroupMessage
             author={knownUsers[message.user_id]}
             key={message.id}
@@ -146,4 +144,6 @@ export const MessageList: FC<MessageListProps> = memo(({ className, groupId, ini
       )}
     </div>
   )
-})
+}
+
+export const MessageList = memo(MessageListComponent)

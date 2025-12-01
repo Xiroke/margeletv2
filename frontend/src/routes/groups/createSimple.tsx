@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+﻿import { createFileRoute } from '@tanstack/react-router'
 
 import { CreateSimpleGroupPage } from '@/pages/CreateSimpleGroupPage/ui/CreateSimpleGroupPage'
 

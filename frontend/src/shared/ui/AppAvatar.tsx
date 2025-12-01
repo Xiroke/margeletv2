@@ -1,8 +1,4 @@
-import type { FC } from 'react'
-
-import { memo } from 'react'
-
-import { cn } from '@/shared/lib/utils'
+﻿import { cn } from '@/shared/lib/utils'
 
 interface AppAvatarProps {
   avatarUrl?: null | string
@@ -11,12 +7,12 @@ interface AppAvatarProps {
   size?: number
 }
 
-export const AppAvatar: FC<AppAvatarProps> = memo(({
+export const AppAvatar = ({
   avatarUrl,
   className,
   fallback,
   size = 40,
-}) => {
+}: AppAvatarProps) => {
   return (
     <div
       className={cn(
@@ -44,4 +40,4 @@ export const AppAvatar: FC<AppAvatarProps> = memo(({
           )}
     </div>
   )
-})
+}

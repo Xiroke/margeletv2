@@ -1,8 +1,8 @@
-import type { FC, TextareaHTMLAttributes } from 'react'
+﻿import type { TextareaHTMLAttributes } from 'react'
 
 import { cva } from 'class-variance-authority'
 import { CheckIcon, FilesIcon, SendIcon, XIcon } from 'lucide-react'
-import { memo, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMediaQuery } from 'usehooks-ts'
 
 import type { MessageRead } from '@/shared/api/generated'
@@ -28,7 +28,7 @@ interface ChatInputProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   onSend?: (value: string) => void
 }
 
-export const ChatInput: FC<ChatInputProps> = memo(({ className, editingMessage, onCancelEdit, onSend, ...rest }) => {
+export const ChatInput = ({ className, editingMessage, onCancelEdit, onSend, ...rest }: ChatInputProps) => {
   const isPhone = useMediaQuery('(max-width: 576px)')
   const [value, setValue] = useState('')
   const [files, setFiles] = useState<File[]>([])
@@ -99,7 +99,7 @@ export const ChatInput: FC<ChatInputProps> = memo(({ className, editingMessage, 
         <InputGroupTextarea
           {...rest}
           className={cn('min-h-12 py-3 text-base!', isPhone && 'w-0 flex-1')}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={editingMessage ? 'Edit your message...' : 'Enter the message'}
           value={value}
@@ -121,4 +121,4 @@ export const ChatInput: FC<ChatInputProps> = memo(({ className, editingMessage, 
       />
     </>
   )
-})
+}

@@ -1,4 +1,4 @@
-import type { QueryClient } from '@tanstack/react-query'
+﻿import type { QueryClient } from '@tanstack/react-query'
 
 import { createRootRouteWithContext, Outlet, redirect } from '@tanstack/react-router'
 import { Toaster } from 'sonner'
@@ -14,7 +14,7 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ location }) => {
-    const isExcluded = excludedAuthCheckRoutes.some(route =>
+    const isExcluded = excludedAuthCheckRoutes.some((route) =>
       route.endsWith('*') ? location.pathname.startsWith(route.replace('*', '')) : location.pathname === route,
     )
 
@@ -22,8 +22,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
     if (isExcluded && !isAuth) {
       return
-    }
-    else if (isExcluded && isAuth) {
+    } else if (isExcluded && isAuth) {
       throw redirect({ to: '/groups' })
     }
     if (!isAuth) throw redirect({ to: '/' })
