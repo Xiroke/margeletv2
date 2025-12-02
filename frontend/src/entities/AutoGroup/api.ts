@@ -1,4 +1,4 @@
-import { deleteGroupApiGroupsGroupIdDeleteMutation, getGroupApiGroupsGroupIdGetOptions, getGroupMembersCountApiGroupsGroupIdMembersCountGetOptions, getMyGroupApiGroupsMeGroupsGetOptions, getMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetOptions, leaveGroupApiGroupsLeaveGroupIdPostMutation } from '@/shared/api/generated/@tanstack/react-query.gen'
+import { deleteGroupApiGroupsGroupIdDeleteMutation, getGroupApiGroupsGroupIdGetOptions, getGroupMembersCountApiGroupsGroupIdMembersCountGetOptions, getMyGroupApiGroupsMeGroupsGetOptions, getMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetOptions, joinGrougApiGroupsInviteGroupIdPostMutation, leaveGroupApiGroupsLeaveGroupIdPostMutation } from '@/shared/api/generated/@tanstack/react-query.gen'
 
 export const autoGroupQueryProps = {
   delete: deleteGroupApiGroupsGroupIdDeleteMutation,
@@ -6,5 +6,6 @@ export const autoGroupQueryProps = {
   getMembersCount: getGroupMembersCountApiGroupsGroupIdMembersCountGetOptions,
   getMyGroups: getMyGroupApiGroupsMeGroupsGetOptions,
   getMyGroupsWithLastMessage: getMyGroupsWithLastMessageApiGroupsMeWithLastMessageGetOptions,
+  join: joinGrougApiGroupsInviteGroupIdPostMutation,
   leave: leaveGroupApiGroupsLeaveGroupIdPostMutation,
 }

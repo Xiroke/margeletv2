@@ -6,7 +6,7 @@ import { useCopyToClipboard } from 'usehooks-ts'
 import type { MessageRead } from '@/shared/api/generated'
 
 import { cn } from '@/shared/lib/utils'
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
+import { AppAvatar } from '@/shared/ui/AppAvatar'
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/shared/ui/context-menu'
 
 import { messageQueryProps } from '../../api'
@@ -72,10 +72,7 @@ export const GroupMessageContent = ({ author, className, message }: GroupMessage
 
   return (
     <div className={clsx(cls.group_message, className)}>
-      <Avatar className="size-10">
-        <AvatarImage src="/undefined" />
-        <AvatarFallback>{author?.slice(0, 2)}</AvatarFallback>
-      </Avatar>
+      <AppAvatar fallback={author} />
       <div className={cls.message}>
         {author && <span className={cls.author}>{author}</span>}
 

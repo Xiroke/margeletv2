@@ -37,7 +37,7 @@ export const ChatGroupHeader = ({ className, groupId }: ChatGroupHeaderProps) =>
           <AppAvatar fallback={group.title!} />
           <div className="">
             <div className="">{group.title}</div>
-            <div className="text-muted-foreground text-sm">
+            <div className="text-gray-500 text-sm">
               {membersCount}
               {' '}
               members

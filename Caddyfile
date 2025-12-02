@@ -1,72 +1,30 @@
 {
-  servers {
-    timeouts {
-      read_body   10s
-      read_header 5s
-      write       30s
-      idle        10m
+    servers {
+        timeouts {
+            read_body   10s
+            read_header 5s
+            write       30s
+            idle        10m
+        }
     }
-  }
 }
 
 http://localhost {
-  encode gzip
+    encode gzip
 
-  reverse_proxy /static/*   http://frontend:3000 {
-    header_up Host             {host}
-    header_up X-Real-IP        {remote_host}
-    header_up X-Forwarded-For  {remote_host}
-    header_up X-Forwarded-Proto {scheme}
-  }
+    reverse_proxy /api/ws* http://backend:8000 {
+        transport http {
+            keepalive 2m
+        }
 
-  reverse_proxy /_next/*     http://frontend:3000 {
-    header_up Host             {host}
-    header_up X-Real-IP        {remote_host}
-    header_up X-Forwarded-For  {remote_host}
-    header_up X-Forwarded-Proto {scheme}
-  }
-  reverse_proxy /service-worker.js http://frontend:3000 {
-    header_up Host             {host}
-    header_up X-Real-IP        {remote_host}
-    header_up X-Forwarded-For  {remote_host}
-    header_up X-Forwarded-Proto {scheme}
-  }
-
-  reverse_proxy /api/messages/ws* http://backend:8000 {
-    header_up Host {host}
-    header_up X-Real-IP {remote_host}
-    header_up X-Forwarded-For {remote_host}
-    header_up Connection "upgrade"
-    header_up Upgrade "websocket"
-    transport http {
-      versions 1.1
-      keepalive 2m
+        flush_interval 0
     }
-    flush_interval 1s
-  }
 
-  reverse_proxy /api* http://backend:8000 {
-    header_up Host {host}
-    header_up X-Real-IP {remote_host}
-    header_up X-Forwarded-For {remote_host}
-    header_up X-Forwarded-Proto {scheme}
-    transport http {
-      versions 1.1
-      keepalive 2m
+    reverse_proxy /api* http://backend:8000 {
+        transport http {
+            keepalive 2m
+        }
     }
-    flush_interval -1
-  }
 
-  reverse_proxy /* http://frontend:3000 {
-    header_up Host {host}
-    header_up X-Real-IP {remote_host}
-    header_up X-Forwarded-For {remote_host}
-    header_up X-Forwarded-Proto {scheme}
-    transport http {
-      versions 1.1
-      keepalive 2m
-    }
-    flush_interval -1
-  }
+    reverse_proxy http://frontend:3000
 }
-

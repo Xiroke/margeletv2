@@ -1,19 +1,19 @@
-@use '@/shared/styles/form.module.scss';
+@use "@/shared/styles/form.module.scss";
 
 .actions {
-    min-width: 260px;
-    width: 20%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  min-width: 260px;
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .verifyPage {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }

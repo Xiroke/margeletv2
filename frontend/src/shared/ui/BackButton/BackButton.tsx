@@ -12,7 +12,7 @@ export const BackButton = ({ className }: BackButtonProps) => {
   const router = useRouter()
 
   return (
-    <Button className={clsx(className, 'top-10 left-15 absolute')} onClick={() => router.history.back()} type="button" variant="outline">
+    <Button className={clsx(className, 'top-[5%] left-[3%] absolute')} onClick={() => router.history.back()} type="button" variant="outline">
       <ArrowLeftIcon />
       {' '}
       Back

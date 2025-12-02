@@ -34,7 +34,7 @@ export const AppAvatar = ({
             />
           )
         : (
-            <span className="uppercase text-muted-foreground leading-none select-none">
+            <span className="uppercase text-muted-foreground leading-none select-none font-medium">
               {fallback?.slice(0, 2) ?? '?'}
             </span>
           )}

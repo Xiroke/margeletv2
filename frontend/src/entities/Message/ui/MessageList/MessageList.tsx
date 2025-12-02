@@ -9,6 +9,7 @@ import type { MessageRead, WsBaseEvent } from '@/shared/api/generated'
 import { userQueryProps } from '@/entities/User/api'
 import { useChatScroll } from '@/pages/ChatPage/hooks/useChatScroll'
 import { ChatMessagesLoader } from '@/pages/ChatPage/ui/ChatMessagesLoader/ChatMessagesLoader'
+import { cn } from '@/shared/lib/utils'
 
 import { messageQueryProps } from '../../api'
 import { GroupMessage } from '../GroupMessage/GroupMessage'
@@ -116,22 +117,22 @@ const MessageListComponent = ({ className, groupId, initOnMessage, onEditMessage
 
       {pagesData?.pages.map((page) =>
         page.messages.map((message) => (
-          <GroupMessage
-            author={knownUsers[message.user_id]}
-            key={message.id}
-            message={message}
-            onEdit={() => onEditMessage?.(message)}
-          />
+          <div className="w-full md:w-1/2 mx-auto px-2 sm:px-0" key={message.id}>
+            <GroupMessage
+              author={knownUsers[message.user_id]}
+              message={message}
+              onEdit={() => onEditMessage?.(message)}
+            />
+          </div>
         )),
       )}
 
-      {hasNextPage && (
-        <ChatMessagesLoader
-          className={cls.message_list_loader}
-          isLoading={isFetchingNextPage}
-          onIntersect={() => onTopIntersect(fetchNextPage)}
-        />
-      )}
+      <ChatMessagesLoader
+        className={cn(!hasNextPage && 'opacity-0 shrink-0 mx-auto', cls.message_list_loader)}
+        isLoading={isFetchingNextPage}
+        onIntersect={() => onTopIntersect(fetchNextPage)}
+      />
+
     </div>
   )
 }

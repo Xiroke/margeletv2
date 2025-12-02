@@ -19,9 +19,7 @@ class GroupDaoProtocol(Protocol):
     async def is_user_in_group(self, group_id: UUID, user_id: UUID) -> bool: ...
     async def add_user_to_group(self, group_id: UUID, user_id: UUID) -> None: ...
     async def remove_user_from_group(self, group_id: UUID, user_id: UUID) -> None: ...
-    async def add_role_to_user(
-        self, user_id: UUID, group_id, role_id: UUID
-    ) -> None: ...
+    async def add_role_to_user(self, user_id: UUID, group_id, role_id: int) -> None: ...
     async def get_user_ids_in_group(self, group_id: UUID) -> list[UUID]: ...
 
 
@@ -63,7 +61,7 @@ class GroupSqlDaoBase:
         return list(result.scalars().all())
 
     async def add_role_to_user(
-        self, user_id: UUID, group_id: UUID, role_id: UUID
+        self, user_id: UUID, group_id: UUID, role_id: int
     ) -> None:
         user_group_subquery = (
             select(UserToGroupModel.id)

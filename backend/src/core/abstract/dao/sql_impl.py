@@ -104,7 +104,7 @@ class SqlDaoImpl(
 
         return self._model_to_read_schema(record)
 
-    # Есть идея когда-нибудь сделать это через декораторы
+    # maybe do it using a decorators
     def _model_to_read_schema(self, model) -> ReadSchemaType:
         return self.read_schema_type.model_validate(model)
 

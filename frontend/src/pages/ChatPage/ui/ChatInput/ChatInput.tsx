@@ -1,12 +1,12 @@
-﻿import type { TextareaHTMLAttributes } from 'react'
+﻿import type { ReactNode, TextareaHTMLAttributes } from 'react'
 
 import { cva } from 'class-variance-authority'
 import { CheckIcon, FilesIcon, SendIcon, XIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useMediaQuery } from 'usehooks-ts'
 
 import type { MessageRead } from '@/shared/api/generated'
 
+import { useIsPhone } from '@/shared/hooks/platformSize'
 import { cn } from '@/shared/lib/utils'
 import { Input } from '@/shared/ui/input'
 import { InputGroup, InputGroupAddon, InputGroupTextarea } from '@/shared/ui/input-group'
@@ -29,7 +29,7 @@ interface ChatInputProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 export const ChatInput = ({ className, editingMessage, onCancelEdit, onSend, ...rest }: ChatInputProps) => {
-  const isPhone = useMediaQuery('(max-width: 576px)')
+  const isPhone = useIsPhone()
   const [value, setValue] = useState('')
   const [files, setFiles] = useState<File[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -70,7 +70,7 @@ export const ChatInput = ({ className, editingMessage, onCancelEdit, onSend, ...
   return (
     <>
       {editingMessage && (
-        <div className="flex items-center justify-between px-4 py-2 bg-muted/50 text-xs text-muted-foreground border-t border-x rounded-t-md">
+        <div className="flex items-center justify-between px-4 py-2 bg-muted text-xs text-muted-foreground border-t border-x rounded-t-md">
           <span>Editing message</span>
           <XIcon
             className="size-4 cursor-pointer hover:text-foreground"
@@ -82,8 +82,8 @@ export const ChatInput = ({ className, editingMessage, onCancelEdit, onSend, ...
         </div>
       )}
 
-      <InputGroup className={cn(inputGroupVariants({ isPhone }), className)}>
-        <InputGroupAddon align="inline-start" className="cursor-pointer">
+      <InputGroup className={cn('text-muted-foreground', inputGroupVariants({ isPhone }), className)}>
+        <InputGroupAddon align="inline-start" className="cursor-pointer text-muted-foreground">
           <div className="relative cursor-pointer">
             <FilesIcon className="size-5" />
             <Input
@@ -105,7 +105,7 @@ export const ChatInput = ({ className, editingMessage, onCancelEdit, onSend, ...
           value={value}
         />
 
-        <InputGroupAddon align="inline-end" className="cursor-pointer" onClick={send}>
+        <InputGroupAddon align="inline-end" className="cursor-pointer text-muted-foreground" onClick={send}>
           {value.trim() && (editingMessage ? <CheckIcon className="size-5" /> : <SendIcon className="size-5" />)}
         </InputGroupAddon>
       </InputGroup>
@@ -120,5 +120,17 @@ export const ChatInput = ({ className, editingMessage, onCancelEdit, onSend, ...
         open={dialogOpen}
       />
     </>
+  )
+}
+
+export const ChatShapeDummy = ({ children, className }: { children: ReactNode, className?: string }) => {
+  const isPhone = useIsPhone()
+
+  return (
+    <InputGroup className={cn('text-muted-foreground min-h-12', inputGroupVariants({ isPhone }), className)}>
+      <InputGroupAddon className="text-base">
+        {children}
+      </InputGroupAddon>
+    </InputGroup>
   )
 }

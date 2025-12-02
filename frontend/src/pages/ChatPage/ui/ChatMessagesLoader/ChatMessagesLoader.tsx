@@ -7,22 +7,23 @@ import cls from './ChatMessagesLoader.module.scss'
 
 interface ChatMessagesLoaderProps {
   className?: string
+  isLoading: boolean
   onIntersect: () => void
 }
 
-export const ChatMessagesLoader = ({ className, onIntersect }: ChatMessagesLoaderProps) => {
+export const ChatMessagesLoader = ({ className, isLoading, onIntersect }: ChatMessagesLoaderProps) => {
   const { isIntersecting, ref } = useIntersectionObserver({
     threshold: 1,
   })
 
   useEffect(() => {
-    if (isIntersecting) {
+    if (isIntersecting && !isLoading) {
       onIntersect()
     }
   }, [isIntersecting])
 
   return (
-    <div className={clsx(cls.chat_messages_loader, className)} ref={ref}>
+    <div className={clsx(className)} ref={ref}>
       <Loader2 className={cls.animate_spin} size={24} />
     </div>
   )

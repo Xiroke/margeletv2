@@ -1,5 +1,7 @@
 ﻿import { type NavigateOptions, useNavigate } from '@tanstack/react-router'
 import {
+  BadgePlusIcon,
+  LogOutIcon,
   type LucideIcon,
   MenuIcon,
   PlusIcon,
@@ -11,9 +13,11 @@ import {
 } from 'lucide-react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
+import { useLogout } from '@/features/auth/api'
 import { switchTheme } from '@/shared/lib/switchTheme'
 import { cn } from '@/shared/lib/utils'
 import { Button, type ButtonProps } from '@/shared/ui/button'
+import { Sheet, SheetContent } from '@/shared/ui/sheet'
 
 import { SheetSearch } from '../SheetSearch'
 import cls from './ChatNavigation.module.scss'
@@ -76,7 +80,7 @@ export const ChatNavigation = ({ className, setIsProfileDialogOpen }: ChatNaviga
 }
 
 export const MobileFooterChatNavigation = ({ className }: ChatNavigationProps) => {
-  const mobileBtnClass = 'flex flex-col gap-1 text-gray-600 bg-gray-100 h-full w-20 flex-1'
+  const mobileBtnClass = 'flex flex-col gap-1 bg-muted text-muted-foreground h-full w-20 flex-1'
 
   return (
     <div className={cn('flex justify-center h-14 gap-1 px-4', className)}>
@@ -92,11 +96,13 @@ export const MobileFooterChatNavigation = ({ className }: ChatNavigationProps) =
         label="Groups"
         navigateOptions={ROUTES.simpleGroup}
       />
-      <NavButton
-        className={mobileBtnClass}
-        icon={Settings}
-        label="Settings"
-      />
+      <SheetSearch>
+        <NavButton
+          className={mobileBtnClass}
+          icon={SearchIcon}
+          label="Search"
+        />
+      </SheetSearch>
     </div>
   )
 }
@@ -109,8 +115,33 @@ export const MobileHeaderNavigationContainer = ({ children, className }: { child
   )
 }
 
-export const MobileHeaderNavigationDefault = () => {
+export const MobileHeaderNavigationDefault = ({ onClickMenu }: { onClickMenu: () => void }) => {
   return (
-    <NavButton icon={MenuIcon} />
+    <NavButton icon={MenuIcon} onClick={onClickMenu} />
+  )
+}
+
+interface MobileMenuProps {
+  open: boolean
+  setOpen: (open: boolean) => void
+}
+
+export const MobileMenu = ({ open, setOpen }: MobileMenuProps) => {
+  const buttonClassName = '!px-0 w-full gap-6 justify-start'
+  const logout = useLogout()
+
+  return (
+    <Sheet onOpenChange={setOpen} open={open}>
+      <SheetContent className="p-4" side="left">
+        Menu
+        <div className=" mt-4 text-sm font-medium ">Actions</div>
+        <div className="flex flex-col gap-3 items-start text-base">
+          <NavButton className={buttonClassName} icon={BadgePlusIcon} iconClassName="size-6" label="Create group" navigateOptions={ROUTES.createGroup} />
+          <NavButton className={buttonClassName} icon={UserIcon} iconClassName="size-6" label="Profile" />
+          <NavButton className={buttonClassName} icon={SunMoonIcon} iconClassName="size-6" label="Switch theme" onClick={switchTheme} />
+          <NavButton className={cn(buttonClassName, 'text-destructive')} icon={LogOutIcon} iconClassName="size-6" label="Log out" onClick={logout} />
+        </div>
+      </SheetContent>
+    </Sheet>
   )
 }

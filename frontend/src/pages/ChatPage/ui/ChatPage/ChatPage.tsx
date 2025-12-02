@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { useParams } from '@tanstack/react-router'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { type HTMLAttributes, useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { GroupCategory } from '@/entities/Group/model/types'
@@ -10,13 +10,14 @@ import { autoGroupQueryProps } from '@/entities/AutoGroup/api'
 import { MessageList } from '@/entities/Message/ui/MessageList/MessageList'
 import { useIsMedium, useIsPhone } from '@/shared/hooks/platformSize'
 import { cn } from '@/shared/lib/utils'
+import { Button } from '@/shared/ui/button'
 import { Separator } from '@/shared/ui/separator'
 
 import { ChatGroupHeader } from '../ChatGroupHeader'
 import { ChatGroupList } from '../ChatGroupList/ChatGroupList'
 import { ChatInput } from '../ChatInput/ChatInput'
 import { ChatNavigation } from '../ChatNavigation'
-import { MobileFooterChatNavigation, MobileHeaderNavigationContainer, MobileHeaderNavigationDefault } from '../ChatNavigation/ChatNavigation'
+import { MobileFooterChatNavigation, MobileHeaderNavigationContainer, MobileHeaderNavigationDefault, MobileMenu } from '../ChatNavigation/ChatNavigation'
 import { SettingsProfileDialog } from '../Dialogs/SettingsProfileDialog'
 import cls from './ChatPage.module.scss'
 
@@ -24,6 +25,7 @@ export const ChatPage = () => {
   const isMedium = useIsMedium()
   const isPhone = useIsPhone()
   const [profileDialogOpen, setProfileDialogOpen] = useState(false)
+  const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
 
   const params = useParams({ from: '/group/$groupType/{-$groupId}' })
   const groupId = params.groupId
@@ -32,14 +34,14 @@ export const ChatPage = () => {
   const showSidebar = (!groupId && isMedium) || !isMedium
 
   return (
-    <div className="flex flex-col h-[100dvh] overflow-hidden bg-background pt-safe pb-safe">
+    <div className="flex flex-col h-dvh overflow-hidden bg-background pt-safe pb-safe">
       <SettingsProfileDialog isOpen={profileDialogOpen} setOpenChange={setProfileDialogOpen} />
 
       {isPhone
         ? (
             <>
               <MobileHeaderNavigationContainer>
-                {showSidebar ? <MobileHeaderNavigationDefault /> : (groupId && <ChatGroupHeader groupId={groupId} />)}
+                {showSidebar ? <MobileHeaderNavigationDefault onClickMenu={() => setIsOpenMobileMenu(true)} /> : (groupId && <ChatGroupHeader groupId={groupId} />)}
               </MobileHeaderNavigationContainer>
 
               <div className="flex-1 overflow-hidden flex flex-col min-h-0">
@@ -57,6 +59,8 @@ export const ChatPage = () => {
                       groupId && <CurrentGroup className="flex-1" groupId={groupId} groupType={groupType} />
                     )}
               </div>
+
+              <MobileMenu open={isOpenMobileMenu} setOpen={setIsOpenMobileMenu} />
             </>
           )
         : (
@@ -72,7 +76,7 @@ export const ChatPage = () => {
                 </>
               )}
 
-              <div className="flex flex-col flex-1 min-w-0 bg-background/50">
+              <div className="flex flex-col flex-1 min-w-0 bg-background/50 pb-4">
                 {groupId
                   ? (
                       <CurrentGroup className="flex-1" groupId={groupId} groupType={groupType} />
@@ -94,16 +98,25 @@ interface CurrentGroupProps extends HTMLAttributes<HTMLDivElement> {
 
 export const CurrentGroup = ({ className, groupId, groupType }: CurrentGroupProps) => {
   const isPhone = useIsPhone()
+  const navigate = useNavigate()
 
   const [onMessage, setOnMessage] = useState<(d: WsBaseEvent) => void>(() => {})
   const [editingMessage, setEditingMessage] = useState<MessageRead | null>(null)
 
+  const joinGroup = useMutation(autoGroupQueryProps.join())
+
   const ws = useWS()
+
+  const handleJoinGroup = async () => {
+    await joinGroup.mutateAsync({ path: { group_id: groupId } })
+    navigate({ to: '.' })
+  }
 
   useEffect(() => {
     if (ws.isConnected) ws.onMessage(onMessage)
   }, [ws])
 
+  // it must be switched to cache
   const { data: groups } = useQuery(
     autoGroupQueryProps.getMyGroups({ query: { group_type: groupType } }),
   )
@@ -134,23 +147,20 @@ export const CurrentGroup = ({ className, groupId, groupType }: CurrentGroupProp
   }, [ws, groupId, editingMessage])
 
   const chatInputProps = useMemo(() => {
-    if (!groupId || !isMyGroup) {
-      return { placeholder: 'Join the group first', readOnly: true }
-    }
     return {
       editingMessage,
       onCancelEdit: () => setEditingMessage(null),
       onSend: handleSend,
     }
-  }, [groupId, isMyGroup, editingMessage, handleSend])
+  }, [editingMessage, handleSend])
 
   return (
     <div className={cn('flex flex-col h-full w-full', className)}>
       {!isPhone && <ChatGroupHeader className="shrink-0 border-b" groupId={groupId} />}
 
-      <div className="flex-1 overflow-hidden w-full relative min-h-0 md:w-1/2 mx-auto">
+      <div className="flex-1 overflow-hidden w-full relative min-h-0">
         <MessageList
-          className="h-full mx-auto"
+          className="h-full"
           groupId={groupId}
           initOnMessage={setOnMessage}
           onEditMessage={setEditingMessage}
@@ -158,7 +168,8 @@ export const CurrentGroup = ({ className, groupId, groupType }: CurrentGroupProp
       </div>
 
       <div className="shrink-0 p-2 bg-background z-10 mx-auto w-full md:w-1/2">
-        <ChatInput {...chatInputProps} />
+        {isMyGroup && <ChatInput {...chatInputProps} />}
+        {!isMyGroup && <Button className="min-h-12" full onClick={handleJoinGroup} variant="outline">Join to group</Button>}
       </div>
     </div>
   )

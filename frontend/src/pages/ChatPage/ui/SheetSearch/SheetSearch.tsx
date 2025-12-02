@@ -119,7 +119,7 @@ export const SheetSearch = ({ children}: { children: ReactNode }) => {
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>
-      <SheetContent className="w-1/4 sm:max-w-1/4" side="left">
+      <SheetContent className="w-3/4 sm:max-w-1/4" side="left">
         <SheetHeader>
           <SheetTitle asChild><h4>Search</h4></SheetTitle>
         </SheetHeader>

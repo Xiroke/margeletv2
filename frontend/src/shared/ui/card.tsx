@@ -41,7 +41,7 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
 function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
-      className={cn('text-muted-foreground text-sm', className)}
+      className={cn('text-gray-500 text-sm', className)}
       data-slot="card-description"
       {...props}
     />
@@ -82,11 +82,12 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 export {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardAction,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle
 }
+

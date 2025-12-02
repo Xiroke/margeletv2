@@ -805,7 +805,7 @@ export type UpdateApiSimpleGroupsIdPatchResponses = {
     200: unknown;
 };
 
-export type GetInviteTokenApiGroupsInviteGetData = {
+export type GetInviteTokenApiGroupsInviteTokenGetData = {
     body?: never;
     path?: never;
     query: {
@@ -814,26 +814,26 @@ export type GetInviteTokenApiGroupsInviteGetData = {
          */
         group_id: string;
     };
-    url: '/api/groups/invite';
+    url: '/api/groups/invite-token';
 };
 
-export type GetInviteTokenApiGroupsInviteGetErrors = {
+export type GetInviteTokenApiGroupsInviteTokenGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetInviteTokenApiGroupsInviteGetError = GetInviteTokenApiGroupsInviteGetErrors[keyof GetInviteTokenApiGroupsInviteGetErrors];
+export type GetInviteTokenApiGroupsInviteTokenGetError = GetInviteTokenApiGroupsInviteTokenGetErrors[keyof GetInviteTokenApiGroupsInviteTokenGetErrors];
 
-export type GetInviteTokenApiGroupsInviteGetResponses = {
+export type GetInviteTokenApiGroupsInviteTokenGetResponses = {
     /**
      * Successful Response
      */
     200: unknown;
 };
 
-export type JoinGroupApiGroupsInvitePostData = {
+export type JoinGroupByInviteTokenApiGroupsInviteTokenPostData = {
     body?: never;
     path?: never;
     query: {
@@ -842,19 +842,47 @@ export type JoinGroupApiGroupsInvitePostData = {
          */
         token: string;
     };
-    url: '/api/groups/invite';
+    url: '/api/groups/invite-token';
 };
 
-export type JoinGroupApiGroupsInvitePostErrors = {
+export type JoinGroupByInviteTokenApiGroupsInviteTokenPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type JoinGroupApiGroupsInvitePostError = JoinGroupApiGroupsInvitePostErrors[keyof JoinGroupApiGroupsInvitePostErrors];
+export type JoinGroupByInviteTokenApiGroupsInviteTokenPostError = JoinGroupByInviteTokenApiGroupsInviteTokenPostErrors[keyof JoinGroupByInviteTokenApiGroupsInviteTokenPostErrors];
 
-export type JoinGroupApiGroupsInvitePostResponses = {
+export type JoinGroupByInviteTokenApiGroupsInviteTokenPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type JoinGrougApiGroupsInviteGroupIdPostData = {
+    body?: never;
+    path: {
+        /**
+         * Group Id
+         */
+        group_id: string;
+    };
+    query?: never;
+    url: '/api/groups/invite/{group_id}';
+};
+
+export type JoinGrougApiGroupsInviteGroupIdPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type JoinGrougApiGroupsInviteGroupIdPostError = JoinGrougApiGroupsInviteGroupIdPostErrors[keyof JoinGrougApiGroupsInviteGroupIdPostErrors];
+
+export type JoinGrougApiGroupsInviteGroupIdPostResponses = {
     /**
      * Successful Response
      */

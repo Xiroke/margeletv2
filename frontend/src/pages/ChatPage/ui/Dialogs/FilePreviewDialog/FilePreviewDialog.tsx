@@ -42,13 +42,13 @@ export const FilePreviewDialog = ({
           <div className="max-h-60 overflow-y-auto">
             {selected.length === 0
               ? (
-                  <p className="text-center text-muted-foreground py-4">No files selected</p>
+                  <p className="text-center text-gray-500 py-4">No files selected</p>
                 )
               : (
                   <ul className="space-y-2">
                     {selected.map((file, i) => (
                       <li
-                        className="flex items-center justify-between p-2 border rounded-md bg-muted/30"
+                        className="flex items-center justify-between p-2 border rounded-md bg-gray-100/30"
                         key={`${file.name}-${i}`}
                       >
                         <span className="truncate text-sm">{file.name}</span>

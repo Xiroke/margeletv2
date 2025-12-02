@@ -40,7 +40,7 @@ router = APIRouter(prefix="/groups", tags=["group"])
 #     return JSONResponse(status_code=200, content={"message": "Avatar uploaded"})
 
 
-@router.get("/invite")
+@router.get("/invite-token")
 async def get_invite_token(
     group_id: UUID,
     user: CurrentUserDep,
@@ -54,8 +54,8 @@ async def get_invite_token(
     return token
 
 
-@router.post("/invite")
-async def join_group(
+@router.post("/invite-token")
+async def join_group_by_invite_token(
     token: str,
     user: CurrentUserDep,
     group_service: GroupServiceDep,
@@ -67,8 +67,22 @@ async def join_group(
     group_payload_id = UUID(payload.group_id)
 
     await group_service.add_user_to_group(group_payload_id, user.id)
-    member_role = await role_service.get(title="member", group_id=group_payload_id)
+    member_role = await role_service.get(title="Newbie", group_id=group_payload_id)
     await group_service.add_role_to_user(user.id, group_payload_id, member_role.id)
+
+    return {"message": "Group joined"}
+
+
+@router.post("/invite/{group_id}")
+async def join_groug(
+    group_id: UUID,
+    user: CurrentUserDep,
+    group_service: GroupServiceDep,
+    role_service: RoleServiceDep,
+):
+    await group_service.add_user_to_group(group_id, user.id)
+    member_role = await role_service.get_in_group(title="Newbie", group_id=group_id)
+    await group_service.add_role_to_user(user.id, group_id, member_role.id)
 
     return {"message": "Group joined"}
 
