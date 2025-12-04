@@ -17,7 +17,6 @@ export const VerifyPage = () => {
     ...authQueryProps.resendVerificationMut(),
   })
   const inputRef = useRef<HTMLInputElement>(null)
-  const [isLoading, setIsLoading] = useState(false)
 
   const { email, token: tokenParam } = useParams({
     from: '/verify/$email/{-$token}',
@@ -30,13 +29,11 @@ export const VerifyPage = () => {
   const fetchVerify = async () => {
     if (!token) return
 
-    setIsLoading(true)
     await verify.mutateAsync({ body: token })
-    setIsLoading(false)
+
     if (verify.error) {
       toast.error('Ошибка')
-    }
-    else {
+    } else {
       toast.success('Аккаунт подтвержден')
 
       setTimeout(() => {
@@ -49,8 +46,7 @@ export const VerifyPage = () => {
     await resendVerification.mutateAsync({ body: email })
     if (resendVerification.error) {
       toast.error('Ошибка')
-    }
-    else {
+    } else {
       toast.success('Токен отправлен на вашу почту')
     }
   }
@@ -69,7 +65,7 @@ export const VerifyPage = () => {
           full
 
           name="token"
-          onChange={e => setToken(e.target.value)}
+          onChange={(e) => setToken(e.target.value)}
           placeholder="eyJhbGciOiJ..."
           ref={inputRef}
           required

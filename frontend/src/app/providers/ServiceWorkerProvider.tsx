@@ -21,9 +21,10 @@ export const ServiceWorkerProvider = ({ children }: { children: React.ReactNode 
         console.log('Service Worker ready')
 
         if (registration.active) {
+          console.log('Backend_url' + settings.VITE_BACKEND_URL)
           registration.active.postMessage({
             payload: {
-              ALLOWED_CACHED_PATHS: [], // ваши пути
+              ALLOWED_CACHED_PATHS: [],
               BACKEND_URL: settings.VITE_BACKEND_URL,
             },
             type: 'SET_PARAMS',
@@ -31,8 +32,7 @@ export const ServiceWorkerProvider = ({ children }: { children: React.ReactNode 
         }
 
         setIsSWReady(true)
-      }
-      catch (err) {
+      } catch (err) {
         console.error('Service Worker init failed:', err)
         setIsSWReady(true)
       }

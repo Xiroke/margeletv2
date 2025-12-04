@@ -8,7 +8,6 @@ import { excludedAuthCheckRoutes } from '@/config.ts'
 import { getIsAuth } from '@/shared/lib/getIsAuth.ts'
 
 interface MyRouterContext {
-  isAuth: boolean
   queryClient: QueryClient
 }
 

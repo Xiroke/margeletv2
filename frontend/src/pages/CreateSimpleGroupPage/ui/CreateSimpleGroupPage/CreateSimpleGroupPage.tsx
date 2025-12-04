@@ -1,6 +1,5 @@
 import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { ResultAsync } from 'neverthrow'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -15,8 +14,6 @@ import { Input } from '@/shared/ui/input'
 import cls from './CreateSimpleGroupPage.module.scss'
 
 export const CreateSimpleGroupPage = () => {
-  const navigate = useNavigate()
-
   const createGroup = useMutation({ ...simpleGroupQueryProps.create() })
 
   const form = useForm({
@@ -29,15 +26,13 @@ export const CreateSimpleGroupPage = () => {
       const payload = data.value as SimpleGroupCreate
       const result = await ResultAsync.fromPromise(
         createGroup.mutateAsync({ body: payload }),
-        error => error as { detail: string },
+        (error) => error as { detail: string },
       )
 
       if (result.isErr()) {
         toast.error(result.error.detail || 'Не удалось создать группу')
-      }
-      else {
+      } else {
         toast.success('Группа успешно создана')
-        navigate({ to: '/groups/search' })
       }
     },
   })
@@ -74,7 +69,7 @@ export const CreateSimpleGroupPage = () => {
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="Happy group"
                   type="text"
                   value={field.state.value}
@@ -102,7 +97,7 @@ export const CreateSimpleGroupPage = () => {
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="Enter short descriptions"
                   type="text"
                   value={field.state.value}

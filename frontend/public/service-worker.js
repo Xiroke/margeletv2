@@ -1,6 +1,5 @@
 const CACHE_NAME = 'image-cache-v1'
 const TOKEN_CACHE_NAME = 'auth-tokens-v1'
-const DEFAULT_BACKEND_URL = 'http://localhost:8000'
 
 self.BACKEND_URL = null
 self.ALLOWED_CACHED_PATHS = []
@@ -77,8 +76,7 @@ async function fetchAccessToken() {
 
     await setAccessToken(data.access_token, 4.5 * 60 * 1000)
     return data.access_token
-  }
-  catch (err) {
+  } catch (err) {
     console.error('Error fetching access token:', err)
     await clearAccessToken()
     return null
@@ -98,8 +96,7 @@ async function getAccessToken() {
       return null
     }
     return data.token
-  }
-  catch (e) {
+  } catch (e) {
     return null
   }
 }
@@ -119,7 +116,7 @@ async function setAccessToken(token, expiresInMs = 5 * 60 * 1000) {
 self.addEventListener('message', (event) => {
   const { payload, type } = event.data
   if (type === 'SET_PARAMS') {
-    self.BACKEND_URL = DEFAULT_BACKEND_URL
+    self.BACKEND_URL = payload.BACKEND_URL
     self.ALLOWED_CACHED_PATHS = payload.ALLOWED_CACHED_PATHS || []
     console.log('SW params set:', { BACKEND_URL: self.BACKEND_URL })
   }
@@ -137,15 +134,16 @@ self.addEventListener('fetch', (event) => {
     const isImage = request.destination === 'image'
     if (isImage) {
       event.respondWith(
-        caches.open(CACHE_NAME).then(cache =>
-          cache.match(request).then(cached => cached || fetch(request)),
+        caches.open(CACHE_NAME).then((cache) =>
+          cache.match(request).then((cached) => cached || fetch(request)),
         ),
       )
     }
     return
   }
 
-  const isApiRequest = request.url.startsWith(self.BACKEND_URL)
+  const isApiRequest = url.pathname.startsWith('/api/')
+    || (self.BACKEND_URL && request.url.startsWith(self.BACKEND_URL)) // this for check localhost and localhost:80
 
   if (isApiRequest) {
     const pathname = url.pathname
@@ -170,13 +168,13 @@ self.addEventListener('fetch', (event) => {
   }
 
   const isImage = request.destination === 'image'
-  const isAllowedPath = self.ALLOWED_CACHED_PATHS.some(path =>
+  const isAllowedPath = self.ALLOWED_CACHED_PATHS.some((path) =>
     url.pathname.startsWith(path),
   )
 
   if (isImage && isAllowedPath) {
     event.respondWith(
-      caches.open(CACHE_NAME).then(cache =>
+      caches.open(CACHE_NAME).then((cache) =>
         cache.match(request).then((cachedResponse) => {
           if (cachedResponse) return cachedResponse
           return fetch(request).then((networkResponse) => {

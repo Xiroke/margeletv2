@@ -31,9 +31,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "eralchemy>=1.6.0",
-    "erdantic>=1.2.0",
-    "pygraphviz>=1.14",
     "pylint",
     "ruff>=0.11.2",
 ]

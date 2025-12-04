@@ -30,7 +30,7 @@ export const GroupChatCardSkeleton = ({ className}: { className?: string }) => {
 }
 
 export const GroupChatCard = ({ active, className, groupChat }: GroupChatCardProps) => {
-  const { avatarUrl, lastMessage, time, title = 'Group', unreadCount } = groupChat
+  const { avatarUrl, title = 'Group' } = groupChat
 
   return (
     <div className={clsx(cls.group_card, active && cls.active, className)}>

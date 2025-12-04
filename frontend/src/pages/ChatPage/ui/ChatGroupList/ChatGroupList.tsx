@@ -58,7 +58,7 @@ const EmptyPersonallGroupList = () => (
       </EmptyDescription>
     </EmptyHeader>
     <EmptyContent>
-      <Button navigateOptions={{ to: '/groups/search' }} size="sm">
+      <Button onClick={() => {}} size="sm">
         <ScanSearchIcon />
         Find Friend
       </Button>
@@ -69,10 +69,9 @@ const EmptyPersonallGroupList = () => (
 export const ChatGroupList: FC<ChatGroupListProps> = (
   props: ChatGroupListProps,
 ) => {
-  const { className, groupType, onClickItem } = props
+  const { className, groupType } = props
   const { data, isLoading } = useQuery(autoGroupQueryProps.getMyGroupsWithLastMessage({ query: { group_type: groupType } }))
   const groups = data?.groups
-  const messages = data?.messages
   const { groupId } = useParams({ from: '/group/$groupType/{-$groupId}' })
 
   return (

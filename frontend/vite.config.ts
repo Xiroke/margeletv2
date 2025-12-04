@@ -11,12 +11,12 @@ import { defineConfig } from 'vite'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const dirname
-  = typeof __dirname !== 'undefined'
-    ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url))
+// const dirname
+//   = typeof __dirname !== 'undefined'
+//     ? __dirname
+//     : path.dirname(fileURLToPath(import.meta.url))
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') })
+dotenv.config({ path: path.resolve(__dirname, '.env') })
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -30,6 +30,15 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    proxy: {
+      '/api': {
+        changeOrigin: true,
+        secure: false,
+        target: `http://${new URL(import.meta.url).hostname}:8000/api`,
+      },
     },
   },
   test: {

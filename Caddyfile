@@ -9,7 +9,7 @@
     }
 }
 
-http://localhost {
+https://localhost {
     encode gzip
 
     reverse_proxy /api/ws* http://backend:8000 {

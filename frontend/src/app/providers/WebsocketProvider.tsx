@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { createContext, type PropsWithChildren, useContext, useEffect, useRef, useState } from 'react'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 
-import type { WsEventRead } from '@/shared/api/generated'
+import type { WsBaseEvent } from '@/shared/api/generated'
 import type { IWSContext } from '@/shared/types/wsProvider'
 
 import { excludedAuthCheckRoutes } from '@/config'
@@ -30,8 +30,7 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
         const ws_token = await wsTokenMut.mutateAsync({ credentials: 'include' })
         setWsToken(ws_token)
         setIsTokenFetched(true)
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Failed to fetch WS token', error)
       }
     }
@@ -51,8 +50,8 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
 
   useWsLoading(readyState === ReadyState.OPEN)
 
-  const onMessageRef = useRef<(data: WsEventRead) => void>(null)
-  const onMessage = (callback: (data: WsEventRead) => void) => {
+  const onMessageRef = useRef<(data: WsBaseEvent) => void>(null)
+  const onMessage = (callback: (data: WsBaseEvent) => void) => {
     onMessageRef.current = callback
   }
 
@@ -60,10 +59,9 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
     if (!lastMessage?.data || !onMessageRef.current) return
 
     try {
-      const parsedData: WsEventRead = JSON.parse(lastMessage.data)
+      const parsedData: WsBaseEvent = JSON.parse(lastMessage.data)
       onMessageRef.current(parsedData)
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Failed to parse WebSocket message:', error)
     }
   }, [lastMessage])
