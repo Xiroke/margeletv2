@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 
 import { authQueryProps } from '@/features/auth/api'
+import { FORM_STYLES } from '@/shared/styles/form_styles'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -86,6 +87,10 @@ export const VerifyPage = () => {
         >
           Repeat send token
         </Button>
+      </div>
+      <div className={FORM_STYLES.footer}>
+        <span> Or back to </span>
+        <Link to="/">Login</Link>
       </div>
     </div>
   )

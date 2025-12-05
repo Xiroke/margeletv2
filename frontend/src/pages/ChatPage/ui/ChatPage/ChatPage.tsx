@@ -117,7 +117,7 @@ export const CurrentGroup = ({ className, groupId, groupType }: CurrentGroupProp
   }, [ws])
 
   // it must be switched to cache
-  const { data: groups } = useQuery(
+  const { data: groups, isLoading } = useQuery(
     autoGroupQueryProps.getMyGroups({ query: { group_type: groupType } }),
   )
 
@@ -169,7 +169,7 @@ export const CurrentGroup = ({ className, groupId, groupType }: CurrentGroupProp
 
       <div className="shrink-0 p-2 bg-background z-10 mx-auto w-full md:w-1/2">
         {isMyGroup && <ChatInput {...chatInputProps} />}
-        {!isMyGroup && <Button className="min-h-12" full onClick={handleJoinGroup} variant="outline">Join to group</Button>}
+        {!isMyGroup && !isLoading && <Button className="min-h-12" full onClick={handleJoinGroup} variant="outline">Join to group</Button>}
       </div>
     </div>
   )

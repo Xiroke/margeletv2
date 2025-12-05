@@ -119,6 +119,12 @@ export const LoginPage = () => {
         </Button>
       </div>
 
+      <div className={cls.actions}>
+        <Button full navigateOptions={{ to: '/backend/config' }} variant="outline">
+          Set backend url
+        </Button>
+      </div>
+
       <div className={cls.footer}>
         <span> Or </span>
         <Link to="/registration">Register</Link>

@@ -1,22 +1,16 @@
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import viteReact from '@vitejs/plugin-react'
-import dotenv from 'dotenv'
 /// <reference types="vitest/config" />
 import path, { resolve } from 'node:path'
 // https://vitejs.dev/config/
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 
+import { settings } from './src/config'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-// const dirname
-//   = typeof __dirname !== 'undefined'
-//     ? __dirname
-//     : path.dirname(fileURLToPath(import.meta.url))
-
-dotenv.config({ path: path.resolve(__dirname, '.env') })
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -35,9 +29,21 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
+        bypass: (req, res) => {
+          const proxyUrl = new URL(req.url || '', 'http://localhost')
+          if (proxyUrl.pathname.startsWith('/api') && res) {
+            res.setHeader('x-vite-bypass-fallback', 'true')
+            return null
+          }
+        },
         changeOrigin: true,
         secure: false,
-        target: `http://${new URL(import.meta.url).hostname}:8000/api`,
+        target: settings.VITE_DEV_BACKEND_URL,
+      },
+      '/api/ws': {
+        changeOrigin: true,
+        target: settings.VITE_DEV_BACKEND_URL,
+        ws: true,
       },
     },
   },

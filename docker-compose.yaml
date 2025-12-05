@@ -40,9 +40,9 @@ services:
       MINIO_ROOT_PASSWORD: ${S3_PASSWORD}
     volumes:
       - minio_data1:/data1
-      - minio_data2:/data2
     networks:
       - web
+    command: server /data1
 
   redis:
     image: redis
@@ -92,12 +92,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        - VITE_BACKEND_URL=http://localhost:80
-        - VITE_FRONTEND_URL=http://localhost:80
-        - VITE_BACKEND_WS_URL=ws://localhost:80
-    env_file:
-      - ./frontend/.env.prod
     container_name: frontend
     restart: always
     ports:

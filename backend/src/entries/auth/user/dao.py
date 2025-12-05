@@ -1,12 +1,12 @@
 from typing import Protocol, cast
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 
 from src.core.abstract.dao import DaoProtocol, SqlDaoImpl
 from src.entries.auth.refresh_token.models import RefreshTokenModel
 from src.entries.auth.user.models import UserModel
-from src.entries.auth.user.schemas import UserCreate, UserRead, UserUpdate
+from src.entries.auth.user.schemas import UserCreate, UserInternalUpdate, UserRead
 from src.utils.exceptions import ModelNotFoundException
 
 
@@ -16,7 +16,7 @@ class UserDaoProtocol(
         UUID,
         UserRead,
         UserCreate,
-        UserUpdate,
+        UserInternalUpdate,
     ],
     Protocol,
 ):
@@ -35,7 +35,7 @@ class UserSqlDao(
         UUID,
         UserRead,
         UserCreate,
-        UserUpdate,
+        UserInternalUpdate,
     ]
 ):
     async def get_user_by_email(self, email: str) -> UserRead:
@@ -66,14 +66,10 @@ class UserSqlDao(
         return await self._execute_and_return_one(smtp)
 
     async def set_is_verified(self, user_id: UUID, value: bool):
-        smtp = update(self.model_type).filter_by(id=user_id).values(is_verified=value)
-        await self.session.execute(smtp)
-
-        await self.update({"id": user_id}, UserUpdate(is_verified=value))
+        await self.update(UserInternalUpdate(is_verified=value), id=user_id)
 
     async def set_is_active(self, user_id: UUID, value: bool):
-        smtp = update(self.model_type).filter_by(id=user_id).values(is_active=value)
-        await self.session.execute(smtp)
+        await self.update(UserInternalUpdate(is_active=value), id=user_id)
 
     async def get_usernames_by_id(self, user_ids: list[UUID]) -> dict[str, str]:
         smtp = select(UserModel.id, UserModel.name).filter(UserModel.id.in_(user_ids))

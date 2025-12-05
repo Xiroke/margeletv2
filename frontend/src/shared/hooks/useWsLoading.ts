@@ -1,18 +1,26 @@
+import { useLocation } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 
+import { getIsExcluded } from '@/config'
+
 export const useWsLoading = (isConnected: boolean) => {
+  const location = useLocation()
   const loadingToastRef = useRef<number | string | undefined>(undefined)
 
   useEffect(() => {
-    if (!isConnected && !loadingToastRef.current) {
-      loadingToastRef.current = toast.loading('Connecting to server...')
+    const isExcluded = getIsExcluded(location.pathname)
+
+    if (isConnected || isExcluded) {
+      if (loadingToastRef.current !== undefined) {
+        toast.dismiss(loadingToastRef.current)
+        loadingToastRef.current = undefined
+      }
       return
     }
 
-    if (isConnected) {
-      toast.dismiss(loadingToastRef.current)
-      loadingToastRef.current = undefined
+    if (!isConnected && !isExcluded && loadingToastRef.current === undefined) {
+      loadingToastRef.current = toast.loading('Connecting to server...')
     }
-  }, [isConnected])
+  }, [isConnected, location.pathname])
 }

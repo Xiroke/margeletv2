@@ -2,12 +2,10 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 
-import { settings } from '@/config.ts'
-
 import { ServiceWorkerProvider } from './app/providers/ServiceWorkerProvider.tsx'
-import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx'
 // Import the generated route tree
 import './index.css'
+import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx'
 import reportWebVitals from './reportWebVitals.ts'
 import { routeTree } from './routeTree.gen'
 import { client } from './shared/api/generated/client.gen.ts'
@@ -24,8 +22,10 @@ const router = createRouter({
   scrollRestoration: true,
 })
 
+const backendDomain = localStorage.getItem('backendDomain')
+
 client.setConfig({
-  baseUrl: settings.VITE_BACKEND_URL,
+  baseUrl: backendDomain ? 'https://' + localStorage.getItem('backendDomain') : '',
   credentials: 'include',
 })
 

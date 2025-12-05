@@ -35,8 +35,9 @@ class UserUpdate(BaseModel):
     avatar_path: str | None = None
 
 
-class UserUpdateInternal(UserUpdate):
-    pass
+class UserInternalUpdate(BaseModel):
+    is_active: bool | None = None
+    is_verified: bool | None = None
 
 
 class UserLogin(BaseModel):

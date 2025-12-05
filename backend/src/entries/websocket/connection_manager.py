@@ -196,8 +196,8 @@ class ConnectionManager:
 
         await self.redis.hset(
             f"user:{user_id}",
-            {
-                "status": UserStatus.OFFLINE,
+            mapping={
+                "status": UserStatus.OFFLINE.value,
                 "last_updated": datetime.now(timezone.utc).isoformat(),
             },
         )

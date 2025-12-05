@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Any
 
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.db.database import Base
@@ -48,13 +48,15 @@ class SqlDaoImpl(
     async def create(
         self, obj: CreateSchemaType, returning: bool = False
     ) -> ReadSchemaType | None:
-        stmt = insert(self.model_type).values(**obj.model_dump())
+        model_instance = self.model_type(**obj.model_dump())
+        self.session.add(model_instance)
 
         if returning:
-            stmt = stmt.returning(self.model_type)
-            return await self._execute_and_return_one(stmt, flush=True)
-
-        await self.session.execute(stmt)
+            await self.session.flush()
+            await self.session.refresh(model_instance)
+            return self._model_to_read_schema(model_instance)
+        else:
+            return None
 
     async def update(
         self,
@@ -72,7 +74,6 @@ class SqlDaoImpl(
         stmt = update(self.model_type)
         stmt = self._handle_filters(stmt, filters, is_many)
         stmt = stmt.values(**values)
-        print("values " + str(values))
 
         if returning:
             stmt = stmt.returning(self.model_type)

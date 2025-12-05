@@ -1,10 +1,24 @@
-// ServiceWorkerProvider.tsx
-import { useEffect, useState } from 'react'
-
-import { settings } from '@/config'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const ServiceWorkerProvider = ({ children }: { children: React.ReactNode }) => {
   const [isSWReady, setIsSWReady] = useState(false)
+  // Храним ссылку на registration, чтобы иметь доступ к active worker
+  const swRegistrationRef = useRef<null | ServiceWorkerRegistration>(null)
+
+  // Функция для отправки домена
+  const updateBackendDomainInSW = useCallback(async (newDomain: string) => {
+    try {
+      if (swRegistrationRef.current?.active) {
+        swRegistrationRef.current.active.postMessage({
+          domain: newDomain,
+          type: 'UPDATE_BACKEND_DOMAIN',
+        })
+        console.log('Domain updated in SW:', newDomain)
+      }
+    } catch (error) {
+      console.error('Failed to update domain in SW:', error)
+    }
+  }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
@@ -14,22 +28,16 @@ export const ServiceWorkerProvider = ({ children }: { children: React.ReactNode 
 
     const initSW = async () => {
       try {
-        await navigator.serviceWorker.register('/service-worker.js')
+        const registration = await navigator.serviceWorker.register('/service-worker.js')
+        swRegistrationRef.current = registration
         console.log('Service Worker registered')
 
-        const registration = await navigator.serviceWorker.ready
+        await navigator.serviceWorker.ready
         console.log('Service Worker ready')
 
-        if (registration.active) {
-          console.log('Backend_url' + settings.VITE_BACKEND_URL)
-          registration.active.postMessage({
-            payload: {
-              ALLOWED_CACHED_PATHS: [],
-              BACKEND_URL: settings.VITE_BACKEND_URL,
-            },
-            type: 'SET_PARAMS',
-          })
-        }
+        // 1. Сразу отправляем текущий домен при старте
+        const initialDomain = localStorage.getItem('backendDomain') || 'localhost'
+        await updateBackendDomainInSW(initialDomain)
 
         setIsSWReady(true)
       } catch (err) {
@@ -39,7 +47,19 @@ export const ServiceWorkerProvider = ({ children }: { children: React.ReactNode 
     }
 
     initSW()
-  }, [])
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'backendDomain') {
+        updateBackendDomainInSW(e.newValue || 'localhost')
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [updateBackendDomainInSW])
 
   if (!isSWReady) {
     return null

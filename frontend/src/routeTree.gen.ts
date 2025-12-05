@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as GroupsIndexRouteImport } from './routes/groups/index'
 import { Route as GroupsCreateSimpleRouteImport } from './routes/groups/createSimple'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
+import { Route as BackendConfigRouteImport } from './routes/backend.config'
 import { Route as VerifyEmailChar123TokenChar125RouteImport } from './routes/verify.$email.{-$token}'
 import { Route as GroupGroupTypeChar123GroupIdChar125RouteImport } from './routes/group/$groupType/{-$groupId}'
 
@@ -42,6 +43,11 @@ const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   path: '/demo/tanstack-query',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BackendConfigRoute = BackendConfigRouteImport.update({
+  id: '/backend/config',
+  path: '/backend/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifyEmailChar123TokenChar125Route =
   VerifyEmailChar123TokenChar125RouteImport.update({
     id: '/verify/$email/{-$token}',
@@ -58,6 +64,7 @@ const GroupGroupTypeChar123GroupIdChar125Route =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
+  '/backend/config': typeof BackendConfigRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/groups/createSimple': typeof GroupsCreateSimpleRoute
   '/groups': typeof GroupsIndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
+  '/backend/config': typeof BackendConfigRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/groups/createSimple': typeof GroupsCreateSimpleRoute
   '/groups': typeof GroupsIndexRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/registration': typeof RegistrationRoute
+  '/backend/config': typeof BackendConfigRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/groups/createSimple': typeof GroupsCreateSimpleRoute
   '/groups/': typeof GroupsIndexRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/registration'
+    | '/backend/config'
     | '/demo/tanstack-query'
     | '/groups/createSimple'
     | '/groups'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/registration'
+    | '/backend/config'
     | '/demo/tanstack-query'
     | '/groups/createSimple'
     | '/groups'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/registration'
+    | '/backend/config'
     | '/demo/tanstack-query'
     | '/groups/createSimple'
     | '/groups/'
@@ -116,6 +128,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RegistrationRoute: typeof RegistrationRoute
+  BackendConfigRoute: typeof BackendConfigRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   GroupsCreateSimpleRoute: typeof GroupsCreateSimpleRoute
   GroupsIndexRoute: typeof GroupsIndexRoute
@@ -160,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTanstackQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/backend/config': {
+      id: '/backend/config'
+      path: '/backend/config'
+      fullPath: '/backend/config'
+      preLoaderRoute: typeof BackendConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verify/$email/{-$token}': {
       id: '/verify/$email/{-$token}'
       path: '/verify/$email/{-$token}'
@@ -180,6 +200,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RegistrationRoute: RegistrationRoute,
+  BackendConfigRoute: BackendConfigRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   GroupsCreateSimpleRoute: GroupsCreateSimpleRoute,
   GroupsIndexRoute: GroupsIndexRoute,

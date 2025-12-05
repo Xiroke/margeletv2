@@ -11,7 +11,7 @@ import { userQueryProps } from '@/entities/User/api'
 import { UserCard } from '@/entities/User/UserCard'
 import { cn } from '@/shared/lib/utils'
 import { Input } from '@/shared/ui/input'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 
 interface SheetSearchContentProps {
@@ -122,6 +122,7 @@ export const SheetSearch = ({ children}: { children: ReactNode }) => {
       <SheetContent className="w-3/4 sm:max-w-1/4" side="left">
         <SheetHeader>
           <SheetTitle asChild><h4>Search</h4></SheetTitle>
+          <SheetDescription>Search group or users</SheetDescription>
         </SheetHeader>
         <div className="px-4 -mt-6 flex flex-col gap-6">
           <Input autoFocus onChange={(e) => setQuery(e.target.value)} placeholder="Enter query" value={query} />

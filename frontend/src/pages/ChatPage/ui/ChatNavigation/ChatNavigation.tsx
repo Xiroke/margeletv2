@@ -17,7 +17,7 @@ import { useLogout } from '@/features/auth/api'
 import { switchTheme } from '@/shared/lib/switchTheme'
 import { cn } from '@/shared/lib/utils'
 import { Button, type ButtonProps } from '@/shared/ui/button'
-import { Sheet, SheetContent } from '@/shared/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/shared/ui/sheet'
 
 import { SheetSearch } from '../SheetSearch'
 import cls from './ChatNavigation.module.scss'
@@ -133,6 +133,8 @@ export const MobileMenu = ({ open, setOpen }: MobileMenuProps) => {
   return (
     <Sheet onOpenChange={setOpen} open={open}>
       <SheetContent className="p-4" side="left">
+        <SheetTitle className="sr-only">Mobile menu</SheetTitle>
+        <SheetDescription className="sr-only">Mobile menu with different functions</SheetDescription>
         Menu
         <div className=" mt-4 text-sm font-medium ">Actions</div>
         <div className="flex flex-col gap-3 items-start text-base">

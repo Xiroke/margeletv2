@@ -26,9 +26,6 @@ class SimpleGroupDaoProtocol(
     ],
     Protocol,
 ):
-    async def create(
-        self, obj: SimpleGroupCreate, returning=True
-    ) -> SimpleGroupRead: ...
     async def set_creator_group(
         self, group_id: UUID, user_id: UUID, creator_role_id
     ) -> None: ...
@@ -46,9 +43,6 @@ class SimpleGroupSqlDao(
     ],
     GroupSqlDaoParent,
 ):
-    async def create(self, obj: SimpleGroupCreate, returning=False) -> SimpleGroupRead:
-        return await self.create(obj, returning=returning)
-
     async def get_groups_by_user(self, user_id: UUID) -> list[SimpleGroupRead]:
         data = await self._get_groups_by_user(SimpleGroupModel, user_id)
         return [SimpleGroupRead.model_validate(item) for item in data]

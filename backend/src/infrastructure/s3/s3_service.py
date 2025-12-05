@@ -1,5 +1,7 @@
 import logging
 from io import BytesIO
+from types import TracebackType
+from typing import Optional, Type
 
 import aioboto3
 from botocore.exceptions import ClientError
@@ -20,28 +22,33 @@ class S3BucketService(StorageBase):
         self.endpoint = endpoint
         self.access_key = access_key
         self.secret_key = secret_key
+        self.session = aioboto3.Session()
+        self.client = None
+        self._exit_stack = None
 
-        session = aioboto3.Session()
-
-        # return context manager
-
-        self.client = session.client(
+    async def __aenter__(self):
+        self.client = await self.session.client(
             "s3",
             endpoint_url=self.endpoint,
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
-        )
+        ).__aenter__()
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ):
+        if self.client:
+            await self.client.__aexit__(exc_type, exc_val, exc_tb)
 
     async def save(
         self,
         key: str,
         value: str | bytes,
     ) -> None:
-        """
-        Upload file to S3
-        key - path to file
-        value - file
-        """
         destination_file_name = key
 
         if isinstance(value, bytes):
@@ -54,10 +61,6 @@ class S3BucketService(StorageBase):
         )
 
     async def list_objects(self, key: str) -> list[str]:
-        """
-        List objects in the bucket
-        key - path to file
-        """
         response = await self.client.list_objects_v2(
             Bucket=self.bucket_name, Prefix=key
         )
@@ -74,22 +77,15 @@ class S3BucketService(StorageBase):
 
         return storage_content
 
-    async def get(self, key: str, chunk_size: int = 69 * 1024):
-        """
-        Get file object from S3
-        key - path to file
-        """
-
+    async def get(self, key: str):
         try:
-            file_obj = await self.client.get_object(
-                Bucket=self.bucket_name, Key=key, chunk_size=chunk_size
-            )
+            file_obj = await self.client.get_object(Bucket=self.bucket_name, Key=key)
 
             file_data = await file_obj["Body"].read()
 
         except ClientError as e:
             if e.response["Error"]["Code"] == "NoSuchKey":
-                raise HTTPException(  # noqa: B904
+                raise HTTPException(
                     status_code=404,
                     detail="File not found",
                 )
@@ -102,20 +98,11 @@ class S3BucketService(StorageBase):
         return file_data
 
     async def delete(self, key: str) -> None:
-        """
-        Delete file object from S3
-        key - path to file
-        """
-        self.client.delete_object(Bucket=self.bucket_name, Key=key)
+        # ВАЖНО: Здесь тоже не хватало await!
+        await self.client.delete_object(Bucket=self.bucket_name, Key=key)
 
     async def save_image(self, key: str, value: UploadFile):
-        """
-        Upload file to S3
-        key - path to file
-        value - image
-        """
         try:
-            # convert image to .jpg and save
             with Image.open(BytesIO(await value.read())) as img:
                 img = img.convert("RGB")
                 img_byte_arr = BytesIO()

@@ -22,30 +22,50 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
   const [wsToken, setWsToken] = useState<null | string>(null)
   const wsTokenMut = useMutation(userQueryProps.wsTokenMut())
 
-  useEffect(() => {
-    if (isTokenFetched || wsTokenMut.isPending) return
+  const fetchToken = async () => {
+    if (isTokenFetched) return
+    setIsTokenFetched(true)
 
-    const fetchToken = async () => {
-      try {
-        const ws_token = await wsTokenMut.mutateAsync({ credentials: 'include' })
-        setWsToken(ws_token)
-        setIsTokenFetched(true)
-      } catch (error) {
-        console.error('Failed to fetch WS token', error)
-      }
+    try {
+      const ws_token = await wsTokenMut.mutateAsync({ credentials: 'include' })
+      setWsToken(ws_token)
+    } catch (error) {
+      console.error('Failed to fetch WS token', error)
+    } finally {
+      setIsTokenFetched(false)
     }
+  }
 
-    fetchToken()
-  }, [isTokenFetched, wsTokenMut])
+  const [interval, setInterval] = useState(1000)
+
+  const getInterval = () => {
+    const old = interval
+    setInterval(old + old * 1.5)
+    return old
+  }
+
+  useEffect(() => {
+    if (!wsToken) {
+      fetchToken()
+    }
+  }, [wsToken])
+
+  const backendDomain = localStorage.getItem('backendDomain')
 
   const socketUrl = wsToken
-    ? `${import.meta.env.VITE_BACKEND_WS_URL}/api/ws?ws_token=${wsToken}`
+    ? (backendDomain ? 'wss://' + backendDomain + `/api/ws?ws_token=${wsToken}` : `/api/ws?ws_token=${wsToken}`)
     : null
 
   const { lastMessage, readyState, sendMessage } = useWebSocket(socketUrl, {
-    retryOnError: false,
+    onClose: () => {
+      setWsToken(null)
+    },
+    onError: () => {
+      setWsToken(null)
+    },
+    reconnectInterval: getInterval,
     share: false,
-    shouldReconnect: () => true,
+    shouldReconnect: () => false,
   })
 
   useWsLoading(readyState === ReadyState.OPEN)

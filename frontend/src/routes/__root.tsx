@@ -4,7 +4,7 @@ import { createRootRouteWithContext, Outlet, redirect } from '@tanstack/react-ro
 import { Toaster } from 'sonner'
 
 import { AllProviders } from '@/app/providers/AllProviders.tsx'
-import { excludedAuthCheckRoutes } from '@/config.ts'
+import { getIsExcluded } from '@/config.ts'
 import { getIsAuth } from '@/shared/lib/getIsAuth.ts'
 
 interface MyRouterContext {
@@ -13,18 +13,15 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ location }) => {
-    const isExcluded = excludedAuthCheckRoutes.some((route) =>
-      route.endsWith('*') ? location.pathname.startsWith(route.replace('*', '')) : location.pathname === route,
-    )
+    const isExcluded = getIsExcluded(location.pathname)
 
     const isAuth = await getIsAuth()
 
-    if (isExcluded && !isAuth) {
-      return
-    } else if (isExcluded && isAuth) {
+    if (isExcluded && isAuth) {
       throw redirect({ to: '/groups' })
+    } else if (!isExcluded && !isAuth) {
+      throw redirect({ to: '/' })
     }
-    if (!isAuth) throw redirect({ to: '/' })
   },
   component: () => (
     <>

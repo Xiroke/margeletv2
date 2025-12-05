@@ -40,7 +40,7 @@ register_schemas(app)
 
 
 @app.get(
-    "/api/healthcheck",
+    "/api/health",
 )
 def ping():
     return "ok"

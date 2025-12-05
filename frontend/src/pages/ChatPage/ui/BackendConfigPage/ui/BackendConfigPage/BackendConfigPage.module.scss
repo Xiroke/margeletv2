@@ -1,0 +1,269 @@
+.backendConfigPage {
+  min-height: 100vh;
+  padding: 1rem;
+  background: var(--background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
+}
+
+.contentWrapper {
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+}
+
+.backButton {
+  position: absolute;
+  top: -3rem;
+  left: 0;
+
+  @media (max-width: 768px) {
+    top: -2.5rem;
+  }
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--foreground);
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.container {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
+}
+
+.infoSection {
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+  }
+}
+
+.infoText {
+  margin-bottom: 1rem;
+  color: var(--foreground);
+  font-size: 0.95rem;
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+  }
+}
+
+.examplesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.exampleCard {
+  padding: 0.75rem;
+  background: var(--muted);
+  border-radius: 6px;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
+}
+
+.exampleLabel {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.25rem;
+}
+
+.exampleCode {
+  background: var(--accent);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  word-break: break-word;
+}
+
+.actions {
+  margin-bottom: 1.5rem;
+}
+
+.inputGroup {
+  margin-bottom: 1rem;
+}
+
+.inputWithPort {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWithPort input {
+  padding-right: 4rem;
+}
+
+.portBadge {
+  position: absolute;
+  right: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--muted);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.preview {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: var(--muted);
+  border-radius: 6px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+
+  code {
+    background: var(--accent);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: "Courier New", monospace;
+    margin-left: 0.25rem;
+  }
+}
+
+.buttonGrid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.saveButton {
+  background: var(--primary);
+  color: var(--primary-foreground);
+
+  &:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.testButton {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+
+  &:hover:not(:disabled) {
+    background: var(--secondary-hover);
+  }
+}
+
+.auxButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.statusSection {
+  padding: 1rem;
+  background: var(--muted);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.statusIndicators {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statusItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.statusInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted-foreground);
+  flex-shrink: 0;
+
+  &.active,
+  &.success {
+    background: var(--success);
+  }
+
+  &.error {
+    background: var(--destructive);
+  }
+}
+
+.domainValue {
+  background: var(--accent);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 0.875rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 480px) {
+    max-width: 100%;
+    align-self: flex-start;
+  }
+}
+
+.connectionStatus {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
